@@ -4,7 +4,7 @@ Small tool for basic graph statistics using GFA format.
   
 
 
-####Installation: 
+#### Installation: 
 
 **Git**  
 ```
@@ -16,9 +16,7 @@ cargo build --release
 
 **Cargo** 
 ```
-argo  
-daskdajd 
-daskdaj
+cargo install gfastats
 ```
 
 #### Usage
