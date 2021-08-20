@@ -29,6 +29,10 @@ pub fn mean_median_graph_size(graph: &Gfa) -> Vec<(&str, String)> {
     result
 }
 
+/// Calculate total size of all input genomes
+///
+/// Iterate over path information - sum length of all nodes
+///
 pub fn input_genomes(graph: &Gfa) -> Vec<(&str, String)> {
     let mut input_size: u32 = 0;
 
@@ -114,6 +118,11 @@ pub fn inverted_edges(graph: &Gfa) -> Vec<(&str, String)>{
     result
 }
 
+
+
+///
+/// Get the number of edges and nodes
+///
 pub fn edges_nodes_number(graph: &Gfa) -> Vec<(&str, String)>{
     let mut result: Vec<(&str, String)> = Vec::new();
     result.push(("#Nodes", graph.nodes.len().to_string()));

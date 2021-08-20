@@ -1,13 +1,12 @@
 mod stats;
 
 use crate::stats::{mean_median_graph_size, input_genomes, node_degree, inverted_edges, edges_nodes_number};
-use std::collections::HashMap;
-use std::env;
-use argparse::{ArgumentParser, StoreOption, StoreTrue, Store};
-use std::path::Path;
+use argparse::{ArgumentParser, Store};
 
 
 
+/// Printing the stats
+///
 fn printing(results: Vec<(&str, String)>){
     for (k,_v) in results.iter(){
         print!("{}\t", k);
@@ -19,6 +18,7 @@ fn printing(results: Vec<(&str, String)>){
     print!("\n");
 }
 
+/// Combine multiple vectors into one
 fn combine(results: Vec<Vec<(&str, String)>>) -> Vec<(&str, String)>{
     let mut combined_vector: Vec<(&str, String)> = Vec::new();
     for x in results.iter(){
@@ -29,6 +29,10 @@ fn combine(results: Vec<Vec<(&str, String)>>) -> Vec<(&str, String)>{
     combined_vector
 }
 
+/// Get the file name
+///
+/// Remove folder structure
+///
 fn get_filename(name: &String) -> Vec<(&str, String)>{
     let u: Vec<&str> = name.split("/").collect();
     let mut result: Vec<(&str, String)> = Vec::new();
