@@ -44,7 +44,6 @@ fn main() {
         ap.parse_args_or_exit();
     }
 
-    println!("These are the command line arguments {:?}", name);
     // Read the graph
     let graph = gfaR::readGFA(&name);
 
