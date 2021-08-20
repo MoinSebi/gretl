@@ -8,7 +8,7 @@ use std::path::Path;
 
 
 
-fn printing(results: HashMap<&str, String>){
+fn printing(results: Vec<(&str, String)>){
     for (k,_v) in results.iter(){
         print!("{}\t", k);
     }
@@ -19,24 +19,26 @@ fn printing(results: HashMap<&str, String>){
     print!("\n");
 }
 
-fn combine(results: Vec<HashMap<&str, String>>) -> HashMap<&str, String>{
-    let mut combined_hm: HashMap<&str, String> = HashMap::new();
+fn combine(results: Vec<Vec<(&str, String)>>) -> Vec<(&str, String)>{
+    let mut combined_vector: Vec<(&str, String)> = Vec::new();
     for x in results.iter(){
-        for (k,v) in x.iter(){
-            combined_hm.insert(k, v.clone());
+        for (k, v) in x.iter(){
+            combined_vector.push((k, v.clone()));
         }
     }
-    combined_hm
+    combined_vector
 }
 
-fn get_filename(name: &String) -> HashMap<&str, String>{
+fn get_filename(name: &String) -> Vec<(&str, String)>{
     let u: Vec<&str> = name.split("/").collect();
-    let mut result: HashMap<&str, String> = HashMap::new();
+    let mut result: Vec<(&str, String)> = Vec::new();
 
-    result.insert("File name" , u.last().unwrap().to_string());
+    result.push(("File name" , u.last().unwrap().to_string()));
     result
 
 }
+
+
 
 fn main() {
     let mut name = "World".to_string();
@@ -54,18 +56,17 @@ fn main() {
 
     let graph = gfaR::readGFA(&name);
 
-    let mut stats: Vec<HashMap<&str, String>> = Vec::new();
-
+    let mut stats: Vec<Vec<(&str, String)>> = Vec::new();
 
     stats.push(get_filename(&name));
+    stats.push(edges_nodes_number(&graph));
     stats.push(mean_median_graph_size(&graph));
     stats.push(input_genomes(&graph));
     stats.push(node_degree(&graph));
     stats.push(inverted_edges(&graph));
-    stats.push(edges_nodes_number(&graph));
-
 
 
     let combined = combine(stats);
+
     printing(combined);
 }
