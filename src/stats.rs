@@ -6,7 +6,7 @@ use std::collections::{HashMap};
 /// Sum all nodes in the graph and divide it by the number of nodes
 ///
 ///
-pub fn mean_median_graph_size(graph: &Gfa) -> HashMap<&str, f32> {
+pub fn mean_median_graph_size(graph: &Gfa) -> HashMap<&str, String> {
     let mut numb: u32 = 0;
     let mut total_size: u32 = 0;
     let mut vec_size: Vec<u32> = Vec::new();
@@ -21,15 +21,15 @@ pub fn mean_median_graph_size(graph: &Gfa) -> HashMap<&str, f32> {
     let median = vec_size[mid];
     let mean: f32 = (total_size as f32)/(numb as f32);
 
-    let mut result: HashMap<&str, f32> = HashMap::new();
-    result.insert("Node mean size [bp]", mean);
-    result.insert("Node median size [bp]", median as f32);
-    result.insert("Graph size  [bp]", total_size as f32);
+    let mut result: HashMap<&str, String> = HashMap::new();
+    result.insert("Node mean size [bp]", format!("{:.4}", mean));
+    result.insert("Node median size [bp]", median.to_string());
+    result.insert("Graph size  [bp]", total_size.to_string());
 
     result
 }
 
-pub fn input_genomes(graph: &Gfa) -> HashMap<&str, f32> {
+pub fn input_genomes(graph: &Gfa) -> HashMap<&str, String> {
     let mut input_size: u32 = 0;
 
     for x in &graph.paths{
@@ -38,8 +38,8 @@ pub fn input_genomes(graph: &Gfa) -> HashMap<&str, f32> {
         }
     }
 
-    let mut result:HashMap<&str, f32> = HashMap::new();
-    result.insert("Input genome [bp]", input_size as f32);
+    let mut result:HashMap<&str, String> = HashMap::new();
+    result.insert("Input genome [bp]", input_size.to_string());
     result
 }
 
@@ -47,7 +47,7 @@ pub fn input_genomes(graph: &Gfa) -> HashMap<&str, f32> {
 ///
 /// Compute number of outgoing and ingoing edges per node
 ///
-pub fn node_degree(graph: &Gfa) -> HashMap<&str, f32>{
+pub fn node_degree(graph: &Gfa) -> HashMap<&str, String>{
     let mut degree_in: HashMap<&String, u32> = HashMap::new();
     let mut degree_out: HashMap<&String, u32> = HashMap::new();
     let mut degree_total: HashMap<&String, u32> = HashMap::new();
@@ -71,10 +71,10 @@ pub fn node_degree(graph: &Gfa) -> HashMap<&str, f32>{
         }
     }
 
-    let mut result: HashMap<&str, f32> = HashMap::new();
-    result.insert("Degree in", edges_mean_value(&degree_in));
-    result.insert("Degree out", edges_mean_value(&degree_out));
-    result.insert("Degree total", edges_mean_value(&degree_total));
+    let mut result: HashMap<&str, String> = HashMap::new();
+    result.insert("Degree in", format!("{:.4}", edges_mean_value(&degree_in)));
+    result.insert("Degree out", format!("{:.4}", edges_mean_value(&degree_out)));
+    result.insert("Degree total", format!("{:.4}", edges_mean_value(&degree_total)));
     result
 }
 
@@ -98,7 +98,7 @@ pub fn edges_mean_value(hs: &HashMap<&String, u32>) -> f32{
 ///
 /// Maybe need to rethink this///
 ///
-pub fn inverted_edges(graph: &Gfa) -> HashMap<&str, f32>{
+pub fn inverted_edges(graph: &Gfa) -> HashMap<&str, String>{
     let mut inverted_numb =0;
     for x in graph.edges.iter(){
         if !x.from_dir{
@@ -109,15 +109,15 @@ pub fn inverted_edges(graph: &Gfa) -> HashMap<&str, f32>{
         }
 
     }
-    let mut result: HashMap<&str, f32> = HashMap::new();
-    result.insert("#Inverted nodes", inverted_numb as f32);
+    let mut result: HashMap<&str, String> = HashMap::new();
+    result.insert("#Inverted nodes", inverted_numb.to_string());
     result
 }
 
-pub fn edges_nodes_number(graph: &Gfa) -> HashMap<&str, f32>{
-    let mut result: HashMap<&str, f32> = HashMap::new();
-    result.insert("#Nodes", graph.nodes.len() as f32);
-    result.insert("#Edges", graph.edges.len() as f32);
+pub fn edges_nodes_number(graph: &Gfa) -> HashMap<&str, String>{
+    let mut result: HashMap<&str, String> = HashMap::new();
+    result.insert("#Nodes", graph.nodes.len().to_string());
+    result.insert("#Edges", graph.edges.len().to_string());
     result
 
 }
