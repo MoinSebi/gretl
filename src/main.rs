@@ -2,7 +2,7 @@ mod stats;
 
 use crate::stats::{mean_median_graph_size, input_genomes, node_degree, inverted_edges, edges_nodes_number};
 use argparse::{ArgumentParser, Store};
-
+use gfaR::Gfa;
 
 
 /// Printing the stats
@@ -58,7 +58,8 @@ fn main() {
     // Read the graph
     eprintln!("File name: {}", &name);
 
-    let graph = gfaR::readGFA(&name);
+    let mut graph = Gfa::new();
+    graph.read_file(&name);
 
     let mut stats: Vec<Vec<(&str, String)>> = Vec::new();
 
