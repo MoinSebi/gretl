@@ -1,5 +1,6 @@
 use gfaR::Gfa;
-use std::collections::{HashMap};
+use std::collections::{HashMap, HashSet};
+use std::iter::FromIterator;
 
 /// Compute mean+median node size and total graph size
 ///
@@ -129,4 +130,30 @@ pub fn edges_nodes_number(graph: &Gfa) -> Vec<(&str, String)>{
     result.push(("#Edges", graph.edges.len().to_string()));
     result
 
+}
+
+pub fn single_paths(graph: &Gfa) -> Vec<(&str, String)>{
+
+    let mut f = Vec::new();
+    for path in graph.paths.iter(){
+        let mut trigger: bool = false;
+        for path2 in graph.paths.iter(){
+            if path.name != path2.name{
+                let set1: HashSet<String> = HashSet::from_iter(path.nodes.clone());
+                let set2 = HashSet::from_iter(path2.nodes.clone());
+                if (&set1 | &set2).len() != 0{
+                    trigger = true;
+                    break;
+                }
+            }
+        }
+        if trigger == false{
+            f.push(path.name.clone())
+        }
+    }
+
+    let mut result = Vec::new();
+    result.push(("Single paths" , f.len().to_string()));
+    print!("{:?}", f);
+    return result
 }

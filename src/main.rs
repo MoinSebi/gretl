@@ -1,6 +1,6 @@
 mod stats;
 
-use crate::stats::{mean_median_graph_size, input_genomes, node_degree, inverted_edges, edges_nodes_number};
+use crate::stats::{mean_median_graph_size, input_genomes, node_degree, inverted_edges, edges_nodes_number, single_paths};
 use argparse::{ArgumentParser, Store};
 use gfaR::Gfa;
 
@@ -69,6 +69,7 @@ fn main() {
     stats.push(input_genomes(&graph));
     stats.push(node_degree(&graph));
     stats.push(inverted_edges(&graph));
+    stats.push(single_paths(&graph));
 
 
     let combined = combine(stats);
