@@ -59,11 +59,18 @@ fn main() {
             .about("Input GFA file")
             .takes_value(true)
             .required(true))
+        .arg(Arg::new("structure")
+            .short('s')
+            .long("structure")
+            .about("Statistics based on structure of the graph"))
+        .arg(Arg::new("path")
+            .short('p')
+            .long("path")
+            .about("Path based structure"))
         .get_matches();
 
     // Read the graph
-    let mut gfa: &str = "trest";
-    gfa = matches.value_of("gfa").unwrap();
+    let gfa = matches.value_of("gfa").unwrap();
     eprintln!("File name: {}", gfa);
 
     let mut graph = Gfa::new();
