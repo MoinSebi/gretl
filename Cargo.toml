@@ -11,4 +11,4 @@ repository = "https://github.com/MoinSebi/gfastats"
 
 [dependencies]
 gfaR = "=0.1.3"
-argparse = "0.2.2"
+clap = "=3.0.0-beta.4"

@@ -1,9 +1,8 @@
 mod stats;
 
 use crate::stats::{mean_median_graph_size, input_genomes, node_degree, inverted_edges, edges_nodes_number, single_paths};
-use argparse::{ArgumentParser, Store};
 use gfaR::Gfa;
-
+use clap::{Arg, App, AppSettings};
 
 /// Printing the stats
 ///
@@ -33,7 +32,7 @@ fn combine(results: Vec<Vec<(&str, String)>>) -> Vec<(&str, String)>{
 ///
 /// Remove folder structure
 ///
-fn get_filename(name: &String) -> Vec<(&str, String)>{
+fn get_filename(name: &str) -> Vec<(&str, String)>{
     let u: Vec<&str> = name.split("/").collect();
     let mut result: Vec<(&str, String)> = Vec::new();
 
@@ -45,25 +44,34 @@ fn get_filename(name: &String) -> Vec<(&str, String)>{
 
 
 fn main() {
-    let mut name = "World".to_string();
-    {  // this block limits scope of borrows by ap.refer() method
-        let mut ap = ArgumentParser::new();
-        ap.set_description("GFA statistics");
-        ap.refer(&mut name)
-            .add_option(&["-i", "--input"], Store,
-                        "Input data").required();
-        ap.parse_args_or_exit();
-    }
+
+
+    let matches = App::new("bvd")
+        .setting(AppSettings::ArgRequiredElseHelp)
+        .version("0.1.0")
+        .author("Sebastian V")
+        .about("Bifurcation variation detection")
+
+        .help_heading("Input options")
+        .arg(Arg::new("gfa")
+            .short('g')
+            .long("gfa")
+            .about("Input GFA file")
+            .takes_value(true)
+            .required(true))
+        .get_matches();
 
     // Read the graph
-    eprintln!("File name: {}", &name);
+    let mut gfa: &str = "trest";
+    gfa = matches.value_of("gfa").unwrap();
+    eprintln!("File name: {}", gfa);
 
     let mut graph = Gfa::new();
-    graph.read_file(&name);
+    graph.read_file(&gfa);
 
     let mut stats: Vec<Vec<(&str, String)>> = Vec::new();
 
-    stats.push(get_filename(&name));
+    stats.push(get_filename(&gfa));
     stats.push(edges_nodes_number(&graph));
     stats.push(mean_median_graph_size(&graph));
     stats.push(input_genomes(&graph));
