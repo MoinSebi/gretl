@@ -1,4 +1,4 @@
-use gfaR::Gfa;
+use gfa_reader::Gfa;
 use std::collections::{HashMap, HashSet};
 use std::iter::FromIterator;
 

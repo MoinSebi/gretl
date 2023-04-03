@@ -1,8 +1,12 @@
 mod stats;
+mod path;
+mod helper;
+mod writer;
 
 use crate::stats::{mean_median_graph_size, input_genomes, node_degree, inverted_edges, edges_nodes_number, single_paths};
-use gfaR::Gfa;
 use clap::{Arg, App, AppSettings};
+use gfa_reader::Gfa;
+use crate::path::path_stats_wrapper;
 
 /// Printing the stats
 ///
@@ -46,11 +50,11 @@ fn get_filename(name: &str) -> Vec<(&str, String)>{
 fn main() {
 
 
-    let matches = App::new("bvd")
+    let matches = App::new("gfastats")
         .setting(AppSettings::ArgRequiredElseHelp)
         .version("0.1.0")
         .author("Sebastian V")
-        .about("Bifurcation variation detection")
+        .about("GFa stats")
 
         .help_heading("Input options")
         .arg(Arg::new("gfa")
@@ -67,14 +71,31 @@ fn main() {
             .short('p')
             .long("path")
             .about("Path based structure"))
+
+        .help_heading("Output options")
+        .arg(Arg::new("output")
+            .short('o')
+            .long("output")
+            .about("Output"))
+        .arg(Arg::new("tsv")
+            .short('t')
+            .about("Tab seperated values format "))
+        .arg(Arg::new("YAML")
+            .short('y')
+            .about("yaml format"))
+
         .get_matches();
 
     // Read the graph
     let gfa = matches.value_of("gfa").unwrap();
-    eprintln!("File name: {}", gfa);
-
     let mut graph = Gfa::new();
     graph.read_file(&gfa);
+    eprintln!("File name: {}", gfa);
+    if matches.is_present("path"){
+        path_stats_wrapper(&graph);
+    } else {
+
+    }
 
     let mut stats: Vec<Vec<(&str, String)>> = Vec::new();
 
