@@ -21,36 +21,43 @@ pub fn calculate_core(graph: &NGfa) -> HashMap<u32, u32>{
 
 /// Counting the amount of accessions and depth
 pub fn calculate_depth(graph: &NGfa) -> HashMap<u32, u32>{
-    let mut count: HashMap<u32, u32> = HashMap::new();
+    let mut depth: HashMap<u32, u32> = HashMap::new();
     for x in &graph.nodes{
-        count.insert(x.0.clone(), 0);
+        depth.insert(x.0.clone(), 0);
     }
 
     for path in &graph.paths{
 
 
         for y in path.nodes.iter(){
-            *count.get_mut(&y).unwrap() += 1;
+            *depth.get_mut(&y).unwrap() += 1;
         }
     }
-    count.shrink_to_fit();
-    count
+    depth.shrink_to_fit();
+    depth
 }
 
 
-
-pub fn mean(data: Vec<u32>) -> f64{
-    let sums = data.iter().sum() as f64/data.iter().len() as f64;
+/// Calculate average of the vector
+pub fn mean(data: &mut Vec<u32>) -> f64{
+    let sums1: u32 = data.iter().sum();
+    let sums = (sums1 as f64)/data.iter().len() as f64;
     return sums
 }
 
-pub fn median(data: Ve)
+/// Calculate median of the vector
+pub fn median(data: &mut Vec<u32>) -> u32{
+    data.sort();
+    return data[data.len()/2]
+}
 
-pub fn depth(graph: &NGfa, counts: ){
-    let count = counting_graph(graph);
+
+pub fn depth(graph: &NGfa){
+    let count = calculate_core(graph);
     for path in graph.paths.iter(){
         let mut data = Vec::new();
-        for p in path.iter(){
+        for p in path.nodes.iter(){
+            data.push(count.get(&p).unwrap().clone())
 
         }
     }

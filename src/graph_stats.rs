@@ -2,6 +2,11 @@ use gfa_reader::Gfa;
 use std::collections::{HashMap, HashSet};
 use std::iter::FromIterator;
 
+pub fn graph_stats_wrapper(graph: &Gfa){
+
+}
+
+
 /// Compute mean+median node size and total graph size
 ///
 /// Sum all nodes in the graph and divide it by the number of nodes
