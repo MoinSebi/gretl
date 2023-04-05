@@ -1,10 +1,8 @@
 use gfa_reader::Gfa;
 use std::collections::{HashMap, HashSet};
 use std::iter::FromIterator;
-use std::os::unix::net::UnixDatagram;
 use std::panic::resume_unwind;
-use crate::helper::{mean, median};
-use crate::path::median_sim;
+use crate::stats::helper::{mean, median};
 
 pub fn graph_stats_wrapper(graph: &Gfa) -> Vec<String>{
     let mut result = Vec::new();

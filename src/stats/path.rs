@@ -1,6 +1,6 @@
 use std::collections::{HashMap, HashSet};
 use gfa_reader::{Node, Path, Gfa};
-use crate::helper::{calculate_core, calculate_depth, mean, median};
+use crate::stats::helper::{calculate_core, calculate_depth, mean, median};
 
 
 pub fn path_stats_wrapper(graph: &Gfa) -> Vec<(String, Vec<String>)>{

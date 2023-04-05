@@ -4,7 +4,7 @@ use std::fs::File;
 pub fn write_yaml(data: &Vec<String>, tab: &[&str], filename:  &str){
     let f = File::create(filename).expect("Unable to create file");
     let mut f = BufWriter::new(f);
-    for (d, x) in tab.iter().zip(data){
+    for (d, x) in data.iter().zip(tab){
         write!(f, "{}: {}\n", x, d);
     }
 }
