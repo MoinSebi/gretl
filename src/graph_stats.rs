@@ -1,63 +1,69 @@
 use gfa_reader::Gfa;
 use std::collections::{HashMap, HashSet};
 use std::iter::FromIterator;
+use std::os::unix::net::UnixDatagram;
+use std::panic::resume_unwind;
+use crate::helper::{mean, median};
+use crate::path::median_sim;
 
-pub fn graph_stats_wrapper(graph: &Gfa){
+pub fn graph_stats_wrapper(graph: &Gfa) -> Vec<String>{
+    let mut result = Vec::new();
+    result.push(graph_path_number(graph).to_string());
+    result.push(graph_node_number(graph).to_string());
+    result.push(graph_edge_number(graph).to_string());
 
+    let (graph_node_average, graph_node_median, graph_node_sum) = graph_node_stats(graph);
+    result.push(graph_node_average.to_string());
+    result.push(graph_node_median.to_string());
+    result.push(graph_node_sum.to_string());
+
+    result.push(graph_path_seq_total(graph).to_string());
+
+
+    let (graph_degree_in_average, graph_degree_out_average, graph_degree_total_average) = node_degree(&graph);
+    result.push(graph_degree_in_average.to_string());
+    result.push(graph_degree_out_average.to_string());
+    result.push(graph_degree_total_average.to_string());
+
+
+
+    result
 }
+
+/// Number of paths
+fn graph_path_number(graph: &Gfa) -> usize{ return graph.paths.len()}
+
+/// Number of nodes
+fn graph_node_number(graph: &Gfa) -> usize{return graph.nodes.len()}
+
+/// Number of edges
+fn graph_edge_number(graph: &Gfa) -> usize {return graph.edges.len()}
+
+/// Calculate total size of all input genomes
+pub fn graph_path_seq_total(graph: &Gfa) ->  usize{
+    graph.paths.iter().map(|n| n.nodes.iter().map(|r| graph.nodes[r].len).sum::<usize>()).sum::<usize>()
+}
+
+
 
 
 /// Compute mean+median node size and total graph size
 ///
 /// Sum all nodes in the graph and divide it by the number of nodes
-///
-///
-pub fn mean_median_graph_size(graph: &Gfa) -> Vec<(&str, String)> {
-    let mut numb: u32 = 0;
-    let mut total_size: u32 = 0;
-    let mut vec_size: Vec<u32> = Vec::new();
-    for x in &graph.nodes{
-        numb += 1;
-        total_size += x.1.len as u32;
-        vec_size.push(x.1.len as u32);
+pub fn graph_node_stats(graph: &Gfa) -> (f64, u32, u32){
+    let mut vec_size: Vec<u32> = graph.nodes.iter().map(|n| n.1.len as u32).collect();
 
-    }
     vec_size.sort();
-    let mid = vec_size.len()/2;
-    let median = vec_size[mid];
-    let mean: f32 = (total_size as f32)/(numb as f32);
-
-    let mut result: Vec<(&str, String)> = Vec::new();
-    result.push(("Node mean size [bp]", format!("{:.4}", mean)));
-    result.push(("Node median size [bp]", median.to_string()));
-    result.push(("Graph size  [bp]", total_size.to_string()));
-
-    result
+    let average = mean(&vec_size);
+    let med = median(&mut vec_size);
+    let sums: u32 = vec_size.iter().sum();
+    (average, med, sums)
 }
 
-/// Calculate total size of all input genomes
-///
-/// Iterate over path information - sum length of all nodes
-///
-pub fn input_genomes(graph: &Gfa) -> Vec<(&str, String)> {
-    let mut input_size: u32 = 0;
 
-    for x in &graph.paths{
-        for y in &x.nodes{
-            input_size += graph.nodes[y].len as u32;
-        }
-    }
 
-    let mut result:Vec<(&str, String)> = Vec::new();
-    result.push(("Input genome [bp]", input_size.to_string()));
-    result
-}
-
-/// Number of in and outgoing edges + total
-///
-/// Compute number of outgoing and ingoing edges per node
-///
-pub fn node_degree(graph: &Gfa) -> Vec<(&str, String)>{
+/// Calculate node degree (in, out, total)
+pub fn node_degree(graph: &Gfa) -> (f64, f64, f64){
     let mut degree_in: HashMap<&String, u32> = HashMap::new();
     let mut degree_out: HashMap<&String, u32> = HashMap::new();
     let mut degree_total: HashMap<&String, u32> = HashMap::new();
@@ -80,85 +86,21 @@ pub fn node_degree(graph: &Gfa) -> Vec<(&str, String)>{
 
         }
     }
+    let degree_in_values: Vec<u32> = degree_in.into_values().collect();
+    let degree_out_values: Vec<u32> = degree_out.into_values().collect();
+    let degree_total_values: Vec<u32> = degree_total.into_values().collect();
 
-    let mut result: Vec<(&str, String)> = Vec::new();
-    result.push(("Degree in", format!("{:.4}", edges_mean_value(&degree_in))));
-    result.push(("Degree out", format!("{:.4}", edges_mean_value(&degree_out))));
-    result.push(("Degree total", format!("{:.4}", edges_mean_value(&degree_total))));
-    result
+    let graph_degree_in_average = mean(&degree_in_values);
+    let graph_degree_out_average = mean(&degree_out_values);
+    let graph_degree_total_average = mean(&degree_total_values);
+    (graph_degree_in_average, graph_degree_out_average, graph_degree_total_average)
 }
 
-/// Get mean value from the HashMap(u32, u32) values
-///
-/// Iterate and sum, then divide by total number of entries
-///
-pub fn edges_mean_value(hs: &HashMap<&String, u32>) -> f32{
-    let mut umax: u32 =0;
-    let mut ucout: u32= 0;
-    for (_x, y) in hs.iter(){
-        ucout += 1;
-        umax += y;
-    }
-    let mean_degree = umax as f32/ucout as f32;
-    mean_degree
-}
+
 
 /// Calculate number of inverted edges
-/// A egdes going or starting from a negative node
-///
-/// Maybe need to rethink this///
-///
-pub fn inverted_edges(graph: &Gfa) -> Vec<(&str, String)>{
-    let mut inverted_numb =0;
-    for x in graph.edges.iter(){
-        if !x.from_dir{
-            inverted_numb += 1;
-        }
-        if !x.to_dir{
-            inverted_numb += 1;
-        }
-
-    }
-    let mut result: Vec<(&str, String)> = Vec::new();
-    result.push(("#Inverted nodes", inverted_numb.to_string()));
-    result
-}
-
-
-
-///
-/// Get the number of edges and nodes
-///
-pub fn edges_nodes_number(graph: &Gfa) -> Vec<(&str, String)>{
-    let mut result: Vec<(&str, String)> = Vec::new();
-    result.push(("#Nodes", graph.nodes.len().to_string()));
-    result.push(("#Edges", graph.edges.len().to_string()));
-    result
-
-}
-
-pub fn single_paths(graph: &Gfa) -> Vec<(&str, String)>{
-
-    let mut f = Vec::new();
-    for path in graph.paths.iter(){
-        let mut trigger: bool = false;
-        for path2 in graph.paths.iter(){
-            if path.name != path2.name{
-                let set1: HashSet<String> = HashSet::from_iter(path.nodes.clone());
-                let set2 = HashSet::from_iter(path2.nodes.clone());
-                if (&set1 | &set2).len() != 0{
-                    trigger = true;
-                    break;
-                }
-            }
-        }
-        if trigger == false{
-            f.push(path.name.clone())
-        }
-    }
-
-    let mut result = Vec::new();
-    result.push(("Single paths" , f.len().to_string()));
-    print!("{:?}", f);
-    return result
+/// Edges which change direction
+pub fn inverted_edges(graph: &Gfa) -> usize{
+    let mut inverted: usize = graph.edges.iter().filter(|n| n.to_dir != n.from_dir).count();
+    inverted
 }

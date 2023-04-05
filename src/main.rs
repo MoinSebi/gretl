@@ -3,11 +3,12 @@ mod path;
 mod helper;
 mod writer;
 
-use crate::graph_stats::{mean_median_graph_size, input_genomes, node_degree, inverted_edges, edges_nodes_number, single_paths, graph_stats_wrapper};
 use clap::{Arg, App, AppSettings};
 use gfa_reader::Gfa;
+use crate::graph_stats::graph_stats_wrapper;
+use crate::helper::get_filename;
 use crate::path::path_stats_wrapper;
-use crate::writer::{write_tsv_path, write_yaml_path};
+use crate::writer::{write_tsv_path, write_yaml, write_yaml_path};
 
 /// Printing the stats
 ///
@@ -33,18 +34,7 @@ fn combine(results: Vec<Vec<(&str, String)>>) -> Vec<(&str, String)>{
     combined_vector
 }
 
-/// Get the file name
-///
-/// Remove folder structure
-///
-fn get_filename(name: &str) -> Vec<(&str, String)>{
-    let u: Vec<&str> = name.split("/").collect();
-    let mut result: Vec<(&str, String)> = Vec::new();
 
-    result.push(("File name" , u.last().unwrap().to_string()));
-    result
-
-}
 
 
 
@@ -92,28 +82,36 @@ fn main() {
     let mut graph = Gfa::new();
     graph.read_file(&gfa);
     eprintln!("File name: {}", gfa);
+    let filename = get_filename(&gfa);
+    eprintln!("The filename is {}", filename);
+
     if matches.is_present("path"){
         let data = path_stats_wrapper(&graph);
-        let tab = ["Seq len", "Node len", "Uniuqe", "jumps1", "jumps2", "jumps3"];
-        write_yaml_path(&data, &tab, "test");
+        let tab = ["Seq len",
+            "Node length (seq)",
+            "Nodes length (node)",
+            "Unique nodes",
+            "Jumps total",
+            "Jumps ratio",
+            "Jumps bigger than ",
+            "Average depth",
+            "Median depth",
+            "Average similarity",
+            "Median similarity"];
         write_tsv_path(&data, &tab, "test");
-
     } else {
-        graph_stats_wrapper(&graph);
-        let mut stats: Vec<Vec<(&str, String)>> = Vec::new();
-
-        stats.push(get_filename(&gfa));
-        stats.push(edges_nodes_number(&graph));
-        stats.push(mean_median_graph_size(&graph));
-        stats.push(input_genomes(&graph));
-        stats.push(node_degree(&graph));
-        stats.push(inverted_edges(&graph));
-        stats.push(single_paths(&graph));
-
-
-        let combined = combine(stats);
-
-        printing(combined);
+        let data = graph_stats_wrapper(&graph);
+        let tab = ["#Path",
+        "#Nodes",
+        "#Edges",
+        "Node length [average]",
+        "Node length [mediant]",
+        "Node length [total]",
+        "Input genomes [total]",
+        "Graph degree [in]",
+        "Graph degree [out]",
+        "Graph degree [total]"];
+        write_yaml(&data, &tab, "test");
     }
 
 }
