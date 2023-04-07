@@ -1,9 +1,12 @@
 mod stats;
 mod bootstrap;
+mod core;
 
+use std::env::args;
 use clap::{Arg, App, AppSettings};
 use gfa_reader::Gfa;
 use crate::bootstrap::bootstrap_main::bootstrap_main;
+use crate::core::core_main::core_main;
 use crate::stats::graph_stats::graph_stats_wrapper;
 use crate::stats::helper::get_filename;
 use crate::stats::path::path_stats_wrapper;
@@ -79,6 +82,7 @@ fn main() {
                                 .long("number")
                                 .about("Number of bootstraps")
                                 .takes_value(true)))
+        .subcommand(App::new("core"))
         .get_matches();
 
     // Read the graph
@@ -93,6 +97,8 @@ fn main() {
 
     } else if let Some(ref matches) = matches.subcommand_matches("bootstrap") {
         bootstrap_main(&matches, &graph);
+    } else if let Some(ref matches) = matches.subcommand_matches("core"){
+        core_main(&matches, &graph);
     }
 
 

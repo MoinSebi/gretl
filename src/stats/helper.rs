@@ -1,18 +1,22 @@
 use std::collections::{HashMap, HashSet};
 use gfa_reader::{Gfa, NGfa};
 
-/// Counting the amount of accessions and depth
-pub fn calculate_core(graph: &Gfa) -> HashMap<u32, u32>{
-    let mut count: HashMap<u32, u32> = HashMap::new();
+/// Counting the amount of core nodes
+pub fn calculate_core(graph: &Gfa) -> HashMap<u32, (u32, u32)>{
+
+    // Initialization hashmap
+    let mut count: HashMap<u32, (u32, u32)> = HashMap::new();
     for x in &graph.nodes{
-        count.insert(x.0.parse().unwrap(), 0);
+        count.insert(x.0.parse().unwrap(), (0, 0));
     }
 
+    // Calculate the amount of sequence and the amount of nodes
     for x in &graph.paths{
-
+        // Count every node only once
         let v: HashSet<_> = x.nodes.iter().cloned().collect();
         for y in v{
-            *count.get_mut(&y.parse().unwrap()).unwrap() += 1;
+            count.get_mut(&y.parse().unwrap()).unwrap().1 += 1;
+            count.get_mut(&y.parse().unwrap()).unwrap().0 += graph.nodes.get(&y).unwrap().len as u32
         }
     }
     count.shrink_to_fit();
