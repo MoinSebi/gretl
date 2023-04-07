@@ -1,12 +1,14 @@
 mod stats;
 mod bootstrap;
 mod core;
+mod id2int;
 
 use std::env::args;
 use clap::{Arg, App, AppSettings};
 use gfa_reader::Gfa;
 use crate::bootstrap::bootstrap_main::bootstrap_main;
 use crate::core::core_main::core_main;
+use crate::id2int::id2int_main::id2int_main;
 use crate::stats::graph_stats::graph_stats_wrapper;
 use crate::stats::helper::get_filename;
 use crate::stats::path::path_stats_wrapper;
@@ -83,6 +85,10 @@ fn main() {
                                 .about("Number of bootstraps")
                                 .takes_value(true)))
         .subcommand(App::new("core"))
+        .subcommand(App::new("id2int")
+            .arg(Arg::new("dict")
+                .long("dict")
+                .about("Old to new values dictionary")))
         .get_matches();
 
     // Read the graph
@@ -99,6 +105,8 @@ fn main() {
         bootstrap_main(&matches, &graph);
     } else if let Some(ref matches) = matches.subcommand_matches("core"){
         core_main(&matches, &graph);
+    } else if let Some(ref matches) = matches.subcommand_matches("id2int"){
+        id2int_main(&matches, &graph);
     }
 
 

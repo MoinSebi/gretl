@@ -33,10 +33,5 @@ pub fn core_main(matches: &ArgMatches, graph: &Gfa){
     // Make a meta file
 
 
-
-
-
-
-
 }
 
