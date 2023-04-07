@@ -4,7 +4,7 @@ use crate::stats::graph_stats::graph_stats_wrapper;
 use crate::stats::path::path_stats_wrapper;
 use crate::stats::writer::{write_tsv_path, write_yaml};
 
-pub fn stats_main(matches: ArgMatches, graph: &Gfa){
+pub fn stats_main(matches: &ArgMatches, graph: &Gfa){
     if matches.is_present("path"){
         let data = path_stats_wrapper(&graph);
         let tab = ["Seq len",

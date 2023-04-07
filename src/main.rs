@@ -1,7 +1,9 @@
 mod stats;
+mod bootstrap;
 
 use clap::{Arg, App, AppSettings};
 use gfa_reader::Gfa;
+use crate::bootstrap::bootstrap_main::bootstrap_main;
 use crate::stats::graph_stats::graph_stats_wrapper;
 use crate::stats::helper::get_filename;
 use crate::stats::path::path_stats_wrapper;
@@ -28,6 +30,7 @@ fn main() {
             .short('o')
             .long("output")
             .about("Output")
+            .takes_value(true)
                  .required(true))
         .subcommand(App::new("stats")
             .arg(Arg::new("structure")
@@ -50,6 +53,32 @@ fn main() {
             .arg(Arg::new("YAML")
                 .short('y')
                 .about("yaml format")))
+
+            .subcommand(App::new("bootstrap")
+                .arg(Arg::new("Pan-SN")
+                    .short('p')
+                    .long("pansn")
+                    .about("Seperate by first entry in Pan-SN spec")
+                    .takes_value(true))
+                .arg(Arg::new("meta")
+                    .long("meta")
+                    .about("Make a meta file"))
+                .arg(Arg::new("meta input")
+                    .long("meta-input")
+                    .about("Take a meta file input for specific stuff")
+                    .takes_value(true))
+                .arg(Arg::new("meta line")
+                    .long("meta-line")
+                    .about("Take a specific line")
+                    .takes_value(true))
+                .arg(Arg::new("level")
+                    .long("level")
+                    .about("Only calculate a specific level")
+                    .takes_value(true))
+                            .arg(Arg::new("number")
+                                .long("number")
+                                .about("Number of bootstraps")
+                                .takes_value(true)))
         .get_matches();
 
     // Read the graph
@@ -59,7 +88,12 @@ fn main() {
     eprintln!("File name: {}", gfa);
     let filename = get_filename(&gfa);
     eprintln!("The filename is {}", filename);
-    stats_main(matches, &graph);
+    if let Some(ref matches) = matches.subcommand_matches("stats"){
+        stats_main(matches, &graph);
+
+    } else if let Some(ref matches) = matches.subcommand_matches("bootstrap") {
+        bootstrap_main(&matches, &graph);
+    }
 
 
 }
