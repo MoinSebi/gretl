@@ -20,14 +20,6 @@ cargo install gfastats
 ```
 
 #### Usage
-```
-Usage:
-  ./gfastats [OPTIONS]
 
-GFA statistics
-
-Optional arguments:
-  -h,--help             Show this help message and exit
-  -i,--input INPUT      Input data
-
-```
+##### ID2INT
+Convert any string as ID to u32 integer. Do not use when graph is already digits only + some statistics might not be working as intended :) 
