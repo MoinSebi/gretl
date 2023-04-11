@@ -24,12 +24,11 @@ pub fn core_main(matches: &ArgMatches, graph: &Gfa){
             }
 
         }
-        total22.push(total2);
+        total22.push((total, total2));
     }
 
-    if total22.iter().sum::<usize>() as u32 == cores.get(&1).unwrap().1{
-        println!("fine")
-    }
+
+    
     // Make a meta file
 
 

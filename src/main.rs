@@ -88,7 +88,7 @@ fn main() {
         .subcommand(App::new("id2int")
             .arg(Arg::new("dict")
                 .long("dict")
-                .about("Old to new values dictionary")))
+                .about("Write a dictionary for Old->New values in this file. ")))
         .get_matches();
 
     // Read the graph
