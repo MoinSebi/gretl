@@ -1,7 +1,8 @@
 use std::collections::{HashMap, HashSet};
+use std::hash::Hash;
 use gfa_reader::{Gfa, NGfa};
 
-/// Counting the amount of core nodes
+/// Counting the amount
 pub fn calculate_core(graph: &Gfa) -> HashMap<u32, (u32, u32)>{
 
     // Initialization hashmap
@@ -20,6 +21,21 @@ pub fn calculate_core(graph: &Gfa) -> HashMap<u32, (u32, u32)>{
         }
     }
     count.shrink_to_fit();
+    count
+}
+
+pub fn core1(graph: &Gfa) -> HashMap<u32, u32>{
+    let mut count: HashMap<u32, u32> = HashMap::new();
+    for x in &graph.nodes{
+        count.insert(x.0.parse().unwrap(), 0);
+    }
+
+    for p in graph.paths.iter(){
+        let v: HashSet<_> = p.nodes.iter().cloned().collect();
+        for y in v.iter(){
+            *count.get_mut(&y.parse().unwrap()).unwrap() += 1;
+        }
+    }
     count
 }
 

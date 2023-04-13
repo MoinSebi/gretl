@@ -80,8 +80,7 @@ fn main() {
                 .about("Number of bootstraps")
                 .takes_value(true)))
         .subcommand(App::new("core")
-            .about("Test test")
-            .setting(AppSettings::ArgRequiredElseHelp))
+            .about("Graph similarity "))
 
         .subcommand(App::new("id2int")
             .arg(Arg::new("dict")
@@ -91,22 +90,27 @@ fn main() {
 
     // Read the graph
     let gfa = matches.value_of("gfa").unwrap();
+    let output = matches.value_of("output").unwrap();
     let mut graph = Gfa::new();
     graph.read_file(&gfa);
     eprintln!("File name: {}", gfa);
     let filename = get_filename(&gfa);
     eprintln!("The filename is {}", filename);
     if let Some(ref matches) = matches.subcommand_matches("stats"){
+        println!("Test");
         stats_main(matches, &graph);
 
     } else if let Some(ref matches) = matches.subcommand_matches("bootstrap") {
+        println!("Test");
         bootstrap_main(&matches, &graph);
     } else if let Some(ref matches) = matches.subcommand_matches("core"){
         println!("Test");
-        core_main(&matches, &graph);
+        core_main(&matches, &graph, output);
     } else if let Some(ref matches) = matches.subcommand_matches("id2int"){
+        println!("Test");
         id2int_main(&matches, &graph);
     }
+    println!("Test");
 
 
 }

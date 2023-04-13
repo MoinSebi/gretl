@@ -9,7 +9,7 @@ fn file_doesnt_exist() -> Result<(), Box<dyn std::error::Error>> {
         .arg("--gfa")
         .arg("/home/svorbrugg/code/bvd/data/example_data/testGraph.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/test1 ")
+        .arg("/home/svorbrugg/code/gfastats/test1.txt")
         .arg("core");
 
     cmd.assert().success();
