@@ -7,13 +7,16 @@ use crate::stats::helper::{calculate_core, core1};
 
 /// Core main function
 ///
-/// Check all core levels first
-/// -Return amount of each core level + the amount of private for each accession
+/// Calculate amount of nodes and sequence for each level.
+/// Everything is written in one file. 
 pub fn core_main(matches: &ArgMatches, graph: &Gfa, output: &str){
     eprintln!("Running core analysis");
-    let amount_path = graph.paths.len();
     let cores = core1(graph);
+
+    // Each entry hold information for its level (#nodes, seq)
     let mut similarity_level: Vec<(usize, usize)> = vec![(0, 0); graph.paths.len()+1];
+
+    // Get additional information for private nodes
     let mut private_only = Vec::new();
     for path in graph.paths.iter(){
         let mut nodes = 0;
@@ -34,18 +37,12 @@ pub fn core_main(matches: &ArgMatches, graph: &Gfa, output: &str){
 
 
 
+    // Check if both values are the same (should be)
     let total_sum:usize = private_only.iter().map(|n| n.2).sum();
     if total_sum == similarity_level.get(1).unwrap().1 as usize{
         eprintln!("Statistic is fine")
     }
     // Write output in table
     writer_core(similarity_level, private_only, output)
-
-
-
-    
-    // Make a meta file
-
-
 }
 

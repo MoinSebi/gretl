@@ -1,7 +1,7 @@
 use std::io::{self, BufWriter, Write};
 use std::fs::File;
 
-/// Write yaml
+/// Write table with both information in one line
 pub fn writer_core(data: Vec<(usize, usize)>, data2: Vec<(String, usize, usize)>, filename: &str){
     let f = File::create(filename).expect("Unable to create file");
     let mut f = BufWriter::new(f);

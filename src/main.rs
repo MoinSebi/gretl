@@ -80,7 +80,7 @@ fn main() {
                 .about("Number of bootstraps")
                 .takes_value(true)))
         .subcommand(App::new("core")
-            .about("Graph similarity "))
+            .about("Graph similarity statistics"))
 
         .subcommand(App::new("id2int")
             .arg(Arg::new("dict")
