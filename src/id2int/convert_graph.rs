@@ -6,8 +6,8 @@ pub fn id2int_nnodes(graph: &Gfa) -> (HashMap<&String, u32>, HashMap<u32, NNode>
     let mut result: HashMap<&String, u32> = HashMap::new();
     let mut nodes_new: HashMap<u32, NNode> = HashMap::new();
     for (index, (node_id, node_info)) in graph.nodes.iter().enumerate(){
-        result.insert(node_id, index as u32);
-        nodes_new.insert(index as u32, NNode{len: node_info.len, id: index as u32, seq: node_info.seq.clone()});
+        result.insert(node_id, (index+1) as u32);
+        nodes_new.insert((index+1) as u32, NNode{len: node_info.len, id: index as u32, seq: node_info.seq.clone()});
     }
     (result, nodes_new)
 
