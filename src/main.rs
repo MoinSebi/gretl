@@ -85,7 +85,9 @@ fn main() {
         .subcommand(App::new("id2int")
             .arg(Arg::new("dict")
                 .long("dict")
-                .about("Write a dictionary for Old->New values in this file. ")))
+                .about("Write a dictionary for Old->New identifiers in this file.")
+                .takes_value(true)
+                .short('d')))
         .get_matches();
 
     // Read the graph
@@ -107,8 +109,7 @@ fn main() {
         println!("Test");
         core_main(&matches, &graph, output);
     } else if let Some(ref matches) = matches.subcommand_matches("id2int"){
-        println!("Test");
-        id2int_main(&matches, &graph);
+        id2int_main(&matches, &graph, output);
     }
     println!("Test");
 
