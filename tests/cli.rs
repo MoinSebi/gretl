@@ -31,3 +31,18 @@ fn id2int() -> Result<(), Box<dyn std::error::Error>> {
     cmd.assert().success();
     Ok(())
 }
+
+
+#[test]
+fn ps() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("gfastats")?;
+    cmd
+        .arg("--gfa")
+        .arg("/home/svorbrugg/code/bvd/data/example_data/testGraph.gfa")
+        .arg("--output")
+        .arg("/home/svorbrugg/code/gfastats/test.ps.txt")
+        .arg("ps");
+
+    cmd.assert().success();
+    Ok(())
+}

@@ -2,6 +2,7 @@ mod stats;
 mod bootstrap;
 mod core;
 mod id2int;
+mod path_similarity;
 
 use std::env::args;
 use clap::{Arg, App, AppSettings};
@@ -9,6 +10,7 @@ use gfa_reader::Gfa;
 use crate::bootstrap::bootstrap_main::bootstrap_main;
 use crate::core::core_main::core_main;
 use crate::id2int::id2int_main::id2int_main;
+use crate::path_similarity::ps_main::ps_main;
 use crate::stats::graph_stats::graph_stats_wrapper;
 use crate::stats::helper::get_filename;
 use crate::stats::path::path_stats_wrapper;
@@ -36,6 +38,11 @@ fn main() {
             .about("Output")
             .takes_value(true)
             .required(true))
+        .arg(Arg::new("sep")
+            .short('s')
+            .long("sep")
+            .about("If in PanSN format, group by first entry")
+            .takes_value(true))
 
 
         .subcommand(App::new("stats")
@@ -81,6 +88,8 @@ fn main() {
                 .takes_value(true)))
         .subcommand(App::new("core")
             .about("Graph similarity statistics"))
+        .subcommand(App::new("ps")
+            .about("Path similarity stats"))
 
         .subcommand(App::new("id2int")
             .arg(Arg::new("dict")
@@ -110,6 +119,8 @@ fn main() {
         core_main(&matches, &graph, output);
     } else if let Some(ref matches) = matches.subcommand_matches("id2int"){
         id2int_main(&matches, &graph, output);
+    } else if let Some(ref matches) = matches.subcommand_matches("ps"){
+        ps_main(&matches, &graph, output);
     }
     println!("Test");
 
