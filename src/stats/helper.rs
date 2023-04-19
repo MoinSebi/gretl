@@ -1,6 +1,5 @@
 use std::collections::{HashMap, HashSet};
-use std::hash::Hash;
-use gfa_reader::{Gfa, NGfa};
+use gfa_reader::{Gfa};
 
 /// Counting the amount
 pub fn calculate_core(graph: &Gfa) -> HashMap<u32, (u32, u32)>{

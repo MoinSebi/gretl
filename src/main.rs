@@ -4,18 +4,14 @@ mod core;
 mod id2int;
 mod path_similarity;
 
-use std::env::args;
 use clap::{Arg, App, AppSettings};
 use gfa_reader::Gfa;
 use crate::bootstrap::bootstrap_main::bootstrap_main;
 use crate::core::core_main::core_main;
 use crate::id2int::id2int_main::id2int_main;
 use crate::path_similarity::ps_main::ps_main;
-use crate::stats::graph_stats::graph_stats_wrapper;
 use crate::stats::helper::get_filename;
-use crate::stats::path::path_stats_wrapper;
 use crate::stats::stats_main::stats_main;
-use crate::stats::writer::{write_tsv_path, write_yaml};
 
 fn main() {
 

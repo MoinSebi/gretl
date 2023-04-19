@@ -1,6 +1,3 @@
-use std::collections::HashSet;
-use std::hash::Hash;
-use gfa_reader::Gfa;
 use rand::{seq::IteratorRandom, thread_rng}; // 0.6.1
 
 

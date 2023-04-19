@@ -5,7 +5,7 @@ use crate::stats::helper::{calculate_core, calculate_depth, mean, median};
 
 pub fn path_stats_wrapper(graph: &Gfa) -> Vec<(String, Vec<String>)>{
     let mut res = Vec::new();
-    let core = calculate_core(&graph);
+    let _core = calculate_core(&graph);
     let depth = calculate_depth(&graph);
      for p in graph.paths.iter(){
          let mut result = Vec::new();
@@ -47,12 +47,13 @@ pub fn path_seq_len(path: &Path, nodes: &HashMap<String, Node>) -> usize{
     return size
 }
 
-
+#[allow(dead_code)]
 /// Count the number of inverted nodes for each path
 pub fn path_node_inverted(path: &Path) -> usize{
     path.dir.iter().filter(|&n | *n == true).count()
 }
 
+#[allow(dead_code)]
 /// Count the number of inverted nodes for each path
 pub fn path_seq_inverted(path: &Path, nodes: HashMap<String, Node>) -> usize{
     let sums: usize = path.dir.iter().zip(&path.nodes).filter(|&n | *n.0 == true).map(|s| nodes.get(s.1).unwrap().len).sum();
@@ -82,7 +83,7 @@ pub fn path_jumps(path: &Path) -> (usize, f64){
 pub fn path_jumps_2(path: &Path, val: Option<i32> ) -> u32{
     let distance = val.unwrap_or(20);
     let mut c: u32 = 0;
-    let mut last = 0;
+    let last = 0;
     for x in path.nodes.iter(){
         let u: u32 = x.parse().unwrap();
         let ff: i32 = u as i32 - last as i32;
@@ -99,14 +100,14 @@ pub fn path_unique(path: &Path) -> usize{
     return hp.len()
 }
 
-
+#[allow(dead_code)]
 /// Calculate the number of repeated nodes
 pub fn path_cycle(path: &Path){
-    let mut c = 0;
+    let mut _c = 0;
     let mut hs: HashSet<&String> = HashSet::new();
     for x in path.nodes.iter(){
         if hs.contains(x){
-            c += 1
+            _c += 1
         }
         hs.insert(x);
     }

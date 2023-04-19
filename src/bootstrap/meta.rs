@@ -12,7 +12,7 @@ use crate::bootstrap::bootstrap_main::combinations_maker;
 pub fn make_meta(graph: &Gfa, amount: usize) -> Vec<(usize, usize, HashSet<usize>)>{
     let mut f = Vec::new();
 
-    for y in (2..graph.paths.len()+1) {
+    for y in 2..graph.paths.len()+1 {
         let test_comb = combinations_maker(&graph.paths.len(), &y, &amount);
         test_comb.iter().for_each(|n| f.push((graph.paths.len(), y, n.clone())))
     }

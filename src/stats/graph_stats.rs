@@ -1,7 +1,5 @@
 use gfa_reader::Gfa;
-use std::collections::{HashMap, HashSet};
-use std::iter::FromIterator;
-use std::panic::resume_unwind;
+use std::collections::{HashMap};
 use crate::stats::helper::{mean, median};
 
 pub fn graph_stats_wrapper(graph: &Gfa) -> Vec<String>{
@@ -95,10 +93,10 @@ pub fn node_degree(graph: &Gfa) -> (f64, f64, f64){
 }
 
 
-
+#[allow(dead_code)]
 /// Calculate number of inverted edges
 /// Edges which change direction
 pub fn inverted_edges(graph: &Gfa) -> usize{
-    let mut inverted: usize = graph.edges.iter().filter(|n| n.to_dir != n.from_dir).count();
+    let inverted: usize = graph.edges.iter().filter(|n| n.to_dir != n.from_dir).count();
     inverted
 }

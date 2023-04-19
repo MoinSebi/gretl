@@ -1,5 +1,5 @@
 use std::collections::{HashMap, HashSet};
-use clap::{ArgMatches, crate_version};
+use clap::{ArgMatches};
 use gfa_reader::Gfa;
 use crate::bootstrap::helper::random_numbers;
 use crate::bootstrap::meta::make_meta;
@@ -29,7 +29,7 @@ pub fn bootstrap_main(matches: &ArgMatches, graph: &Gfa){
 
     let mut total = Vec::new();
     if true{
-        for x in (2..amount_path+1){
+        for x in 2..amount_path+1{
             let test_comb = combinations_maker(&6, &x, &5);
             let mut real_res = Vec::new();
             for (i, x1) in test_comb.iter().enumerate(){

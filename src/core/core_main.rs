@@ -1,15 +1,14 @@
-use std::os::unix::raw::uid_t;
 use clap::ArgMatches;
 use gfa_reader::Gfa;
 use crate::core::writer::writer_core;
-use crate::stats::helper::{calculate_core, core1};
+use crate::stats::helper::{core1};
 
 
 /// Core main function
 ///
 /// Calculate amount of nodes and sequence for each level.
 /// Everything is written in one file. 
-pub fn core_main(matches: &ArgMatches, graph: &Gfa, output: &str){
+pub fn core_main(_matches: &ArgMatches, graph: &Gfa, output: &str){
     eprintln!("Running core analysis");
     let cores = core1(graph);
 
