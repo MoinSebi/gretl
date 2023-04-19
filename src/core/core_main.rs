@@ -1,36 +1,37 @@
 use clap::ArgMatches;
-use gfa_reader::Gfa;
+use gfa_reader::{Gfa, GraphWrapper};
 use crate::core::writer::writer_core;
-use crate::stats::helper::{core1};
+use crate::stats::helper::{core2};
 
 
 /// Core main function
 ///
 /// Calculate amount of nodes and sequence for each level.
 /// Everything is written in one file. 
-pub fn core_main(_matches: &ArgMatches, graph: &Gfa, output: &str){
+pub fn core_main(_matches: &ArgMatches, graph: &GraphWrapper, graph2: &Gfa, output: &str){
     eprintln!("Running core analysis");
-    let cores = core1(graph);
+    let cores = core2(graph, graph2);
 
     // Each entry hold information for its level (#nodes, seq)
-    let mut similarity_level: Vec<(usize, usize)> = vec![(0, 0); graph.paths.len()+1];
+    let mut similarity_level: Vec<(usize, usize)> = vec![(0, 0); graph2.paths.len()+1];
 
     // Get additional information for private nodes
     let mut private_only = Vec::new();
-    for path in graph.paths.iter(){
+    for path in graph.genomes.iter(){
         let mut nodes = 0;
         let mut seq = 0;
-        for node in path.nodes.iter(){
-            let level = cores[&node.parse::<u32>().unwrap()] as usize;
-            similarity_level[level].0 += 1;
-            similarity_level[level].1 += graph.nodes.get(node).unwrap().len;
-            if level == 1{
-                nodes += 1;
-                seq += graph.nodes.get(node).unwrap().len;
+        for x in path.1.iter() {
+            for node in x.nodes.iter() {
+                let level = cores[&node.parse::<u32>().unwrap()] as usize;
+                similarity_level[level].0 += 1;
+                similarity_level[level].1 += graph2.nodes.get(node).unwrap().len;
+                if level == 1 {
+                    nodes += 1;
+                    seq += graph2.nodes.get(node).unwrap().len;
+                }
             }
-
         }
-        private_only.push((path.name.clone(), nodes, seq));
+        private_only.push((path.0.clone(), nodes, seq));
     }
 
 

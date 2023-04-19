@@ -5,7 +5,7 @@ use std::fs::File;
 pub fn writer_core(data: Vec<(usize, usize)>, data2: Vec<(String, usize, usize)>, filename: &str){
     let f = File::create(filename).expect("Unable to create file");
     let mut f = BufWriter::new(f);
-    write!(f, "Featrure\tSequence[bp]\t#Node\n").expect("Not able to write");
+    write!(f, "Feature\tSequence[bp]\t#Node\n").expect("Not able to write");
     for  (name, nodes, seq) in data2.iter(){
         write!(f, "{}\t{}\t{}\n", name, seq, nodes).expect("Not able to write");
     }

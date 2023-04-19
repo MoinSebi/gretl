@@ -1,5 +1,5 @@
 use std::collections::{HashMap, HashSet};
-use gfa_reader::{Gfa};
+use gfa_reader::{Gfa, GraphWrapper};
 
 /// Counting the amount
 pub fn calculate_core(graph: &Gfa) -> HashMap<u32, (u32, u32)>{
@@ -32,6 +32,27 @@ pub fn core1(graph: &Gfa) -> HashMap<u32, u32>{
     for p in graph.paths.iter(){
         let v: HashSet<_> = p.nodes.iter().cloned().collect();
         for y in v.iter(){
+            *count.get_mut(&y.parse().unwrap()).unwrap() += 1;
+        }
+    }
+    count
+}
+
+pub fn core2(graph: &GraphWrapper, graph2: &Gfa) -> HashMap<u32, u32>{
+    let mut count: HashMap<u32, u32> = HashMap::new();
+    for x in &graph2.nodes{
+        count.insert(x.0.parse().unwrap(), 0);
+    }
+
+    for p in graph.genomes.iter(){
+        let mut v2: HashSet<_> = p.1[0].nodes.iter().cloned().collect();
+
+        for x in p.1.iter(){
+            let v: HashSet<_> = x.nodes.iter().cloned().collect();
+            v2 = v2.union(&v).cloned().collect();
+
+        }
+        for y in v2.iter(){
             *count.get_mut(&y.parse().unwrap()).unwrap() += 1;
         }
     }

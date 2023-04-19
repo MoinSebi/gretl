@@ -5,7 +5,7 @@ mod id2int;
 mod path_similarity;
 
 use clap::{Arg, App, AppSettings};
-use gfa_reader::Gfa;
+use gfa_reader::{Gfa, GraphWrapper};
 use crate::bootstrap::bootstrap_main::bootstrap_main;
 use crate::core::core_main::core_main;
 use crate::id2int::id2int_main::id2int_main;
@@ -37,7 +37,8 @@ fn main() {
         .arg(Arg::new("Pan-SN")
           .short('p')
           .long("pansn")
-          .about("Seperate by first entry in Pan-SN spec"))
+          .about("Seperate by first entry in Pan-SN spec")
+            .takes_value(true))
 
 
         .subcommand(App::new("stats")
@@ -103,17 +104,22 @@ fn main() {
     let output = matches.value_of("output").unwrap();
     let mut graph = Gfa::new();
     graph.read_file(&gfa);
+    let mut sep = " ";
+    if matches.is_present("Pan-SN"){
+        sep = matches.value_of("Pan-SN").unwrap();
+    }
+    let mut f: GraphWrapper = GraphWrapper::new();
+    f.from_ngfa(&graph, sep);
     eprintln!("File name: {}", gfa);
     let filename = get_filename(&gfa);
     eprintln!("The filename is {}", filename);
     if let Some(ref matches) = matches.subcommand_matches("stats"){
-        println!("Test");
         stats_main(matches, &graph, output);
 
     } else if let Some(ref matches) = matches.subcommand_matches("bootstrap") {
         bootstrap_main(&matches, &graph);
     } else if let Some(ref matches) = matches.subcommand_matches("core"){
-        core_main(&matches, &graph, output);
+        core_main(&matches, &f, &graph, output);
     } else if let Some(ref matches) = matches.subcommand_matches("id2int"){
         id2int_main(&matches, &graph, output);
     } else if let Some(ref matches) = matches.subcommand_matches("ps"){

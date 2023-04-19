@@ -9,6 +9,8 @@ fn core() -> Result<(), Box<dyn std::error::Error>> {
         .arg("/home/svorbrugg/code/bvd/data/example_data/testGraph.gfa")
         .arg("--output")
         .arg("/home/svorbrugg/code/gfastats/data/test/test.core.txt")
+        .arg("--pansn")
+        .arg("_")
         .arg("core");
 
     cmd.assert().success();
