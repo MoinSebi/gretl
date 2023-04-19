@@ -4,7 +4,7 @@ use crate::stats::graph_stats::graph_stats_wrapper;
 use crate::stats::path::path_stats_wrapper;
 use crate::stats::writer::{write_tsv_path, write_yaml};
 
-pub fn stats_main(matches: &ArgMatches, graph: &Gfa){
+pub fn stats_main(matches: &ArgMatches, graph: &Gfa, output: &str){
     if matches.is_present("path"){
         let data = path_stats_wrapper(&graph);
         let tab = ["Seq len",
@@ -18,7 +18,7 @@ pub fn stats_main(matches: &ArgMatches, graph: &Gfa){
             "Median depth",
             "Average similarity",
             "Median similarity"];
-        write_tsv_path(&data, &tab, "test");
+        write_tsv_path(&data, &tab, output);
     } else {
         let data = graph_stats_wrapper(&graph);
         let tab = ["#Path",
@@ -31,6 +31,6 @@ pub fn stats_main(matches: &ArgMatches, graph: &Gfa){
             "Graph degree [in]",
             "Graph degree [out]",
             "Graph degree [total]"];
-        write_yaml(&data, &tab, "test");
+        write_yaml(&data, &tab, output);
     }
 }

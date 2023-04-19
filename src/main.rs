@@ -108,7 +108,7 @@ fn main() {
     eprintln!("The filename is {}", filename);
     if let Some(ref matches) = matches.subcommand_matches("stats"){
         println!("Test");
-        stats_main(matches, &graph);
+        stats_main(matches, &graph, output);
 
     } else if let Some(ref matches) = matches.subcommand_matches("bootstrap") {
         bootstrap_main(&matches, &graph);
