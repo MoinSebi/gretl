@@ -1,5 +1,4 @@
 use assert_cmd::prelude::*; // Add methods on commands
-use predicates::prelude::*; // Used for writing assertions
 use std::process::Command;
 
 #[test]
@@ -9,7 +8,7 @@ fn core() -> Result<(), Box<dyn std::error::Error>> {
         .arg("--gfa")
         .arg("/home/svorbrugg/code/bvd/data/example_data/testGraph.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/test.core.txt")
+        .arg("/home/svorbrugg/code/gfastats/data/test/test.core.txt")
         .arg("core");
 
     cmd.assert().success();
@@ -25,7 +24,7 @@ fn id2int() -> Result<(), Box<dyn std::error::Error>> {
         .arg("--gfa")
         .arg("/home/svorbrugg/code/bvd/data/example_data/testGraph.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/test.id2int.txt")
+        .arg("/home/svorbrugg/code/gfastats/data/test/test.id2int.txt")
         .arg("id2int");
 
     cmd.assert().success();
