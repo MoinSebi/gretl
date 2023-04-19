@@ -22,7 +22,7 @@ cargo install gfastats
 ## Usage
 
 ### ID2INT
-Convert any string as node identifier to numeric.  
+Convert any string-based node identifier to numeric values.
 
 **Comment**: Do not use when graph is already digits only. The order of identifier does not reflect a sorted graph structure. I highly advise to use ```odgi sort``` on the graph. If not, some statistics are not very meaningful. 
 ```text
@@ -44,7 +44,6 @@ OPTIONS:
 ./gfastats -g /path/to/graph.gfa -o /path/to/output.gfa id2int -d /path/to/dict.txt
 ```
 
-**Output plotted**
 
 
 

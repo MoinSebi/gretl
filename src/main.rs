@@ -123,7 +123,7 @@ fn main() {
     } else if let Some(ref matches) = matches.subcommand_matches("id2int"){
         id2int_main(&matches, &graph, output);
     } else if let Some(ref matches) = matches.subcommand_matches("ps"){
-        ps_main(&matches, &graph, output);
+        ps_main(&matches, &graph, &f, output);
     }
 
 
