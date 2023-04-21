@@ -1,11 +1,12 @@
 use std::collections::{HashMap, HashSet};
 use gfa_reader::{Node, Path, Gfa};
-use crate::stats::helper::{calculate_core, calculate_depth, mean, median};
+use crate::stats::helper::{calculate_core, calculate_depth, core1, mean, meanf, median, node_degree2};
 
 
 pub fn path_stats_wrapper(graph: &Gfa) -> Vec<(String, Vec<String>)>{
     let mut res = Vec::new();
-    let _core = calculate_core(&graph);
+    let _core = core1(&graph);
+    let test = node_degree2(&graph);
     let depth = calculate_depth(&graph);
      for p in graph.paths.iter(){
          let mut result = Vec::new();
@@ -14,18 +15,31 @@ pub fn path_stats_wrapper(graph: &Gfa) -> Vec<(String, Vec<String>)>{
          result.push(path_node_len(&p.nodes).to_string());
          result.push(path_unique(p).to_string());
 
+         result.push(path_node_inverted(p).to_string());
+         result.push(path_seq_inverted(p, &graph.nodes).to_string());
+
+
          let (v,m) = path_jumps(p);
          result.push(v.to_string());
          result.push(m.to_string());
+
+
 
          result.push(path_jumps_2(p, None).to_string());
 
          result.push(mean_depth(p, &depth).to_string());
          result.push(median_depth(p, &depth).to_string());
-         result.push(mean_sim(p, &depth).to_string());
-         result.push(median_sim(p, &depth).to_string());
+         result.push(mean_sim(p, &_core).to_string());
+         result.push(median_sim(p, &_core).to_string());
+
+         result.push(degree(p, &test.2).to_string());
+         result.push("test".to_string());
+
+
 
          res.push((p.name.to_string(), result))
+
+
      }
 
     res
@@ -50,13 +64,13 @@ pub fn path_seq_len(path: &Path, nodes: &HashMap<String, Node>) -> usize{
 #[allow(dead_code)]
 /// Count the number of inverted nodes for each path
 pub fn path_node_inverted(path: &Path) -> usize{
-    path.dir.iter().filter(|&n | *n == true).count()
+    path.dir.iter().filter(|&n | *n == false).count()
 }
 
 #[allow(dead_code)]
 /// Count the number of inverted nodes for each path
-pub fn path_seq_inverted(path: &Path, nodes: HashMap<String, Node>) -> usize{
-    let sums: usize = path.dir.iter().zip(&path.nodes).filter(|&n | *n.0 == true).map(|s| nodes.get(s.1).unwrap().len).sum();
+pub fn path_seq_inverted(path: &Path, nodes: &HashMap<String, Node>) -> usize{
+    let sums: usize = path.dir.iter().zip(&path.nodes).filter(|&n | *n.0 == false).map(|s| nodes.get(s.1).unwrap().len).sum();
     return sums
 }
 
@@ -145,4 +159,13 @@ pub fn median_sim(path: &Path, count: &HashMap<u32, u32> ) -> u32{
         data.push(count.get(&x.parse::<u32>().unwrap()).unwrap().clone())
     }
     median(&mut data)
+}
+
+
+pub fn degree(path: &Path, count: &HashMap<&String, u32>) -> f64{
+    let mut res = vec![];
+    for node in path.nodes.iter(){
+        res.push(count.get(node).unwrap().clone())
+    }
+    mean(&res)
 }

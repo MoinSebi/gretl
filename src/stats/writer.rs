@@ -16,7 +16,7 @@ pub fn write_yaml_path(data: &Vec<(String, Vec<String>)>, tab2: &[&str], filenam
     for x in data.iter(){
         write!(f, "Path: {}\n", x.0).expect("Not able to write");
         for (d2, x2) in tab2.iter().zip(&x.1){
-            write!(f, "\t-{}: {}\n", d2, x2).expect("Not able to write");
+            write!(f, "\t- {}: {}\n", d2, x2).expect("Not able to write");
         }
     }
 }

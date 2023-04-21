@@ -35,7 +35,7 @@ fn main() {
             .takes_value(true)
             .required(true))
         .arg(Arg::new("Pan-SN")
-          .short('p')
+          .short('s')
           .long("pansn")
           .about("Seperate by first entry in Pan-SN spec")
             .takes_value(true))

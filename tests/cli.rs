@@ -42,7 +42,7 @@ fn ps() -> Result<(), Box<dyn std::error::Error>> {
         .arg("/home/svorbrugg/code/bvd/data/example_data/testGraph.gfa")
         .arg("--output")
         .arg("/home/svorbrugg/code/gfastats/data/test/test.ps.txt")
-        .arg("-p")
+        .arg("-s")
         .arg("_")
         .arg("ps");
 
@@ -65,3 +65,19 @@ fn stats() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
+
+#[test]
+fn stats_path() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("gfastats")?;
+    cmd
+        .arg("--gfa")
+        .arg("/home/svorbrugg/code/bvd/data/example_data/testGraph.gfa")
+        .arg("--output")
+        .arg("/home/svorbrugg/code/gfastats/data/test/test.stats.path.txt")
+        .arg("stats")
+        .arg("--path")
+        .arg("-y");
+
+    cmd.assert().success();
+    Ok(())
+}

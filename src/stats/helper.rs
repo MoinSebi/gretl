@@ -85,6 +85,14 @@ pub fn mean(data: & [u32]) -> f64{
     return sums
 }
 
+
+/// Calculate average of the vector
+pub fn meanf(data: & [f32]) -> f64{
+    let sums1: f32 = data.iter().sum();
+    let sums = (sums1 as f64)/data.iter().len() as f64;
+    return sums
+}
+
 /// Calculate median of the vector
 pub fn median(data: &mut Vec<u32>) -> u32{
     data.sort();
@@ -102,3 +110,34 @@ pub fn get_filename(name: &str) -> String{
 
 }
 
+
+/// Calculate node degree (in, out, total)
+pub fn node_degree2(graph: &Gfa) -> (HashMap<&String, u32>, HashMap<&String, u32>, HashMap<&String, u32>){
+    let mut degree_in: HashMap<&String, u32> = HashMap::new();
+    let mut degree_out: HashMap<&String, u32> = HashMap::new();
+    let mut degree_total: HashMap<&String, u32> = HashMap::new();
+    for x in graph.edges.iter(){
+        let fromu: u32 = x.from.parse().unwrap();
+        let tou: u32 = x.to.parse().unwrap();
+
+        if degree_in.contains_key(&x.from){
+            degree_in.insert(&x.from, degree_in[&x.from]  +1 );
+            degree_total.insert(&x.from, degree_total[&x.from]  +1 );
+
+        } else {
+            degree_in.insert(&x.from, 1);
+            degree_total.insert(&x.from, 1 );
+        }
+        if degree_out.contains_key(&x.to){
+            degree_out.insert(&x.to, degree_out[&x.to]  +1 );
+            degree_total.insert(&x.to, degree_total[&x.to]  +1 );
+
+        } else {
+            degree_out.insert(&x.to, 1);
+            degree_total.insert(&x.to, 1 );
+
+        }
+    }
+    return (degree_in, degree_out, degree_total)
+
+}
