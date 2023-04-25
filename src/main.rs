@@ -3,6 +3,7 @@ mod bootstrap;
 mod core;
 mod id2int;
 mod path_similarity;
+mod node_list;
 
 use clap::{Arg, App, AppSettings};
 use gfa_reader::{Gfa, GraphWrapper};
@@ -97,6 +98,9 @@ fn main() {
                 .about("Write a dictionary for Old->New identifiers in this file.")
                 .takes_value(true)
                 .short('d')))
+        .subcommand(App::new("node-list")
+
+            .about("Stats for each node"))
         .get_matches();
 
     // Read the graph
