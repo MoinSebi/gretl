@@ -81,3 +81,17 @@ fn stats_path() -> Result<(), Box<dyn std::error::Error>> {
     cmd.assert().success();
     Ok(())
 }
+
+#[test]
+fn node_list_path() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("gfastats")?;
+    cmd
+        .arg("--gfa")
+        .arg("/home/svorbrugg/code/bvd/data/example_data/testGraph.gfa")
+        .arg("--output")
+        .arg("/home/svorbrugg/code/gfastats/data/test/test.stats.nodelist.txt")
+        .arg("node-list");
+
+    cmd.assert().success();
+    Ok(())
+}
