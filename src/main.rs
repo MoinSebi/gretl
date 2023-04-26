@@ -10,6 +10,7 @@ use gfa_reader::{Gfa, GraphWrapper};
 use crate::bootstrap::bootstrap_main::bootstrap_main;
 use crate::core::core_main::core_main;
 use crate::id2int::id2int_main::id2int_main;
+use crate::node_list::node_list::nodelist_main;
 use crate::path_similarity::ps_main::ps_main;
 use crate::stats::helper::get_filename;
 use crate::stats::stats_main::stats_main;
@@ -100,7 +101,12 @@ fn main() {
                 .short('d')))
         .subcommand(App::new("node-list")
 
-            .about("Stats for each node"))
+            .about("Some information about each node")
+            .arg(Arg::new("Features")
+                .short('f')
+                .long("feature")
+                .takes_value(true)
+                .about("Name the features you need. If nothing is used, report everything. Example -f Length, Core")))
         .get_matches();
 
     // Read the graph
@@ -128,6 +134,8 @@ fn main() {
         id2int_main(&matches, &graph, output);
     } else if let Some(ref matches) = matches.subcommand_matches("ps"){
         ps_main(&matches, &graph, &f, output);
+    } else if let Some(ref matches) = matches.subcommand_matches("node-list"){
+        nodelist_main(&matches, &graph, output);
     }
 
 
