@@ -37,8 +37,8 @@ fn id2int() -> Result<(), Box<dyn std::error::Error>> {
 fn ps() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
     cmd
-        .arg("--gfa")
         .arg("ps")
+        .arg("--gfa")
         .arg("/home/svorbrugg/code/bvd/data/example_data/testGraph.gfa")
         .arg("--output")
         .arg("/home/svorbrugg/code/gfastats/data/test/test.ps.txt")
@@ -54,8 +54,8 @@ fn ps() -> Result<(), Box<dyn std::error::Error>> {
 fn stats() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
     cmd
-        .arg("--gfa")
         .arg("stats")
+        .arg("--gfa")
         .arg("/home/svorbrugg/code/bvd/data/example_data/testGraph.gfa")
         .arg("--output")
         .arg("/home/svorbrugg/code/gfastats/data/test/test.stats.txt");
