@@ -26,8 +26,9 @@ fn main() {
         .about("GFa stats")
         .setting(AppSettings::SubcommandRequiredElseHelp)
 
+        // Subcommand for normal stats
         .subcommand(App::new("stats")
-            .about("Create statists ")
+            .about("Create statists about the graph or its path")
             .arg(Arg::new("gfa")
                 .short('g')
                 .long("gfa")
@@ -45,20 +46,14 @@ fn main() {
                 .long("pansn")
                 .about("Seperate by first entry in Pan-SN spec")
                 .takes_value(true))
-            .arg(Arg::new("structure")
-                .short('m')
-                .long("structure")
-                .about("Statistics based on structure of the graph"))
+
             .arg(Arg::new("path")
                 .short('p')
                 .long("path")
-                .about("Path based structure"))
-            .arg(Arg::new("tsv")
-                .short('t')
-                .about("Tab seperated values format "))
+                .about("Report path statistics (default:off -> report graph stats)"))
             .arg(Arg::new("YAML")
                 .short('y')
-                .about("yaml format")))
+                .about("Report output in YAML format (default:off -> report in tsv)")))
 
         .subcommand(App::new("bootstrap")
             .about("Bootstrap approach")
@@ -105,6 +100,7 @@ fn main() {
                 .takes_value(true)))
 
 
+        // Subcommand for similarity level
         .subcommand(App::new("core")
             .about("Graph similarity statistics")
             .arg(Arg::new("gfa")
@@ -146,6 +142,7 @@ fn main() {
                 .about("Seperate by first entry in Pan-SN spec")
                 .takes_value(true)))
 
+        // Subcommand to convert string graph to numeric
         .subcommand(App::new("id2int")
             .arg(Arg::new("gfa")
                 .short('g')
@@ -170,6 +167,9 @@ fn main() {
                 .about("Write a dictionary for Old->New identifiers in this file.")
                 .takes_value(true)
                 .short('d')))
+
+
+
         .subcommand(App::new("node-list")
             .arg(Arg::new("gfa")
                 .short('g')

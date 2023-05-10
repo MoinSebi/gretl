@@ -1,6 +1,7 @@
 use std::io::{BufWriter, Write};
 use std::fs::File;
 
+/// Write function for graph stats in yaml
 pub fn write_yaml(data: &Vec<String>, tab: &[&str], filename:  &str){
     let f = File::create(filename).expect("Unable to create file");
     let mut f = BufWriter::new(f);
@@ -9,7 +10,7 @@ pub fn write_yaml(data: &Vec<String>, tab: &[&str], filename:  &str){
     }
 }
 
-#[allow(dead_code)]
+/// Write function for path stats in yaml
 pub fn write_yaml_path(data: &Vec<(String, Vec<String>)>, tab2: &[&str], filename:  &str){
     let f = File::create(filename).expect("Unable to create file");
     let mut f = BufWriter::new(f);
@@ -21,7 +22,7 @@ pub fn write_yaml_path(data: &Vec<(String, Vec<String>)>, tab2: &[&str], filenam
     }
 }
 
-
+/// Write function for path stats in tsv
 pub fn write_tsv_path(data: &Vec<(String, Vec<String>)>, tab2: &[&str], filename:  &str) {
     let f = File::create(filename).expect("Unable to create file");
     let mut f = BufWriter::new(f);
@@ -37,6 +38,4 @@ pub fn write_tsv_path(data: &Vec<(String, Vec<String>)>, tab2: &[&str], filename
         }
         write!(f, "\n").expect("Not able to write");
     }
-
-
 }
