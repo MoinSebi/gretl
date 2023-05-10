@@ -103,6 +103,8 @@ fn main() {
                 .long("number")
                 .about("Number of bootstraps")
                 .takes_value(true)))
+
+
         .subcommand(App::new("core")
             .about("Graph similarity statistics")
             .arg(Arg::new("gfa")
@@ -122,6 +124,8 @@ fn main() {
                 .long("pansn")
                 .about("Seperate by first entry in Pan-SN spec")
                 .takes_value(true)))
+
+
         .subcommand(App::new("ps")
             .about("Path similarity stats")
             .arg(Arg::new("gfa")
