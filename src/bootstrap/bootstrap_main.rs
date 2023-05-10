@@ -4,15 +4,17 @@ use gfa_reader::Gfa;
 use crate::bootstrap::helper::random_numbers;
 use crate::bootstrap::meta::make_meta;
 use crate::bootstrap::writer::write_meta;
+use crate::helpers::graphs::read_graph;
 
-pub fn bootstrap_main(matches: &ArgMatches, graph: &Gfa){
+pub fn bootstrap_main(matches: &ArgMatches){
+    let graph = read_graph(matches);
     eprintln!("Running bootstrap");
     let amount_path = graph.paths.len();
 
     // Make a meta file
     if matches.is_present("meta"){
         eprintln!("Creating meta file");
-        let meta = make_meta(graph, 10);
+        let meta = make_meta(&graph, 10);
         write_meta(meta, "test2");
 
         // Run the bootstrap
@@ -35,7 +37,7 @@ pub fn bootstrap_main(matches: &ArgMatches, graph: &Gfa){
             for (i, x1) in test_comb.iter().enumerate(){
                 println!("hit");
                 let k: Vec<usize> = x1.iter().cloned().collect();
-                let dd = do_one_iteration(graph, &k);
+                let dd = do_one_iteration(&graph, &k);
                 println!("{} {:?} {:?}", x, i, dd);
                 real_res.push((x, i, dd));
             }

@@ -1,11 +1,16 @@
 use clap::ArgMatches;
 use gfa_reader::Gfa;
+use crate::helpers::graphs::{make_wrapper, read_graph};
 use crate::node_list::wrapper::wrapper;
+use crate::stats::helper::get_filename;
 
-pub fn nodelist_main(matches: &ArgMatches, graph: &Gfa, output: &str) {
+pub fn nodelist_main(matches: &ArgMatches) {
     eprintln!("Running node-list analysis.");
     // Size, depth, similarity, degree in, degree out, degree_total, inversion amount,
     // path related?
+    let graph = read_graph(matches);
+    let gw = make_wrapper(&graph, matches);
+    let output = &get_filename(matches.value_of("output").unwrap());
     let splits = vec!["Core", "Length", "Depth", "Core", "ND_in", "ND_out", "ND_total"];
     let mut splits2 = Vec::new();
     if matches.is_present("Features"){

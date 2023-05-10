@@ -5,14 +5,13 @@ use std::process::Command;
 fn core() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
     cmd
+        .arg("core")
         .arg("--gfa")
         .arg("/home/svorbrugg/code/bvd/data/example_data/testGraph.gfa")
         .arg("--output")
         .arg("/home/svorbrugg/code/gfastats/data/test/test.core.txt")
         .arg("--pansn")
-        .arg("_")
-        .arg("core");
-
+        .arg("_");
     cmd.assert().success();
     Ok(())
 }
@@ -23,11 +22,11 @@ fn core() -> Result<(), Box<dyn std::error::Error>> {
 fn id2int() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
     cmd
+        .arg("id2int")
         .arg("--gfa")
         .arg("/home/svorbrugg/code/bvd/data/example_data/testGraph.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/test.id2int.txt")
-        .arg("id2int");
+        .arg("/home/svorbrugg/code/gfastats/data/test/test.id2int.txt");
 
     cmd.assert().success();
     Ok(())
@@ -39,12 +38,12 @@ fn ps() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
     cmd
         .arg("--gfa")
+        .arg("ps")
         .arg("/home/svorbrugg/code/bvd/data/example_data/testGraph.gfa")
         .arg("--output")
         .arg("/home/svorbrugg/code/gfastats/data/test/test.ps.txt")
         .arg("-s")
-        .arg("_")
-        .arg("ps");
+        .arg("_");
 
     cmd.assert().success();
     Ok(())
@@ -56,10 +55,10 @@ fn stats() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
     cmd
         .arg("--gfa")
+        .arg("stats")
         .arg("/home/svorbrugg/code/bvd/data/example_data/testGraph.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/test.stats.txt")
-        .arg("stats");
+        .arg("/home/svorbrugg/code/gfastats/data/test/test.stats.txt");
 
     cmd.assert().success();
     Ok(())
@@ -70,11 +69,11 @@ fn stats() -> Result<(), Box<dyn std::error::Error>> {
 fn stats_path() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
     cmd
+        .arg("stats")
         .arg("--gfa")
         .arg("/home/svorbrugg/code/bvd/data/example_data/testGraph.gfa")
         .arg("--output")
         .arg("/home/svorbrugg/code/gfastats/data/test/test.stats.path.txt")
-        .arg("stats")
         .arg("--path")
         .arg("-y");
 
@@ -86,11 +85,11 @@ fn stats_path() -> Result<(), Box<dyn std::error::Error>> {
 fn node_list_path() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
     cmd
+        .arg("node-list")
         .arg("--gfa")
         .arg("/home/svorbrugg/code/bvd/data/example_data/testGraph.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/test.stats.nodelist.txt")
-        .arg("node-list");
+        .arg("/home/svorbrugg/code/gfastats/data/test/test.stats.nodelist.txt");
 
     cmd.assert().success();
     Ok(())

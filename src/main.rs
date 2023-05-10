@@ -4,6 +4,7 @@ mod core;
 mod id2int;
 mod path_similarity;
 mod node_list;
+mod helpers;
 
 use clap::{Arg, App, AppSettings};
 use gfa_reader::{Gfa, GraphWrapper};
@@ -45,7 +46,7 @@ fn main() {
                 .about("Seperate by first entry in Pan-SN spec")
                 .takes_value(true))
             .arg(Arg::new("structure")
-                .short('s')
+                .short('m')
                 .long("structure")
                 .about("Statistics based on structure of the graph"))
             .arg(Arg::new("path")
@@ -192,33 +193,20 @@ fn main() {
         .get_matches();
 
     // Read the graph
-    let gfa = matches.value_of("gfa").unwrap();
-    let output = matches.value_of("output").unwrap();
-    let mut graph = Gfa::new();
-    graph.read_file(&gfa);
-    let mut sep = " ";
-    if matches.is_present("Pan-SN"){
-        sep = matches.value_of("Pan-SN").unwrap();
-    }
-    let mut f: GraphWrapper = GraphWrapper::new();
-    f.from_ngfa(&graph, sep);
-    eprintln!("File name: {}", gfa);
-    let filename = get_filename(&gfa);
-    eprintln!("The filename is {}", filename);
-    if let Some(ref matches) = matches.subcommand_matches("stats"){
-        stats_main(matches, &graph, output);
+
+    if let Some(ref matches) = matches.subcommand_matches("core"){
+        core_main(matches);
 
     } else if let Some(ref matches) = matches.subcommand_matches("bootstrap") {
-        bootstrap_main(&matches, &graph);
-    } else if let Some(ref matches) = matches.subcommand_matches("core"){
-        core_main(&matches, &f, &graph, output);
+        bootstrap_main(&matches);
+    } else if let Some(ref matches) = matches.subcommand_matches("stats"){
+        stats_main(&matches);
     } else if let Some(ref matches) = matches.subcommand_matches("id2int"){
-        id2int_main(&matches, &graph, output);
+        id2int_main(&matches);
     } else if let Some(ref matches) = matches.subcommand_matches("ps"){
-        ps_main(&matches, &graph, &f, output);
+        ps_main(&matches);
     } else if let Some(ref matches) = matches.subcommand_matches("node-list"){
-        nodelist_main(&matches, &graph, output);
+        nodelist_main(&matches);
     }
-
 
 }

@@ -1,10 +1,16 @@
 use clap::ArgMatches;
 use gfa_reader::Gfa;
+use crate::helpers::graphs::{make_wrapper, read_graph};
 use crate::stats::graph_stats::graph_stats_wrapper;
+use crate::stats::helper::get_filename;
 use crate::stats::path::path_stats_wrapper;
 use crate::stats::writer::{write_tsv_path, write_yaml, write_yaml_path};
 
-pub fn stats_main(matches: &ArgMatches, graph: &Gfa, output: &str){
+pub fn stats_main(matches: &ArgMatches){
+    let graph = read_graph(matches);
+    let gw = make_wrapper(&graph, matches);
+    let output = &get_filename(matches.value_of("output").unwrap());
+
     if matches.is_present("path"){
         let data = path_stats_wrapper(&graph);
         let tab = [
