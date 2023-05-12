@@ -5,6 +5,7 @@ mod id2int;
 mod path_similarity;
 mod node_list;
 mod helpers;
+mod sliding_window;
 
 use clap::{Arg, App, AppSettings};
 use gfa_reader::{Gfa, GraphWrapper};
@@ -13,6 +14,7 @@ use crate::core::core_main::core_main;
 use crate::id2int::id2int_main::id2int_main;
 use crate::node_list::node_list::nodelist_main;
 use crate::path_similarity::ps_main::ps_main;
+use crate::sliding_window::sliding_window_main::window_main;
 use crate::stats::helper::get_filename;
 use crate::stats::stats_main::stats_main;
 
@@ -173,6 +175,36 @@ fn main() {
                 .takes_value(true)
                 .short('d')))
 
+        .subcommand(App::new("sliding windows")
+            .about("Sliding window along the samples")
+            .arg(Arg::new("gfa")
+                .short('g')
+                .long("gfa")
+                .about("Input GFA file")
+                .takes_value(true)
+                .required(true))
+            .arg(Arg::new("output")
+                .short('o')
+                .long("output")
+                .about("Output")
+                .takes_value(true)
+                .required(true))
+            .arg(Arg::new("Pan-SN")
+                .short('s')
+                .long("pansn")
+                .about("Seperate by first entry in Pan-SN spec")
+                .takes_value(true))
+            .arg(Arg::new("window-size")
+                .short('w')
+                .long("window")
+                .about("Window size")
+                .takes_value(true))
+            .arg(Arg::new("metric")
+                .short('m')
+                .long("metric")
+                .about("Which metric")
+                .takes_value(true)))
+
 
 
         .subcommand(App::new("node-list")
@@ -216,6 +248,8 @@ fn main() {
         ps_main(&matches);
     } else if let Some(ref matches) = matches.subcommand_matches("node-list"){
         nodelist_main(&matches);
+    }  else if let Some(ref matches) = matches.subcommand_matches("window"){
+        window_main(&matches);
     }
 
 }
