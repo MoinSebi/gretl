@@ -57,16 +57,11 @@ fn main() {
 
         .subcommand(App::new("bootstrap")
             .about("Bootstrap approach")
+            .help_heading("Input options")
             .arg(Arg::new("gfa")
                 .short('g')
                 .long("gfa")
                 .about("Input GFA file")
-                .takes_value(true)
-                .required(true))
-            .arg(Arg::new("output")
-                .short('o')
-                .long("output")
-                .about("Output")
                 .takes_value(true)
                 .required(true))
             .arg(Arg::new("Pan-SN")
@@ -74,21 +69,15 @@ fn main() {
                 .long("pansn")
                 .about("Seperate by first entry in Pan-SN spec")
                 .takes_value(true))
-            .arg(Arg::new("Pan-SN")
-                .short('p')
-                .long("pansn")
-                .about("Seperate by first entry in Pan-SN spec")
-                .takes_value(true))
-            .arg(Arg::new("meta")
-                .long("meta")
-                .about("Make a meta file"))
             .arg(Arg::new("meta input")
                 .long("meta-input")
-                .about("Take a meta file input for specific stuff")
+                .about("Take a specific meta file as input")
                 .takes_value(true))
+
+            .help_heading("Modifications")
             .arg(Arg::new("meta line")
                 .long("meta-line")
-                .about("Take a specific line")
+                .about("Take a specific line of the meta file (only works when meta file is provided)")
                 .takes_value(true))
             .arg(Arg::new("level")
                 .long("level")
@@ -96,8 +85,23 @@ fn main() {
                 .takes_value(true))
             .arg(Arg::new("number")
                 .long("number")
-                .about("Number of bootstraps")
+                .about("How many bootstraps do you want to run")
+                .takes_value(true))
+
+            .help_heading("Output options")
+            .arg(Arg::new("output")
+                .short('o')
+                .long("output")
+                .about("Output")
+                .takes_value(true))
+            .arg(Arg::new("meta")
+                .long("meta")
+                .about("Report an additional meta file with all combinations")
                 .takes_value(true)))
+
+
+
+
 
 
         // Subcommand for similarity level
@@ -122,8 +126,9 @@ fn main() {
                 .takes_value(true)))
 
 
+        // Subcommand for detailed similarity
         .subcommand(App::new("ps")
-            .about("Path similarity stats")
+            .about("Detailed similarity information for each path")
             .arg(Arg::new("gfa")
                 .short('g')
                 .long("gfa")

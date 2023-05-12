@@ -3,7 +3,6 @@ use gfa_reader::{Gfa, GraphWrapper};
 
 pub fn read_graph(matches: &ArgMatches) -> Gfa {
     let gfa = matches.value_of("gfa").unwrap();
-    let output = matches.value_of("output").unwrap();
     let mut graph = Gfa::new();
     graph.read_file(&gfa);
     return graph
