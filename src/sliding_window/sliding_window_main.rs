@@ -1,6 +1,6 @@
 use clap::ArgMatches;
 use crate::helpers::graphs::{make_wrapper, read_graph};
-use crate::sliding_window::window::sw_wrapper;
+use crate::sliding_window::window::sliding_window_wrapper;
 use crate::sliding_window::writer::write_window;
 use crate::stats::helper::get_filename;
 
@@ -24,7 +24,7 @@ pub fn window_main(matches: &ArgMatches){
     // similarity
     let metric = "similarity";
 
-    let f = sw_wrapper(&graph, window_size, step);
+    let f = sliding_window_wrapper(&graph, window_size, step);
     write_window(f, "hilfe");
 
 

@@ -9,7 +9,7 @@ use std::fs::File;
 ///
 /// Comment: All rows have the same length. If vector is smaller then max_size (longest vector in the data set), add NaN
 ///
-pub fn write_window(data: Vec<(String, Vec<u32>)>, filename: &str){
+pub fn write_window(data: Vec<(String, Vec<f64>)>, filename: &str){
 
 
     let f = File::create(filename).expect("Unable to create file");

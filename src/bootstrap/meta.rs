@@ -58,14 +58,18 @@ pub fn combinations_maker(size: &usize, core_number: &usize, amount: &usize) -> 
 
 
 /// Calculation for one iteration
-pub fn do_one_iteration2(gw: &GraphWrapper, graph: &Gfa, combination: &[usize]) -> (Vec<usize>, Vec<usize>){
-    let count = calculate_core2(gw, graph, combination);
+pub fn do_one_iteration2(gw: &GraphWrapper, graph: &Gfa, combination: &[usize], metric: &str) -> (Vec<usize>, Vec<usize>){
+    let mut metric_hm: HashMap<u32, u32> = HashMap::new();
+    if metric == "core"{
+        metric_hm = calculate_core2(gw, graph, combination)
+    }
+
     let f = combination.len();
     let mut result: Vec<usize> = vec![0; f+1];             // NODES
     let mut result2 = vec![0; f+1];             // Sequence
     graph.nodes.iter().for_each(|n|
         {let id = n.0.parse::<usize>().unwrap();
-            let id = count.get(&(id as u32)).unwrap();
+            let id = metric_hm.get(&(id as u32)).unwrap();
             result[*id as usize] += 1;
             result2[*id as usize] += graph.nodes.get(n.0).unwrap().len});
     result.remove(0);

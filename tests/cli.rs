@@ -127,4 +127,17 @@ fn node_bootstrap2() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
+#[test]
+fn slidinw() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("gfastats")?;
+    cmd
+        .arg("sliding-window")
+        .arg("--gfa")
+        .arg("/home/svorbrugg/code/bvd/data/example_data/testGraph.gfa")
+        .arg("--output")
+        .arg("hellllloo");
+
+    cmd.assert().success();
+    Ok(())
+}
 

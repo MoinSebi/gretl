@@ -40,7 +40,7 @@ pub fn bootstrap_main(matches: &ArgMatches){
 
     for (x, i, x1) in combii.iter(){
         let k: Vec<usize> = x1.iter().cloned().collect();
-        let dd = do_one_iteration2(&gw, &graph, &k);
+        let dd = do_one_iteration2(&gw, &graph, &k, "core");
         println!("{} {:?} {:?}", x, i, dd.0);
         total.push((*x, *i, dd));
         metas.push((*x, *i, x1.clone()));

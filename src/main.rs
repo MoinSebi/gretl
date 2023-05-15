@@ -175,7 +175,7 @@ fn main() {
                 .takes_value(true)
                 .short('d')))
 
-        .subcommand(App::new("sliding windows")
+        .subcommand(App::new("sliding-window")
             .about("Sliding window along the samples")
             .arg(Arg::new("gfa")
                 .short('g')
@@ -248,7 +248,7 @@ fn main() {
         ps_main(&matches);
     } else if let Some(ref matches) = matches.subcommand_matches("node-list"){
         nodelist_main(&matches);
-    }  else if let Some(ref matches) = matches.subcommand_matches("window"){
+    }  else if let Some(ref matches) = matches.subcommand_matches("sliding-window"){
         window_main(&matches);
     }
 
