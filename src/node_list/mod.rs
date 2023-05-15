@@ -1,3 +1,3 @@
 pub mod node_list;
-mod wrapper;
+pub mod wrapper;
 mod writer;

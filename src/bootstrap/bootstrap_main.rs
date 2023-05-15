@@ -53,7 +53,7 @@ pub fn bootstrap_main(matches: &ArgMatches){
     }
 
 
-    write_output(total, output);
+    write_output(total, matches.value_of("output").unwrap());
 
 
 

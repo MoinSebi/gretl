@@ -59,8 +59,8 @@ pub fn combinations_maker(size: &usize, core_number: &usize, amount: &usize) -> 
 
 /// Calculation for one iteration
 pub fn do_one_iteration2(gw: &GraphWrapper, graph: &Gfa, combination: &[usize], metric: &str) -> (Vec<usize>, Vec<usize>){
-    let mut metric_hm: HashMap<u32, u32> = HashMap::new();
-    if metric == "core"{
+    let mut metric_hm: HashMap<u32, u32> = calculate_core2(gw, graph, combination);
+    if metric == "length"{
         metric_hm = calculate_core2(gw, graph, combination)
     }
 

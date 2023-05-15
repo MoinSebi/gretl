@@ -135,7 +135,7 @@ fn slidinw() -> Result<(), Box<dyn std::error::Error>> {
         .arg("--gfa")
         .arg("/home/svorbrugg/code/bvd/data/example_data/testGraph.gfa")
         .arg("--output")
-        .arg("hellllloo");
+        .arg("/home/svorbrugg/code/gfastats/data/test/test.stats.sw.txt");
 
     cmd.assert().success();
     Ok(())

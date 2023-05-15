@@ -24,8 +24,8 @@ pub fn window_main(matches: &ArgMatches){
     // similarity
     let metric = "similarity";
 
-    let f = sliding_window_wrapper(&graph, window_size, step);
-    write_window(f, "hilfe");
+    let f = sliding_window_wrapper(&graph, window_size, step, "core");
+    write_window(f, matches.value_of("output").unwrap());
 
 
 }
