@@ -3,64 +3,54 @@ use std::collections::{HashMap, HashSet};
 use std::fmt::Debug;
 use gfa_reader::{Gfa, Path};
 use crate::node_list::wrapper::make_mapper;
+use crate::sliding_window::metrics::{calculate_core12, node_len};
+use crate::sliding_window::sliding_window_main::metric;
 use crate::stats::helper::calculate_core;
 
 /// Wrapper for sliding window
 ///
 /// TODO
 /// - add different metrics
-pub fn sliding_window_wrapper(graph: &Gfa, binsize: u32, steosize: u32, metric: &str) -> Vec<(String, Vec<f64>)>{
+pub fn sliding_window_wrapper(graph: &Gfa, binsize: u32, steosize: u32, metric: metric, node: bool) -> Vec<(String, Vec<f64>)>{
     let mut result = Vec::new();
     let mut core = calculate_core12(graph);
-    if metric == "length"{
-        core = node_len(graph);
+    match metric{
+        metric::nodesizem => core = node_len(graph),
+        metric::similarity => core = calculate_core12(graph),
     }
+
+
     for path in graph.paths.iter(){
-        let vector = make_vector(path, &graph, &core);
-        let sww = sw2(vector, binsize, steosize);
+        let vector = make_vector(path, &graph, &core, &node);
+        let sww = sliding_window(vector, binsize, steosize);
         result.push((path.name.clone(), sww));
     }
     return result
 }
 
 /// Create the vector for sliding window
-pub fn make_vector(path: &Path, graph:&Gfa, core: &HashMap<u32, u32>) -> Vec<u32>{
-        let mut vv = Vec::new();
-        for node in path.nodes.iter(){
-            let size = graph.nodes.get(node).unwrap().len;
-            let level = core.get(&node.parse::<u32>().unwrap()).unwrap();
-            for x in (0..size){
+pub fn make_vector(path: &Path, graph:&Gfa, core: &HashMap<u32, u32>, node: &bool) -> Vec<u32>{
+    let mut vv = Vec::new();
+    if *node{
+        for n in path.nodes.iter(){
+            let level = core.get(&n.parse::<u32>().unwrap()).unwrap();
+            vv.push(level.clone());
+        }
+    } else {
+        for n in path.nodes.iter() {
+            let size = graph.nodes.get(n).unwrap().len;
+            let level = core.get(&n.parse::<u32>().unwrap()).unwrap();
+            for x in (0..size) {
                 vv.push(level.clone());
             }
         }
-
+    }
     vv
-}
-
-/// Counting the amount
-pub fn calculate_core12(graph: &Gfa) -> HashMap<u32, u32>{
-
-    // Initialization hashmap
-    let mut count: HashMap<u32,u32> = HashMap::new();
-    for x in &graph.nodes{
-        count.insert(x.0.parse().unwrap(),  0);
-    }
-
-    // Calculate the amount of sequence and the amount of nodes
-    for x in &graph.paths{
-        // Count every node only once
-        let v: HashSet<_> = x.nodes.iter().cloned().collect();
-        for y in v{
-            *count.get_mut(&y.parse().unwrap()).unwrap() += 1;
-        }
-    }
-    count.shrink_to_fit();
-    count
 }
 
 
 /// Sliding window
-pub fn sw2(input: Vec<u32>, binsize_input: u32, step: u32) -> Vec<f64>{
+pub fn sliding_window(input: Vec<u32>, binsize_input: u32, step: u32) -> Vec<f64>{
     let binsize = binsize_input as usize;
     let mut start = 0;
     let maxsize= input.len();
@@ -99,20 +89,6 @@ fn calculate_average<T>(v: &[T]) -> Option<f64>
     println!("{:?}", v);
 
     Some(mean)
-}
-
-/// Compute the node len
-///
-/// Return a vector
-pub fn node_len(graph: &Gfa) ->  HashMap<u32, u32>{
-    let mapper = make_mapper(graph);
-
-    let mut result = HashMap::new();
-    for (id, node) in graph.nodes.iter(){
-        let index = mapper.get(id).unwrap();
-        result.insert(index.clone() as u32, node.len as u32);
-    }
-    return result
 }
 
 

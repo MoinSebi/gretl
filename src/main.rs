@@ -175,7 +175,7 @@ fn main() {
                 .takes_value(true)
                 .short('d')))
 
-        .subcommand(App::new("sliding-window")
+        .subcommand(App::new("window")
             .about("Sliding window along the samples")
             .arg(Arg::new("gfa")
                 .short('g')
@@ -190,15 +190,22 @@ fn main() {
                 .takes_value(true)
                 .required(true))
             .arg(Arg::new("Pan-SN")
-                .short('s')
                 .long("pansn")
                 .about("Seperate by first entry in Pan-SN spec")
                 .takes_value(true))
-            .arg(Arg::new("window-size")
-                .short('w')
+            .arg(Arg::new("size")
+                .short('s')
                 .long("window")
-                .about("Window size")
+                .about("Window on sequence")
                 .takes_value(true))
+            .arg(Arg::new("step")
+                .long("step")
+                .about("Step size (If nothing is set, step size -> bin size")
+                .takes_value(true))
+            .arg(Arg::new("node")
+                .short('n')
+                .long("node")
+                .about("Window on nodes nodes ([default: off] -> on sequence)"))
             .arg(Arg::new("metric")
                 .short('m')
                 .long("metric")
@@ -248,7 +255,7 @@ fn main() {
         ps_main(&matches);
     } else if let Some(ref matches) = matches.subcommand_matches("node-list"){
         nodelist_main(&matches);
-    }  else if let Some(ref matches) = matches.subcommand_matches("sliding-window"){
+    }  else if let Some(ref matches) = matches.subcommand_matches("window"){
         window_main(&matches);
     }
 
