@@ -131,13 +131,13 @@ fn node_bootstrap2() -> Result<(), Box<dyn std::error::Error>> {
 fn slidinw() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
     cmd
-        .arg("sliding-window")
+        .arg("window")
         .arg("--gfa")
         .arg("/home/svorbrugg/code/bvd/data/example_data/testGraph.gfa")
         .arg("--output")
         .arg("/home/svorbrugg/code/gfastats/data/test/test.stats.sw.txt")
-        .arg("-w")
-        .arg("10");
+        .arg("-s")
+        .arg("2");
 
     cmd.assert().success();
     Ok(())
