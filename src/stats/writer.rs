@@ -10,6 +10,25 @@ pub fn write_yaml(data: &Vec<String>, tab: &[&str], filename:  &str){
     }
 }
 
+/// Write function for graph stats in tsv
+pub fn write_tsv(data: &Vec<String>, tab: &[&str], filename: &str){
+    let f = File::create(filename).expect("Unable to create file");
+    let mut f = BufWriter::new(f);
+    for y in tab.iter(){
+        write!(f, "{}\t", y).expect("Not able to write");
+    }
+    write!(f, "\n").expect("Not able to write");
+
+    for y in data.iter(){
+        write!(f, "{}\t", y).expect("Not able to write");
+    }
+    write!(f, "\n").expect("Not able to write");
+
+}
+
+
+
+
 /// Write function for path stats in yaml
 pub fn write_yaml_path(data: &Vec<(String, Vec<String>)>, tab2: &[&str], filename:  &str){
     let f = File::create(filename).expect("Unable to create file");
