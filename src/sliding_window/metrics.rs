@@ -25,14 +25,15 @@ pub fn calculate_core12(graph: &Gfa) -> HashMap<u32, u32>{
 
 /// Compute the node len
 ///
-/// Return a vector
-pub fn node_len(graph: &Gfa) ->  HashMap<u32, u32>{
+pub fn node_len(graph: &Gfa) ->  HashMap<u32, u32> {
     let mapper = make_mapper(graph);
 
     let mut result = HashMap::new();
-    for (id, node) in graph.nodes.iter(){
+    for (id, node) in graph.nodes.iter() {
         let index = mapper.get(id).unwrap();
         result.insert(index.clone() as u32, node.len as u32);
     }
     return result
 }
+
+

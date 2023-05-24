@@ -42,7 +42,7 @@ fn ps() -> Result<(), Box<dyn std::error::Error>> {
         .arg("/home/svorbrugg/code/bvd/data/example_data/testGraph.gfa")
         .arg("--output")
         .arg("/home/svorbrugg/code/gfastats/data/test/test.ps.txt")
-        .arg("-s")
+        .arg("--pansn")
         .arg("_");
 
     cmd.assert().success();

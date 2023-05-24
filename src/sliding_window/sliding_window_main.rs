@@ -32,7 +32,6 @@ pub fn window_main(matches: &ArgMatches){
 
     // similarity
     let mut metric = metric::similarity;
-    let possibilities = vec!["similarity", "nodesize"];
     if matches.is_present("metric"){
         match matches.value_of("metric").unwrap(){
             "metric" => metric = metric::nodesizem,

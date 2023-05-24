@@ -12,7 +12,7 @@ use gfa_reader::{Gfa, GraphWrapper};
 use crate::bootstrap::bootstrap_main::bootstrap_main;
 use crate::core::core_main::core_main;
 use crate::id2int::id2int_main::id2int_main;
-use crate::node_list::node_list::nodelist_main;
+use crate::node_list::node_list_main::nodelist_main;
 use crate::path_similarity::ps_main::ps_main;
 use crate::sliding_window::sliding_window_main::window_main;
 use crate::stats::helper::get_filename;
@@ -44,7 +44,6 @@ fn main() {
                 .takes_value(true)
                 .required(true))
             .arg(Arg::new("Pan-SN")
-                .short('s')
                 .long("pansn")
                 .about("Seperate by first entry in Pan-SN spec")
                 .takes_value(true))
@@ -67,10 +66,10 @@ fn main() {
                 .takes_value(true)
                 .required(true))
             .arg(Arg::new("Pan-SN")
-                .short('s')
                 .long("pansn")
                 .about("Seperate by first entry in Pan-SN spec")
                 .takes_value(true))
+
             .arg(Arg::new("meta input")
                 .long("meta-input")
                 .about("Take a specific meta file as input")
