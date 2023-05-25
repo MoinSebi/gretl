@@ -10,7 +10,7 @@ pub fn ps_main(matches: &ArgMatches){
     let graph = read_graph(matches);
     let gw = make_wrapper(&graph, matches);
     let data = accession2level(&graph, &gw);
-    let output = &get_filename(matches.value_of("output").unwrap());
+    let output = matches.value_of("output").unwrap();
 
 
     write_ps(&data, output);

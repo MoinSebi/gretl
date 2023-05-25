@@ -10,7 +10,7 @@ use crate::stats::helper::get_filename;
 pub fn id2int_main(matches: &ArgMatches){
     let graph = read_graph(matches);
     let gw = make_wrapper(&graph, matches);
-    let output = &get_filename(matches.value_of("output").unwrap());
+    let output = matches.value_of("output").unwrap();
     eprintln!("ID2INT");
     eprintln!("Convert non digit node identifiers to numeric and compress ID space (not smart)");
 

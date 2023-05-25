@@ -13,6 +13,7 @@ use crate::stats::helper::{core2, get_filename};
 pub fn core_main(matches: &ArgMatches){
     eprintln!("Running core analysis");
     let graph = read_graph(matches);
+    println!("{}", graph.nodes.len());
     let gw = make_wrapper(&graph, matches);
     let filename = get_filename(matches.value_of("gfa").unwrap());
     let output = &get_filename(matches.value_of("gfa").unwrap());

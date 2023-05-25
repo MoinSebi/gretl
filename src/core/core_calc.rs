@@ -31,7 +31,7 @@ pub fn core_cal(graph: &GraphWrapper, graph2: &Gfa) -> (Vec<(usize, usize)>, Vec
 
 
     // Check if both values are the same (should be)
-    let total_sum:usize = private_only.iter().map(|n| n.2).sum();
+    let total_sum: usize = private_only.iter().map(|n| n.2).sum();
     if total_sum == similarity_level.get(1).unwrap().1 as usize{
         eprintln!("Statistic is fine")
     }

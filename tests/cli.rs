@@ -7,7 +7,7 @@ fn core() -> Result<(), Box<dyn std::error::Error>> {
     cmd
         .arg("core")
         .arg("--gfa")
-        .arg("/home/svorbrugg/code/bvd/data/example_data/testGraph.gfa")
+        .arg("./data/example_data/testGraph.gfa")
         .arg("--output")
         .arg("/home/svorbrugg/code/gfastats/data/test/test.core.txt")
         .arg("--pansn")
@@ -24,7 +24,7 @@ fn id2int() -> Result<(), Box<dyn std::error::Error>> {
     cmd
         .arg("id2int")
         .arg("--gfa")
-        .arg("/home/svorbrugg/code/bvd/data/example_data/testGraph.gfa")
+        .arg("./data/example_data/testGraph.gfa")
         .arg("--output")
         .arg("/home/svorbrugg/code/gfastats/data/test/test.id2int.txt");
 
@@ -39,7 +39,7 @@ fn ps() -> Result<(), Box<dyn std::error::Error>> {
     cmd
         .arg("ps")
         .arg("--gfa")
-        .arg("/home/svorbrugg/code/bvd/data/example_data/testGraph.gfa")
+        .arg("./data/example_data/testGraph.gfa")
         .arg("--output")
         .arg("/home/svorbrugg/code/gfastats/data/test/test.ps.txt")
         .arg("--pansn")
@@ -56,7 +56,7 @@ fn stats() -> Result<(), Box<dyn std::error::Error>> {
     cmd
         .arg("stats")
         .arg("--gfa")
-        .arg("/home/svorbrugg/code/bvd/data/example_data/testGraph.gfa")
+        .arg("./data/example_data/testGraph.gfa")
         .arg("--output")
         .arg("/home/svorbrugg/code/gfastats/data/test/test.stats.txt");
 
@@ -71,7 +71,7 @@ fn stats_path() -> Result<(), Box<dyn std::error::Error>> {
     cmd
         .arg("stats")
         .arg("--gfa")
-        .arg("/home/svorbrugg/code/bvd/data/example_data/testGraph.gfa")
+        .arg("./data/example_data/testGraph.gfa")
         .arg("--output")
         .arg("/home/svorbrugg/code/gfastats/data/test/test.stats.path.txt")
         .arg("--path")
@@ -87,7 +87,7 @@ fn node_list_path() -> Result<(), Box<dyn std::error::Error>> {
     cmd
         .arg("node-list")
         .arg("--gfa")
-        .arg("/home/svorbrugg/code/bvd/data/example_data/testGraph.gfa")
+        .arg("./data/example_data/testGraph.gfa")
         .arg("--output")
         .arg("/home/svorbrugg/code/gfastats/data/test/test.stats.nodelist.txt");
 
@@ -102,7 +102,7 @@ fn node_bootstrap() -> Result<(), Box<dyn std::error::Error>> {
     cmd
         .arg("bootstrap")
         .arg("--gfa")
-        .arg("/home/svorbrugg/code/bvd/data/example_data/testGraph.gfa")
+        .arg("./data/example_data/testGraph.gfa")
         .arg("--output")
         .arg("/home/svorbrugg/code/gfastats/data/test/test.stats.bootstrap.txt")
         .arg("--meta")
@@ -117,7 +117,7 @@ fn node_bootstrap3() -> Result<(), Box<dyn std::error::Error>> {
     cmd
         .arg("bootstrap")
         .arg("--gfa")
-        .arg("/home/svorbrugg/code/bvd/data/example_data/testGraph.gfa")
+        .arg("./data/example_data/testGraph.gfa")
         .arg("--output")
         .arg("/home/svorbrugg/code/gfastats/data/test/test.stats.bootstrap3.txt");
     cmd.assert().success();
@@ -131,7 +131,7 @@ fn node_bootstrap2() -> Result<(), Box<dyn std::error::Error>> {
     cmd
         .arg("bootstrap")
         .arg("--gfa")
-        .arg("/home/svorbrugg/code/bvd/data/example_data/testGraph.gfa")
+        .arg("./data/example_data/testGraph.gfa")
         .arg("--output")
         .arg("/home/svorbrugg/code/gfastats/data/test/test.stats.bootstrap2.txt")
         .arg("--level")
@@ -146,7 +146,7 @@ fn slidinw() -> Result<(), Box<dyn std::error::Error>> {
     cmd
         .arg("window")
         .arg("--gfa")
-        .arg("/home/svorbrugg/code/bvd/data/example_data/testGraph.gfa")
+        .arg("./data/example_data/testGraph.gfa")
         .arg("--output")
         .arg("/home/svorbrugg/code/gfastats/data/test/test.stats.sw.txt")
         .arg("-s")

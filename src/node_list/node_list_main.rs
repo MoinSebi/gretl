@@ -10,7 +10,7 @@ pub fn nodelist_main(matches: &ArgMatches) {
     // path related?
     let graph = read_graph(matches);
     let gw = make_wrapper(&graph, matches);
-    let output = &get_filename(matches.value_of("output").unwrap());
+    let output = matches.value_of("output").unwrap();
     let splits = vec!["Core", "Length", "Depth", "Core", "ND_in", "ND_out", "ND_total"];
     let mut splits2 = Vec::new();
     if matches.is_present("Features"){

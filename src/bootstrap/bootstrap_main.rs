@@ -17,7 +17,7 @@ pub fn bootstrap_main(matches: &ArgMatches){
     // Read the graph
     let graph = read_graph(matches);
     let gw = make_wrapper(&graph, matches);
-    let output = &get_filename(matches.value_of("output").unwrap());
+    let output = matches.value_of("output").unwrap();
 
     // Get the amount of iterations
     let mut amount = 10;
@@ -74,7 +74,7 @@ pub fn bootstrap_main(matches: &ArgMatches){
     }
 
     // Write the output
-    write_output(total, matches.value_of("output").unwrap());
+    write_output(total, output);
 
 
 

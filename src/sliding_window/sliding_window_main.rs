@@ -9,7 +9,7 @@ use crate::stats::helper::get_filename;
 pub fn window_main(matches: &ArgMatches){
     let graph = read_graph(matches);
     let gw = make_wrapper(&graph, matches);
-    let output = &get_filename(matches.value_of("output").unwrap());
+    let output = matches.value_of("output").unwrap();
 
     let mut size: u32 = 100000;
     if matches.is_present("size"){
@@ -41,7 +41,7 @@ pub fn window_main(matches: &ArgMatches){
     }
 
     let f = sliding_window_wrapper(&graph, size, step, metric , node);
-    write_window(f, matches.value_of("output").unwrap());
+    write_window(f, output);
 
 
 }
