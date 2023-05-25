@@ -16,7 +16,7 @@ pub fn core_main(matches: &ArgMatches){
     println!("{}", graph.nodes.len());
     let gw = make_wrapper(&graph, matches);
     let filename = get_filename(matches.value_of("gfa").unwrap());
-    let output = &get_filename(matches.value_of("gfa").unwrap());
+    let output = matches.value_of("output").unwrap();
 
     let (similarity_level, private_only) = core_cal(&gw, &graph);
     // Write output in table
