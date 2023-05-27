@@ -2,20 +2,31 @@ use gfa_reader::Gfa;
 use std::collections::{HashMap};
 use crate::stats::helper::{mean, median};
 
+/// Wrapper for graph statistics
 pub fn graph_stats_wrapper(graph: &Gfa) -> Vec<String>{
-    let mut result = Vec::new();
-    result.push(graph_path_number(graph).to_string());
-    result.push(graph_node_number(graph).to_string());
-    result.push(graph_edge_number(graph).to_string());
 
+    // Result vector
+    let mut result = Vec::new();
+
+    // Basic stats
+    let path_number = graph_path_number(graph);
+    let node_number = graph_node_number(graph);
+    let edge_number = graph_edge_number(graph);
+    result.push(path_number.to_string());
+    result.push(node_number.to_string());
+    result.push(edge_number.to_string());
+
+    // Node stats (sizes)
     let (graph_node_average, graph_node_median, graph_node_sum) = graph_node_stats(graph);
     result.push(graph_node_average.to_string());
     result.push(graph_node_median.to_string());
     result.push(graph_node_sum.to_string());
 
+    // Total length of paths
     result.push(graph_path_seq_total(graph).to_string());
 
 
+    // Node degree
     let (graph_degree_in_average, graph_degree_out_average, graph_degree_total_average) = node_degree(&graph);
     result.push(graph_degree_in_average.to_string());
     result.push(graph_degree_out_average.to_string());
@@ -25,6 +36,7 @@ pub fn graph_stats_wrapper(graph: &Gfa) -> Vec<String>{
 
     result
 }
+
 
 /// Number of paths
 fn graph_path_number(graph: &Gfa) -> usize{ return graph.paths.len()}
@@ -92,6 +104,17 @@ pub fn node_degree(graph: &Gfa) -> (f64, f64, f64){
     (graph_degree_in_average, graph_degree_out_average, graph_degree_total_average)
 }
 
+/// Calculate graph density
+pub fn graph_desity(graph: &Gfa) -> f64{
+    let n = graph.nodes.len();
+    let e = graph.edges.len();
+    let density = e as f64 / (n* (n-1)) as f64;
+    density
+}
+
+
+
+
 
 #[allow(dead_code)]
 /// Calculate number of inverted edges
@@ -100,3 +123,4 @@ pub fn inverted_edges(graph: &Gfa) -> usize{
     let inverted: usize = graph.edges.iter().filter(|n| n.to_dir != n.from_dir).count();
     inverted
 }
+

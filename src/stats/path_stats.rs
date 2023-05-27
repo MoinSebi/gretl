@@ -3,41 +3,62 @@ use gfa_reader::{Node, Path, Gfa};
 use crate::stats::helper::{calculate_core, calculate_depth, core1, mean, meanf, median, node_degree2};
 
 
+/// Wrapper for path statistics
 pub fn path_stats_wrapper(graph: &Gfa) -> Vec<(String, Vec<String>)>{
+
+    // Total results
     let mut res = Vec::new();
+
+    // Calculate similarity
     let _core = core1(&graph);
+
+    // Calculate node degree
     let test = node_degree2(&graph);
+
+    // Calculate depth
     let depth = calculate_depth(&graph);
-     for p in graph.paths.iter(){
-         let mut result = Vec::new();
 
-         result.push(path_seq_len(p, &graph.nodes).to_string());
-         result.push(path_node_len(&p.nodes).to_string());
-         result.push(path_unique(p).to_string());
+    // Iterate over all paths and calculate statistics
+     for path in graph.paths.iter(){
+         // Temporary results for each path
+         let mut result_temp = Vec::new();
 
-         result.push(path_node_inverted(p).to_string());
-         result.push(path_seq_inverted(p, &graph.nodes).to_string());
+         // Amount of sequence and number of nodes in the path + number of unique nodes
+         result_temp.push(path_seq_len(path, &graph.nodes).to_string());
+         result_temp.push(path_node_len(&path.nodes).to_string());
+         result_temp.push(path_unique(path).to_string());
 
+         // Number of inverted nodes + their sequence
+         result_temp.push(path_node_inverted(path).to_string());
+         result_temp.push(path_seq_inverted(path, &graph.nodes).to_string());
 
-         let (v,m) = path_jumps(p);
-         result.push(v.to_string());
-         result.push(m.to_string());
-
-
-
-         result.push(path_jumps_2(p, None).to_string());
-
-         result.push(mean_depth(p, &depth).to_string());
-         result.push(median_depth(p, &depth).to_string());
-         result.push(mean_sim(p, &_core).to_string());
-         result.push(median_sim(p, &_core).to_string());
-
-         result.push(degree(p, &test.2).to_string());
-         result.push("test".to_string());
+         // Number of jumps - normalized + bigger than x
+         let (jumps_total, jumps_normalized) = path_jumps(path);
+         result_temp.push(jumps_total.to_string());
+         result_temp.push(jumps_normalized.to_string());
 
 
+         let jumps_bigger_than_x = path_jumps_bigger(path, None);
+         result_temp.push(jumps_bigger_than_x.to_string());
 
-         res.push((p.name.to_string(), result))
+         let mean_depth = mean_depth(path, &depth);
+         let median_depth = median_depth(path, &depth);
+         let mean_similarity = mean_sim(path, &_core);
+         let median_similarity = median_sim(path, &_core);
+
+         // Add to temporary result
+         result_temp.push(mean_depth.to_string());
+         result_temp.push(median_depth.to_string());
+         result_temp.push(mean_similarity.to_string());
+         result_temp.push(median_similarity.to_string());
+
+
+         result_temp.push(degree(path, &test.2).to_string());
+         result_temp.push("test".to_string());
+
+
+
+         res.push((path.name.to_string(), result_temp))
 
 
      }
@@ -80,6 +101,9 @@ pub fn path_seq_inverted(path: &Path, nodes: &HashMap<String, Node>) -> usize{
 /// Return:
 /// - total number of jumps
 /// - total number of jumps divided by the number of nodes
+///
+/// TODO
+/// - running average (no overflow)
 pub fn path_jumps(path: &Path) -> (usize, f64){
     let mut c: i64 = 0;
     let mut last = 0;
@@ -93,8 +117,8 @@ pub fn path_jumps(path: &Path) -> (usize, f64){
     return (c as usize, c as f64/path.nodes.len() as f64)
 }
 
-/// Calculate the count of how many jumps are bigger than X
-pub fn path_jumps_2(path: &Path, val: Option<i32> ) -> u32{
+/// Count the number of jumps bigger than X
+pub fn path_jumps_bigger(path: &Path, val: Option<i32> ) -> u32{
     let distance = val.unwrap_or(20);
     let mut c: u32 = 0;
     let last = 0;
@@ -162,6 +186,8 @@ pub fn median_sim(path: &Path, count: &HashMap<u32, u32> ) -> u32{
 }
 
 
+
+/// Mean degree of the graph
 pub fn degree(path: &Path, count: &HashMap<&String, u32>) -> f64{
     let mut res = vec![];
     for node in path.nodes.iter(){
@@ -169,3 +195,5 @@ pub fn degree(path: &Path, count: &HashMap<&String, u32>) -> f64{
     }
     mean(&res)
 }
+
+

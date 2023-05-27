@@ -68,10 +68,11 @@ pub fn one_iteration(gw: &GraphWrapper, graph: &Gfa, combination: &[usize], metr
 
     // Function to get the amount unique values in u32, u32 HashMap (metric_hm)
     let f = metric_hm.values().collect::<HashSet<_>>().len();
+    let maxf = *metric_hm.values().collect::<HashSet<_>>().iter().max().unwrap().clone();
 
     // Saving results as number of nodes and amount of sequence
-    let mut result: Vec<usize> = vec![0; f];             // NODES
-    let mut result2 = vec![0; f];             // Sequence
+    let mut result: Vec<usize> = vec![0; maxf as usize +1];             // NODES
+    let mut result2 = vec![0; maxf as usize +1];             // Sequence
 
     // Iterate over all nodes and add the amount of nodes and sequence to the result vector
     graph.nodes.iter().for_each(|n|

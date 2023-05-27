@@ -28,7 +28,7 @@ fn main() {
         .about("GFa stats")
         .setting(AppSettings::SubcommandRequiredElseHelp)
 
-        // Subcommand for normal stats
+        // Subcommand for normal stats for one graph
         .subcommand(App::new("stats")
             .about("Create statists about the graph or its path")
             .arg(Arg::new("gfa")

@@ -56,8 +56,6 @@ pub fn sliding_window(input: Vec<u32>, binsize_input: u32, step: u32) -> Vec<f64
     let maxsize= input.len();
     let mut result = Vec::new();
     while start < maxsize{
-        println!("{}", start);
-        println!("{}", start+binsize);
         if start+binsize > maxsize{
             let f: u32= input[start..maxsize].iter().sum();
             let f: f64 = calculate_average(&input[start..maxsize]).unwrap();
@@ -86,7 +84,6 @@ fn calculate_average<T>(v: &[T]) -> Option<f64>
         mean += ((value.into() - mean)/ f64::from(count + 1.0));
         count += 1.0;
     }
-    println!("{:?}", v);
 
     Some(mean)
 }

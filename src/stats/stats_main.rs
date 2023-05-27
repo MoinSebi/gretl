@@ -3,9 +3,11 @@ use gfa_reader::Gfa;
 use crate::helpers::graphs::{make_wrapper, read_graph};
 use crate::stats::graph_stats::graph_stats_wrapper;
 use crate::stats::helper::get_filename;
-use crate::stats::path::path_stats_wrapper;
-use crate::stats::writer::{write_tsv, write_tsv_path, write_yaml, write_yaml_path};
+use crate::stats::path_stats::path_stats_wrapper;
+use crate::stats::stats_writer::{write_tsv, write_tsv_path, write_yaml, write_yaml_path};
 
+
+/// Main function for stats subcommand
 pub fn stats_main(matches: &ArgMatches){
     let graph = read_graph(matches);
     let gw = make_wrapper(&graph, matches);
