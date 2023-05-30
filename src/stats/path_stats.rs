@@ -108,26 +108,30 @@ pub fn path_seq_inverted(path: &Path, nodes: &HashMap<String, Node>) -> usize{
 pub fn path_jumps(path: &Path) -> (usize, f64){
     let mut c: i64 = 0;
     let mut last = 0;
-    for x in path.nodes.iter(){
-        let u: u32 = x.parse().unwrap();
-        c += (u as i64- last as i64).abs();
-        last = u
+    let all_digits = path.nodes.iter().all(|s| s.chars().all(|c| c.is_digit(10)));
+    if all_digits {
+        for x in path.nodes.iter(){
+            let u: u32 = x.parse().unwrap();
+            c += (u as i64- last as i64).abs();
+            last = u
+        }
     }
-
-
     return (c as usize, c as f64/path.nodes.len() as f64)
 }
 
 /// Count the number of jumps bigger than X
 pub fn path_jumps_bigger(path: &Path, val: Option<i32> ) -> u32{
     let distance = val.unwrap_or(20);
+    let all_digits = path.nodes.iter().all(|s| s.chars().all(|c| c.is_digit(10)));
     let mut c: u32 = 0;
-    let last = 0;
-    for x in path.nodes.iter(){
-        let u: u32 = x.parse().unwrap();
-        let ff: i32 = u as i32 - last as i32;
-        if ff.abs() > distance{
-            c += 1
+    if all_digits {
+        let last = 0;
+        for x in path.nodes.iter() {
+            let u: u32 = x.parse().unwrap();
+            let ff: i32 = u as i32 - last as i32;
+            if ff.abs() > distance {
+                c += 1
+            }
         }
     }
     return c
