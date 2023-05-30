@@ -58,7 +58,7 @@ pub fn graph_path_seq_total(graph: &Gfa) ->  usize{
 /// Compute mean+median node size and total graph size
 ///
 /// Sum all nodes in the graph and divide it by the number of nodes
-pub fn graph_node_stats(graph: &Gfa) -> (f64, u32, u32){
+pub fn graph_node_stats(graph: &Gfa) -> (f64, f64, u32){
     let mut vec_size: Vec<u32> = graph.nodes.iter().map(|n| n.1.len as u32).collect();
 
     vec_size.sort();

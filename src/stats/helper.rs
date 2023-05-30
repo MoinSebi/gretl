@@ -23,16 +23,16 @@ pub fn calculate_core(graph: &Gfa) -> HashMap<u32, (u32, u32)>{
     count
 }
 
-pub fn core1(graph: &Gfa) -> HashMap<u32, u32>{
-    let mut count: HashMap<u32, u32> = HashMap::new();
+pub fn core1(graph: &Gfa) -> HashMap<&String, u32>{
+    let mut count: HashMap<&String, u32> = HashMap::new();
     for x in &graph.nodes{
-        count.insert(x.0.parse().unwrap(), 0);
+        count.insert(x.0, 0);
     }
 
     for p in graph.paths.iter(){
         let v: HashSet<_> = p.nodes.iter().cloned().collect();
         for y in v.iter(){
-            *count.get_mut(&y.parse().unwrap()).unwrap() += 1;
+            *count.get_mut(y).unwrap() += 1;
         }
     }
     count
@@ -60,17 +60,17 @@ pub fn core2(graph: &GraphWrapper, graph2: &Gfa) -> HashMap<u32, u32>{
 }
 
 /// Counting the amount of accessions and depth
-pub fn calculate_depth(graph: &Gfa) -> HashMap<u32, u32>{
-    let mut depth: HashMap<u32, u32> = HashMap::new();
+pub fn calculate_depth(graph: &Gfa) -> HashMap<&String, u32>{
+    let mut depth: HashMap<&String, u32> = HashMap::new();
     for x in &graph.nodes{
-        depth.insert(x.0.parse().unwrap(), 0);
+        depth.insert(x.0, 0);
     }
 
     for path in &graph.paths{
 
 
         for y in path.nodes.iter(){
-            *depth.get_mut(&y.parse().unwrap()).unwrap() += 1;
+            *depth.get_mut(y).unwrap() += 1;
         }
     }
     depth.shrink_to_fit();
@@ -94,9 +94,9 @@ pub fn meanf(data: & [f32]) -> f64{
 }
 
 /// Calculate median of the vector
-pub fn median(data: &mut Vec<u32>) -> u32{
+pub fn median(data: &mut Vec<u32>) -> f64{
     data.sort();
-    return data[data.len()/2]
+    return data[data.len()/2] as f64
 }
 
 /// Get the file name

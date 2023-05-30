@@ -1,6 +1,7 @@
 use std::collections::{HashMap, HashSet};
 use gfa_reader::{Node, Path, Gfa};
 use crate::stats::helper::{calculate_core, calculate_depth, core1, mean, meanf, median, node_degree2};
+use crate::stats::path_stats::arimetric::MEDIAN;
 
 
 /// Wrapper for path statistics
@@ -10,7 +11,7 @@ pub fn path_stats_wrapper(graph: &Gfa) -> Vec<(String, Vec<String>)>{
     let mut res = Vec::new();
 
     // Calculate similarity
-    let _core = core1(&graph);
+    let core = core1(&graph);
 
     // Calculate node degree
     let test = node_degree2(&graph);
@@ -41,10 +42,10 @@ pub fn path_stats_wrapper(graph: &Gfa) -> Vec<(String, Vec<String>)>{
          let jumps_bigger_than_x = path_jumps_bigger(path, None);
          result_temp.push(jumps_bigger_than_x.to_string());
 
-         let mean_depth = mean_depth(path, &depth);
-         let median_depth = median_depth(path, &depth);
-         let mean_similarity = mean_sim(path, &_core);
-         let median_similarity = median_sim(path, &_core);
+         let mean_depth = mean_path_hm(path, &depth, arimetric::MEAN);
+         let median_depth = mean_path_hm(path, &depth, arimetric::MEDIAN);
+         let mean_similarity = mean_path_hm(path, &core, arimetric::MEAN);
+         let median_similarity = mean_path_hm(path, &core, arimetric::MEDIAN);
 
          // Add to temporary result
          result_temp.push(mean_depth.to_string());
@@ -53,7 +54,7 @@ pub fn path_stats_wrapper(graph: &Gfa) -> Vec<(String, Vec<String>)>{
          result_temp.push(median_similarity.to_string());
 
 
-         result_temp.push(degree(path, &test.2).to_string());
+         result_temp.push(mean_path_hm(path, &test.2, arimetric::MEAN).to_string());
          result_temp.push("test".to_string());
 
 
@@ -132,7 +133,7 @@ pub fn path_jumps_bigger(path: &Path, val: Option<i32> ) -> u32{
     return c
 }
 
-
+/// Number of unique nodes in a path
 pub fn path_unique(path: &Path) -> usize{
     let hp: HashSet<String> = path.nodes.iter().cloned().collect();
     return hp.len()
@@ -151,49 +152,20 @@ pub fn path_cycle(path: &Path){
     }
 }
 
+pub enum arimetric{
+    MEAN,
+    MEDIAN,
+}
 
-pub fn mean_depth(path: &Path, count: &HashMap<u32, u32> ) -> f64{
+pub fn mean_path_hm(path: &Path, count: &HashMap<&String, u32>, ari: arimetric) -> f64{
     let mut data = Vec::new();
     for x in path.nodes.iter(){
-        data.push(count.get(&x.parse::<u32>().unwrap()).unwrap().clone())
+        data.push(count.get(&x).unwrap().clone())
     }
-    mean(&data)
-}
-
-pub fn median_depth(path: &Path, count: &HashMap<u32, u32> ) -> u32{
-    let mut data = Vec::new();
-    for x in path.nodes.iter(){
-        data.push(count.get(&x.parse::<u32>().unwrap()).unwrap().clone())
+    let mut result: f64 = 0.0;
+    match ari {
+        arimetric::MEAN =>  result = mean(&data),
+        _ => result = median(&mut data),
     }
-    median(&mut data)
+    result
 }
-
-
-pub fn mean_sim(path: &Path, count: &HashMap<u32, u32> ) -> f64{
-    let mut data = Vec::new();
-    for x in path.nodes.iter(){
-        data.push(count.get(&x.parse::<u32>().unwrap()).unwrap().clone())
-    }
-    mean(&data)
-}
-
-pub fn median_sim(path: &Path, count: &HashMap<u32, u32> ) -> u32{
-    let mut data = Vec::new();
-    for x in path.nodes.iter(){
-        data.push(count.get(&x.parse::<u32>().unwrap()).unwrap().clone())
-    }
-    median(&mut data)
-}
-
-
-
-/// Mean degree of the graph
-pub fn degree(path: &Path, count: &HashMap<&String, u32>) -> f64{
-    let mut res = vec![];
-    for node in path.nodes.iter(){
-        res.push(count.get(node).unwrap().clone())
-    }
-    mean(&res)
-}
-
-
