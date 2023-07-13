@@ -1,11 +1,11 @@
 use std::collections::HashMap;
 use gfa_reader::{Gfa, GraphWrapper};
-use crate::stats::helper::{core1};
+use crate::stats::helper::{calculate_core};
 
 
 /// Compute the amount of sequence in each similarity level
 pub fn accession2level(graph: &Gfa, graph_wrapper: &GraphWrapper) -> Vec<(String, Vec<(u32, u32)>)>{
-    let cores = core1(graph);
+    let cores = calculate_core(graph);
     let metric_maxval = cores.values().max().unwrap();
 
 
