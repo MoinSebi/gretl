@@ -1,24 +1,19 @@
-use crate::id2int::convert_graph::*;
 use clap::ArgMatches;
-use gfa_reader::{Gfa, NGfa};
-use crate::helpers::graphs::{make_wrapper, read_graph};
-use crate::id2int::writer::writer_graph;
-use crate::stats::helper::get_filename;
+use gfa_reader::{Gfa, GraphWrapper, NCGfa, NCPath};
 
 
-/// Main function for node id to integer function
+/// Main function for converting string ID to integer ID
+///
+/// This returns numeric, compact graph (starting node = 1)
 pub fn id2int_main(matches: &ArgMatches){
-    let graph = read_graph(matches);
-    let gw = make_wrapper(&graph, matches);
+    let mut graph: NCGfa<()> = NCGfa::new();
+    graph.parse_gfa_file_and_convert(matches.value_of("gfa").unwrap(), true);
+    let mut wrapper: GraphWrapper<NCPath> = GraphWrapper::new();
+    wrapper.from_gfa(&graph.paths, " ");
     let output = matches.value_of("output").unwrap();
     eprintln!("ID2INT");
     eprintln!("Convert non digit node identifiers to numeric and compress ID space (not smart)");
 
-    let (id2int, new_nodes) = id2int_nnodes(&graph);
-    let new_edges = nedges(&graph, &id2int);
-    let (new_paths, path2id) = path_new(&graph, &id2int);
-    let new_graph = NGfa{nodes: new_nodes, paths: new_paths, edges: new_edges, path2id: path2id};
-
-    writer_graph(new_graph, output);
+    graph.to_file(output);
 }
 

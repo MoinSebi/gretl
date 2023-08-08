@@ -1,6 +1,5 @@
 use clap::ArgMatches;
-use gfa_reader::{Gfa, NCGraphWrapper};
-use crate::helpers::graphs::{make_wrapper, read_graph};
+use gfa_reader::{Gfa, GraphWrapper, NCEdge, NCGfa, NCPath};
 use crate::stats::graph_stats::graph_stats_wrapper;
 use crate::stats::helper::get_filename;
 use crate::stats::path_stats::path_stats_wrapper;
@@ -9,13 +8,14 @@ use crate::stats::stats_writer::{write_tsv, write_tsv_path, write_yaml, write_ya
 
 /// Main function for stats subcommand
 pub fn stats_main(matches: &ArgMatches){
-    let graph = read_graph(matches);
-    let mut nc_wrapper = NCGraphWrapper::new();
-    nc_wrapper.from_ngfa(&graph, "");
+    let mut graph: NCGfa<()> = NCGfa::new();
+    graph.parse_gfa_file_and_convert(matches.value_of("gfa").unwrap(), true);
+    let mut wrapper: GraphWrapper<NCPath> = GraphWrapper::new();
+    wrapper.from_gfa(&graph.paths, " ");
     let output = matches.value_of("output").unwrap();
 
     if matches.is_present("path"){
-        let data = path_stats_wrapper(&graph, &nc_wrapper);
+        let data = path_stats_wrapper(&graph, &wrapper);
         let tab = [
             "Node_length_(seq)",
             "Nodes_length_(node)",

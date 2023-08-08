@@ -1,38 +1,5 @@
 use std::collections::{HashMap, HashSet};
-use gfa_reader::{Gfa, GraphWrapper, NCGfa, NCGraphWrapper};
-
-
-pub fn calculate_core(graph: &NCGraphWrapper) -> Vec<u32>{
-    let mut count: Vec<u32> = vec![0; graph.nodes.len()];
-
-    for (name, p) in graph.genomes.iter(){
-        let mut v2: HashSet<_> = p[0].nodes.iter().cloned().collect();
-        for x in p.iter(){
-            let v: HashSet<_> = x.nodes.iter().cloned().collect();
-            v2 = v2.union(&v).cloned().collect();
-        }
-        for x in v2.iter(){
-            for y in v.iter(){
-                *count[*x as usize] += 1;
-            }
-        }
-    }
-    count
-}
-
-/// Counting the amount of accessions and depth
-pub fn calculate_depth(graph: &NCGraphWrapper) -> Vec<u32>{
-    let mut count: Vec<u32> = vec![0; graph.nodes.len()];
-    for (name, p) in graph.genomes.iter() {
-        for path in p.iter() {
-            for x in path.nodes.iter() {
-                *count[*x as usize] += 1;
-            }
-        }
-    }
-    depth.shrink_to_fit();
-    depth
-}
+use gfa_reader::{Gfa, GraphWrapper, NCEdge, NCGfa, NCPath};
 
 
 /// Calculate average of the vector
@@ -68,21 +35,3 @@ pub fn get_filename(name: &str) -> String{
 }
 
 
-/// Calculate node degree (in, out, total)
-pub fn node_degree(graph: &NCGraphWrapper, graph2: &NCGfa) -> (Vec<u32>, Vec<u32>, Vec<u32>){
-    let mut degree_in: Vec<u32> = vec![0; graph.nodes.len()];
-    let mut degree_out: Vec<u32> = vec![0; graph.nodes.len()];
-    let mut degree_total: Vec<u32> = vec![0; graph.nodes.len()];
-    for x in graph2.edges.iter(){
-        let fromu: u32 = x.from.parse().unwrap();
-        let tou: u32 = x.to.parse().unwrap();
-
-        degree_out[fromu as usize] += 1;
-        degree_in[tou as usize] += 1;
-        degree_total[fromu as usize] += 1;
-        degree_total[tou as usize] += 1;
-
-    }
-    return (degree_in, degree_out, degree_total)
-
-}

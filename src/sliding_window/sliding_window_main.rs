@@ -1,5 +1,5 @@
 use clap::ArgMatches;
-use crate::helpers::graphs::{make_wrapper, read_graph};
+use gfa_reader::{GraphWrapper, NCEdge, NCGfa, NCPath};
 use crate::sliding_window::sliding_window_main::metric::nodesizem;
 use crate::sliding_window::window::sliding_window_wrapper;
 use crate::sliding_window::writer::write_window;
@@ -7,8 +7,10 @@ use crate::stats::helper::get_filename;
 
 /// Main function for node id to integer function
 pub fn window_main(matches: &ArgMatches){
-    let graph = read_graph(matches);
-    let gw = make_wrapper(&graph, matches);
+    let mut graph: NCGfa<()> = NCGfa::new();
+    graph.parse_gfa_file_and_convert(matches.value_of("gfa").unwrap(), true);
+    let mut wrapper: GraphWrapper<NCPath> = GraphWrapper::new();
+    wrapper.from_gfa(&graph.paths, " ");
     let output = matches.value_of("output").unwrap();
 
     let mut size: u32 = 100000;
@@ -40,7 +42,7 @@ pub fn window_main(matches: &ArgMatches){
         }
     }
 
-    let f = sliding_window_wrapper(&graph, size, step, metric , node);
+    let f = sliding_window_wrapper(&graph, &wrapper,size, step, metric , node);
     write_window(f, output);
 
 

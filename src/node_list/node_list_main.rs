@@ -1,6 +1,5 @@
 use clap::ArgMatches;
-use gfa_reader::Gfa;
-use crate::helpers::graphs::{make_wrapper, read_graph};
+use gfa_reader::{Gfa, GraphWrapper, NCGfa, NCPath};
 use crate::node_list::wrapper::wrapper_node;
 use crate::stats::helper::get_filename;
 
@@ -10,8 +9,11 @@ pub fn nodelist_main(matches: &ArgMatches) {
     eprintln!("Running node-list analysis.");
     // Size, depth, similarity, degree in, degree out, degree_total, inversion amount,
     // path related?
-    let graph = read_graph(matches);
-    let gw = make_wrapper(&graph, matches);
+    let mut graph: NCGfa<()> = NCGfa::new();
+    graph.parse_gfa_file_and_convert(matches.value_of("gfa").unwrap(), true);
+    let mut wrapper: GraphWrapper<NCPath> = GraphWrapper::new();
+    wrapper.from_gfa(&graph.paths, " ");
+
     let output = matches.value_of("output").unwrap();
     let splits = vec!["Core", "Length", "Depth", "Core", "ND"];
     let mut splits2 = Vec::new();
@@ -29,7 +31,7 @@ pub fn nodelist_main(matches: &ArgMatches) {
         final1 = splits.clone();
     }
     // This wrapper also writes data to a file
-    wrapper_node(&graph, output, final1);
+    wrapper_node(&graph, &wrapper, output, final1);
 
 
 }

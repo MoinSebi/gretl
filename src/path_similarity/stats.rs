@@ -1,12 +1,12 @@
 use std::collections::HashMap;
-use gfa_reader::{Gfa, GraphWrapper};
-use crate::stats::helper::{calculate_core};
+use gfa_reader::{Gfa, GraphWrapper, NCGfa, NCPath};
+use crate::helpers::helper::calculate_core;
 
 
 /// Compute the amount of sequence in each similarity level
-pub fn accession2level(graph: &Gfa, graph_wrapper: &GraphWrapper) -> Vec<(String, Vec<(u32, u32)>)>{
-    let cores = calculate_core(graph);
-    let metric_maxval = cores.values().max().unwrap();
+pub fn accession2level(graph: &NCGfa<()>, graph_wrapper: &GraphWrapper<NCPath>) -> Vec<(String, Vec<(u32, u32)>)>{
+    let cores = calculate_core(graph_wrapper, graph);
+    let metric_maxval = cores.iter().max().unwrap();
 
 
     let mut result = Vec::new();
@@ -18,9 +18,9 @@ pub fn accession2level(graph: &Gfa, graph_wrapper: &GraphWrapper) -> Vec<(String
         let mut result_temp = hashmap_zero(*metric_maxval as usize);
         for path in string2path.1.iter() {
             for node in path.nodes.iter() {
-                let metric_value = cores[&node] as usize;
+                let metric_value = cores[*node as usize-1] as usize;
                 result_temp.get_mut(&metric_value).unwrap().0 += 1;
-                result_temp.get_mut(&metric_value).unwrap().1 += graph.nodes.get(node).unwrap().len as u32;
+                result_temp.get_mut(&metric_value).unwrap().1 += graph.nodes[*node as usize -1].seq.len() as u32;
             }
         }
         // Convert hashmap to vec + add to result

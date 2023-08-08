@@ -1,23 +1,24 @@
 use std::collections::{HashMap, HashSet};
-use gfa_reader::{Node, Path, Gfa, NCGfa, NCGraphWrapper, NPath, NNode};
-use crate::stats::helper::{calculate_depth, calculate_core, mean, meanf, median, node_degree};
+use gfa_reader::{Node, Path, Gfa, NCPath, NCNode, GraphWrapper, NCGfa};
+use crate::helpers::helper::{calculate_core, calculate_depth, node_degree};
+use crate::stats::helper::{mean, meanf, median};
 use crate::stats::path_stats::Arithmetic::MEDIAN;
 
 
 /// Wrapper for path statistics
-pub fn path_stats_wrapper(graph: &NCGfa, gw: &NCGraphWrapper) -> Vec<(String, Vec<String>)>{
+pub fn path_stats_wrapper(graph: &NCGfa<()>, gw: &GraphWrapper<NCPath>) -> Vec<(String, Vec<String>)>{
 
     // Total results
     let mut res = Vec::new();
 
     // Calculate similarity
-    let core = calculate_core(&gw);
+    let core = calculate_core(&gw, graph);
 
     // Calculate node degree
-    let test = node_degree(&gw, &graph);
+    let test = node_degree(&graph);
 
     // Calculate depth
-    let depth = calculate_depth(&gw);
+    let depth = calculate_depth(&gw, graph);
 
     // Iterate over all paths and calculate statistics
      for path in graph.paths.iter(){
@@ -75,24 +76,24 @@ pub fn path_node_len(path: &Vec<u32>) -> usize{
 
 
 /// Calculate the length of path
-pub fn path_seq_len(path: &NPath, nodes: &Vec<NNode>) -> usize{
+pub fn path_seq_len(path: &NCPath, nodes: &Vec<NCNode<()>>) -> usize{
     let mut size = 0;
     for x in path.nodes.iter(){
-        size += nodes.get(x).unwrap().len;
+        size += nodes[*x as usize -1].seq.len();
     }
     return size
 }
 
 #[allow(dead_code)]
 /// Count the number of inverted nodes for each path
-pub fn path_node_inverted(path: &NPath) -> usize{
+pub fn path_node_inverted(path: &NCPath) -> usize{
     path.dir.iter().filter(|&n | *n == false).count()
 }
 
 #[allow(dead_code)]
 /// Count the number of inverted nodes for each path
-pub fn path_seq_inverted(path: &NPath, nodes: &Vec<NNode>) -> usize{
-    let sums: usize = path.dir.iter().zip(&path.nodes).filter(|&n | *n.0 == false).map(|s| nodes.get(*s.1 as usize).unwrap()).sum();
+pub fn path_seq_inverted(path: &NCPath, nodes: &Vec<NCNode<()>>) -> usize{
+    let sums: usize = path.dir.iter().zip(&path.nodes).filter(|&n | *n.0 == false).map(|s| nodes.get(*s.1 as usize).unwrap().seq.len()).sum();
     return sums
 }
 
@@ -105,22 +106,20 @@ pub fn path_seq_inverted(path: &NPath, nodes: &Vec<NNode>) -> usize{
 ///
 /// TODO
 /// - running average (no overflow)
-pub fn path_jumps(path: &NPath) -> (usize, f64){
+pub fn path_jumps(path: &NCPath) -> (usize, f64){
     let mut c: i64 = 0;
     let mut last = 0;
-    let all_digits = path.nodes.iter().all(|s| s.chars().all(|c| c.is_digit(10)));
-    if all_digits {
-        for x in path.nodes.iter(){
-            let u: u32 = x.parse().unwrap();
-            c += (u as i64- last as i64).abs();
-            last = u
-        }
+    for x in path.nodes.iter(){
+        let u: u32 = *x;
+        c += (u as i64- last as i64).abs();
+        last = u
+
     }
     return (c as usize, c as f64/path.nodes.len() as f64)
 }
 
 /// Count the number of jumps bigger than X
-pub fn path_jumps_bigger(path: &NPath, val: Option<i32> ) -> u32{
+pub fn path_jumps_bigger(path: &NCPath, val: Option<i32> ) -> u32{
     let distance = val.unwrap_or(20);
     let mut c: u32 = 0;
         let mut last = 0;
@@ -136,14 +135,14 @@ pub fn path_jumps_bigger(path: &NPath, val: Option<i32> ) -> u32{
 }
 
 /// Number of unique nodes in a path
-pub fn path_unique(path: &NPath) -> usize{
+pub fn path_unique(path: &NCPath) -> usize{
     let hp: HashSet<u32> = path.nodes.iter().cloned().collect();
     return hp.len()
 }
 
 #[allow(dead_code)]
 /// Calculate the number of repeated nodes
-pub fn path_cycle(path: &NPath) -> usize{
+pub fn path_cycle(path: &NCPath) -> usize{
     let mut _c = 0;
     let mut hs: HashSet<&u32> = HashSet::new();
     for x in path.nodes.iter(){
@@ -152,7 +151,7 @@ pub fn path_cycle(path: &NPath) -> usize{
         }
         hs.insert(x);
     }
-    c
+    _c
 }
 
 pub enum Arithmetic {
@@ -160,10 +159,11 @@ pub enum Arithmetic {
     MEDIAN,
 }
 
-pub fn mean_path_hm(path: &NPath, count: &Vec<u32>, ari: Arithmetic) -> f64{
+pub fn mean_path_hm(path: &NCPath, count: &Vec<u32>, ari: Arithmetic) -> f64{
     let mut data = Vec::new();
     for x in path.nodes.iter(){
-        data.push(*count[x])  }
+        data.push(count[*x as usize - 1])
+    }
     let mut result: f64 = 0.0;
     match ari {
         Arithmetic::MEAN =>  result = mean(&data),

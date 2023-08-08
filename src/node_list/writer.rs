@@ -11,17 +11,18 @@ pub fn make_buffer(filename: &str) -> BufWriter<File>{
 }
 
 
-pub fn write_header(data: &Vec<&String>, f: &mut BufWriter<File>){
+pub fn write_header(data: &Vec<String>, f: &mut BufWriter<File>){
     let f1: Vec<String> = data.iter().map(|a| a.to_string()).collect();
     write!(f, "{}\t{}\n", "Nodes", f1.join("\t")).expect("hilfe");
 }
 
-pub fn write_list(data: (&str, HashMap<&String, u32>), order: &Vec<&String>, f: &mut BufWriter<File>){
+
+/// Write
+pub fn write_list(data: (&str, &Vec<u32>), f: &mut BufWriter<File>){
     write!(f, "{}\t", data.0).expect("hilfe");
 
-    for x in order.iter(){
-        let val = data.1.get(x).unwrap();
-        write!(f, "{}\t", data.1.get(x).unwrap()).expect("hilfe");
+    for x in data.1.iter(){
+        write!(f, "{}\t", x).expect("hilfe"); ;
     }
     write!(f, "\n").expect("hilfe");
 }

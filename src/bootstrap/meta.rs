@@ -1,5 +1,5 @@
 use std::collections::{HashMap, HashSet};
-use gfa_reader::{Gfa, GraphWrapper};
+use gfa_reader::{Gfa, GraphWrapper, NCGfa, NCPath};
 use crate::bootstrap::helper::random_numbers;
 
 /// Wrapper for combinations
@@ -62,7 +62,7 @@ pub fn reduce_meta(meta: &mut Vec<(usize, usize, HashSet<usize>)>, line: i32, co
 ///
 /// TODO:
 /// - more metrics
-pub fn one_iteration(gw: &GraphWrapper, graph: &Gfa, combination: &[usize], metric: &str) -> (Vec<usize>, Vec<usize>){
+pub fn one_iteration(gw: &GraphWrapper<NCPath>, graph: &NCGfa<()>, combination: &[usize], metric: &str) -> (Vec<usize>, Vec<usize>){
     let mut metric_hm: HashMap<u32, u32> = calculate_core_reduced(gw, graph, combination);
 
 
@@ -76,10 +76,10 @@ pub fn one_iteration(gw: &GraphWrapper, graph: &Gfa, combination: &[usize], metr
 
     // Iterate over all nodes and add the amount of nodes and sequence to the result vector
     graph.nodes.iter().for_each(|n|
-        {let id = n.0.parse::<usize>().unwrap();
+        {let id = n.id as usize;
             let id = metric_hm.get(&(id as u32)).unwrap();
             result[*id as usize] += 1;
-            result2[*id as usize] += graph.nodes.get(n.0).unwrap().len});
+            result2[*id as usize] += graph.nodes[n.id as usize - 1].seq.len()});
 
     // Remove first index (0) from the result vector
     result.remove(0);
@@ -90,22 +90,22 @@ pub fn one_iteration(gw: &GraphWrapper, graph: &Gfa, combination: &[usize], metr
 }
 
 /// Calculate similarity level and ignore path which are not in the combination set
-pub fn calculate_core_reduced(graph2: &GraphWrapper, graph: &Gfa, combination: &[usize]) -> HashMap<u32, u32>{
+pub fn calculate_core_reduced(graph2: &GraphWrapper<NCPath>, graph: &NCGfa<()>, combination: &[usize]) -> HashMap<u32, u32>{
     let mut count: HashMap<u32, u32> = HashMap::new();
     for x in &graph.nodes{
-        count.insert(x.0.parse().unwrap(), 0);
+        count.insert(x.id, 0);
     }
 
     for (i, x) in graph2.genomes.iter().enumerate(){
         if combination.contains(&i){
-            let mut vv: HashSet<String> = HashSet::new();
+            let mut vv: HashSet<u32> = HashSet::new();
             for y in x.1.iter(){
                 let v: HashSet<_> = y.nodes.iter().cloned().collect();
                 vv.extend(v);
             }
 
             for y in vv{
-                *count.get_mut(&y.parse().unwrap()).unwrap() += 1;
+                *count.get_mut(&y).unwrap() += 1;
             }
         }
     }

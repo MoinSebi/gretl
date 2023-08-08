@@ -1,9 +1,10 @@
-use gfa_reader::{Gfa, NCGfa, NCGraphWrapper};
+use gfa_reader::{Gfa, GraphWrapper, NCEdge, NCGfa, NCPath};
 use std::collections::{HashMap};
-use crate::stats::helper::{mean, median, node_degree};
+use crate::helpers::helper::node_degree;
+use crate::stats::helper::{mean, meanf, median};
 
 /// Wrapper for graph statistics
-pub fn graph_stats_wrapper(graph: &NCGfa) -> Vec<String>{
+pub fn graph_stats_wrapper(graph: &NCGfa<()>) -> Vec<String>{
 
     // Result vector
     let mut result = Vec::new();
@@ -28,9 +29,9 @@ pub fn graph_stats_wrapper(graph: &NCGfa) -> Vec<String>{
 
     // Node degree
     let (graph_degree_in_average, graph_degree_out_average, graph_degree_total_average) = node_degree(&graph);
-    result.push(graph_degree_in_average.to_string());
-    result.push(graph_degree_out_average.to_string());
-    result.push(graph_degree_total_average.to_string());
+    result.push(mean(&graph_degree_in_average).to_string());
+    result.push(mean(&graph_degree_out_average).to_string());
+    result.push(mean(&graph_degree_total_average).to_string());
 
 
 
@@ -39,17 +40,18 @@ pub fn graph_stats_wrapper(graph: &NCGfa) -> Vec<String>{
 
 
 /// Number of paths
-fn graph_path_number(graph: &NCGfa) -> usize{ return graph.paths.len()}
+fn graph_path_number(graph: &NCGfa<()>) -> usize{ return graph.paths.len()}
 
 /// Number of nodes
-fn graph_node_number(graph: &NCGfa) -> usize{return graph.nodes.len()}
+fn graph_node_number(graph: &NCGfa<()>) -> usize{return graph.nodes.len()}
 
 /// Number of edges
-fn graph_edge_number(graph: &NCGfa) -> usize {return graph.edges.len()}
+fn graph_edge_number(graph: &NCGfa<()>) -> usize {return graph.edges.as_ref().unwrap().len()}
 
 /// Calculate total size of all input genomes
-pub fn graph_path_seq_total(graph: &NCGfa) ->  usize{
-    graph.paths.iter().map(|n| n.nodes.iter().map(|r| graph.nodes[*r as usize]).sum::<usize>()).sum::<usize>()
+pub fn graph_path_seq_total(graph: &NCGfa<()>) ->  usize{
+    let a = graph.paths.iter().map(|n| n.nodes.iter().map(|r| graph.nodes[*r as usize - 1].seq.len()).sum::<usize>()).sum::<usize>();
+    a
 }
 
 
@@ -58,8 +60,9 @@ pub fn graph_path_seq_total(graph: &NCGfa) ->  usize{
 /// Compute mean+median node size and total graph size
 ///
 /// Sum all nodes in the graph and divide it by the number of nodes
-pub fn graph_node_stats(graph: &NCGfa) -> (f64, f64, u32){
-    let mut vec_size: Vec<u32> = graph.nodes.iter().map(|n| n.1.len as u32).collect();
+pub fn graph_node_stats(graph: &NCGfa<()>) -> (f64, f64, u32){
+
+    let mut vec_size: Vec<u32> = graph.nodes.iter().map(|n| n.seq.len() as u32).collect();
 
     vec_size.sort();
     let average = mean(&vec_size);
@@ -71,8 +74,8 @@ pub fn graph_node_stats(graph: &NCGfa) -> (f64, f64, u32){
 
 
 /// Calculate node degree (in, out, total)
-pub fn node_degree2(ncgraph: &NCGraphWrapper,  graph: &NCGfa) -> (f64, f64, f64){
-    let (degree_in_values, degree_out_values, degree_total_values) = node_degree(ncgraph, graph);
+pub fn node_degree2(ncgraph: &GraphWrapper<NCPath>,  graph: &NCGfa<()>) -> (f64, f64, f64){
+    let (degree_in_values, degree_out_values, degree_total_values) = node_degree(graph);
 
     let graph_degree_in_average = mean(&degree_in_values);
     let graph_degree_out_average = mean(&degree_out_values);
@@ -81,9 +84,9 @@ pub fn node_degree2(ncgraph: &NCGraphWrapper,  graph: &NCGfa) -> (f64, f64, f64)
 }
 
 /// Calculate graph density
-pub fn graph_desity(graph: &NCGfa) -> f64{
+pub fn graph_desity(graph: &NCGfa<()>) -> f64{
     let n = graph.nodes.len();
-    let e = graph.edges.len();
+    let e = graph.edges.as_ref().unwrap().len();
     let density = e as f64 / (n* (n-1)) as f64;
     density
 }
@@ -95,8 +98,8 @@ pub fn graph_desity(graph: &NCGfa) -> f64{
 #[allow(dead_code)]
 /// Calculate number of inverted edges
 /// Edges which change direction
-pub fn inverted_edges(graph: &NCGfa) -> usize{
-    let inverted: usize = graph.edges.iter().filter(|n| n.to_dir != n.from_dir).count();
+pub fn inverted_edges(graph: &NCGfa<()>) -> usize{
+    let inverted: usize = graph.edges.as_ref().unwrap().iter().filter(|n| n.to_dir != n.from_dir).count();
     inverted
 }
 
