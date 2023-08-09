@@ -7,6 +7,7 @@ use crate::bootstrap::helper::random_numbers;
 use crate::bootstrap::meta::{combinations_maker, combinations_maker_wrapper, one_iteration, reduce_meta};
 use crate::bootstrap::reader::read_meta;
 use crate::bootstrap::writer::{write_meta, write_output};
+use crate::helpers::helper::calculate_core;
 use crate::stats::helper::get_filename;
 
 
@@ -15,7 +16,7 @@ pub fn bootstrap_main(matches: &ArgMatches){
 
     // Read the graph
     let mut graph: NCGfa<()> = NCGfa::new();
-    graph.parse_gfa_file_and_convert(matches.value_of("gfa").unwrap(), true);
+    graph.parse_gfa_file_and_convert(matches.value_of("gfa").unwrap(), false);
     let mut wrapper: GraphWrapper<NCPath> = GraphWrapper::new();
     wrapper.from_gfa(&graph.paths, " ");
     let output = matches.value_of("output").unwrap();
@@ -59,12 +60,14 @@ pub fn bootstrap_main(matches: &ArgMatches){
     // Removes lines and unused similarity level from the meta data (file)
     reduce_meta(& mut combinations, line, core);
 
+    let f = calculate_core(&&wrapper, &graph);
 
     // Iterate over all combinations - calculate the core and the sequence
     for (x, i, x1) in combinations.iter(){
         println!("{:?}",x);
         let k: Vec<usize> = x1.iter().cloned().collect();
-        let dd = one_iteration(&wrapper, &graph, &k, "core");
+        println!("{:?}", k);
+        let dd = one_iteration(&wrapper, &graph, &k, "core", &f);
         total.push((*x, *i, dd));
         metas.push((*x, *i, x1.clone()));
     }

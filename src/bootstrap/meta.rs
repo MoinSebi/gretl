@@ -8,10 +8,10 @@ use crate::bootstrap::helper::random_numbers;
 /// One entry consists of: [number of genomes, number of iteration, combination (HashSet)]
 pub fn combinations_maker_wrapper(size: &usize, amount: &usize) -> Vec<(usize, usize, HashSet<usize>)> {
     let mut data = vec![];
-    for x in 2..size+1 {
-        let test_comb = combinations_maker(&size, &x, amount);
-        for (i, x1) in test_comb.iter().enumerate(){
-            data.push((x,i, x1.clone()))
+    for number in 2..size+1 {
+        let test_comb = combinations_maker(&size, &number, amount);
+        for (run, combination) in test_comb.iter().enumerate(){
+            data.push((number, run, combination.clone()))
         }
     }
     data
@@ -60,33 +60,50 @@ pub fn reduce_meta(meta: &mut Vec<(usize, usize, HashSet<usize>)>, line: i32, co
 
 /// Calculation for one iteration
 ///
-/// TODO:
-/// - more metrics
-pub fn one_iteration(gw: &GraphWrapper<NCPath>, graph: &NCGfa<()>, combination: &[usize], metric: &str) -> (Vec<usize>, Vec<usize>){
-    let mut metric_hm: HashMap<u32, u32> = calculate_core_reduced(gw, graph, combination);
+/// Take core and then remove stuff from it
+pub fn one_iteration(gw: &GraphWrapper<NCPath>, graph: &NCGfa<()>, combination: &[usize], metric: &str, information: &Vec<u32>) -> (Vec<usize>, Vec<usize>){
+
+    let info2 = test1(gw, graph, information, combination);
+    let macf = info2.iter().max().unwrap().clone();
+
+    let mut result: Vec<usize> = vec![0; macf as usize +1];             // NODES
+    let mut result2 = vec![0; macf as usize +1];             // Sequence
 
 
-    // Function to get the amount unique values in u32, u32 HashMap (metric_hm)
-    let f = metric_hm.values().collect::<HashSet<_>>().len();
-    let maxf = *metric_hm.values().collect::<HashSet<_>>().iter().max().unwrap().clone();
-
-    // Saving results as number of nodes and amount of sequence
-    let mut result: Vec<usize> = vec![0; maxf as usize +1];             // NODES
-    let mut result2 = vec![0; maxf as usize +1];             // Sequence
-
-    // Iterate over all nodes and add the amount of nodes and sequence to the result vector
-    graph.nodes.iter().for_each(|n|
-        {let id = n.id as usize;
-            let id = metric_hm.get(&(id as u32)).unwrap();
-            result[*id as usize] += 1;
-            result2[*id as usize] += graph.nodes[n.id as usize - 1].seq.len()});
-
-    // Remove first index (0) from the result vector
-    result.remove(0);
+    for (i, x) in info2.iter().enumerate(){
+        result[*x as usize] += 1;
+        result2[*x as usize] += graph.nodes[i].seq.len();
+    }
     result2.remove(0);
+    result.remove(0);
+
 
     return (result, result2)
 
+}
+
+pub fn test1(wrapper: &GraphWrapper<NCPath>, graph: &NCGfa<()>, info: &Vec<u32>, comb: &[usize]) -> Vec<u32>{
+    let mut info2 = info.clone();
+    for (i, x) in wrapper.genomes.iter().enumerate(){
+        if ! comb.contains(&i){
+            let a = make_vec(&x.1, graph.nodes.len());
+            yo(& mut info2, &a);
+        }
+    }
+    return info2
+}
+
+pub fn make_vec(t: &Vec<&NCPath>, length: usize) -> Vec<u32>{
+    let mut vec1 = vec![0; length];
+    for a in t.iter(){
+        a.nodes.iter().for_each(|x| vec1[*x as usize - 1] = 1);
+    }
+    vec1
+}
+
+pub fn yo(t: &mut Vec<u32>, v: &Vec<u32>){
+    t.iter_mut().zip(v.iter()).for_each(|(x,y)| *x = *x - *y);
+    //
 }
 
 /// Calculate similarity level and ignore path which are not in the combination set
