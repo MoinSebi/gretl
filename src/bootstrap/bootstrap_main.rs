@@ -64,9 +64,7 @@ pub fn bootstrap_main(matches: &ArgMatches){
 
     // Iterate over all combinations - calculate the core and the sequence
     for (x, i, x1) in combinations.iter(){
-        println!("{:?}",x);
         let k: Vec<usize> = x1.iter().cloned().collect();
-        println!("{:?}", k);
         let dd = one_iteration(&wrapper, &graph, &k, "core", &f);
         total.push((*x, *i, dd));
         metas.push((*x, *i, x1.clone()));
@@ -80,12 +78,6 @@ pub fn bootstrap_main(matches: &ArgMatches){
 
     // Write the output
     write_output(total, output);
-
-
-
-
-
-
 
 }
 

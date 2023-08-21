@@ -46,7 +46,29 @@ pub fn stats_main(matches: &ArgMatches){
             "Input_genomes_[total]",
             "Graph_degree_[in]",
             "Graph_degree_[out]",
-            "Graph_degree_[total]"];
+            "Graph_degree_[total]",
+            "Inverted_edges",
+            "Negative_edges",
+            "Self_edges",
+            "#Nodes_[size=1]",
+            "#Nodes_[size=2]",
+            "#Nodes_[size=3]",
+            "#Nodes_[size=4]",
+            "#Seq[size=1]",
+            "#Seq[size=2]",
+            "#Seq[size=3]",
+            "#Seq[size=4]",
+
+            "Pathseqlen",
+            "PathNode",
+            "Path unique",
+            "Path inverted node",
+            "Path inverted seq",
+            "Path jumps total",
+            "Path jumps bigger",
+            "Graph density",
+
+        ];
         if matches.is_present("YAML"){
             write_tsv(&data, &tab, output);
             write_yaml(&data, &tab, output);

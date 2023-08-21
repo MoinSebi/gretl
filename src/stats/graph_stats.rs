@@ -1,11 +1,13 @@
 use gfa_reader::{Gfa, GraphWrapper, NCEdge, NCGfa, NCPath};
 use std::collections::{HashMap};
 use crate::helpers::helper::node_degree;
+use crate::stats::graph_path_stats::path_stats_wrapper;
 use crate::stats::helper::{mean, meanf, median};
 
 /// Wrapper for graph statistics
 pub fn graph_stats_wrapper(graph: &NCGfa<()>) -> Vec<String>{
-
+    let mut wrapper: GraphWrapper<NCPath> = GraphWrapper::new();
+    wrapper.from_gfa(&graph.paths, " ");
     // Result vector
     let mut result = Vec::new();
 
@@ -33,7 +35,27 @@ pub fn graph_stats_wrapper(graph: &NCGfa<()>) -> Vec<String>{
     result.push(mean(&graph_degree_out_average).to_string());
     result.push(mean(&graph_degree_total_average).to_string());
 
+    // Inverted edges
+    result.push(inverted_edges(graph).to_string());
+    result.push(neg_edges(graph).to_string());
+    result.push(self_edge(graph).to_string());
 
+    let nodes1 = node_size2(graph);
+    result.push(nodes1[0][0].to_string());
+    result.push(nodes1[0][1].to_string());
+    result.push(nodes1[0][2].to_string());
+    result.push(nodes1[0][3].to_string());
+    result.push(nodes1[1][0].to_string());
+    result.push(nodes1[1][1].to_string());
+    result.push(nodes1[1][2].to_string());
+    result.push(nodes1[1][3].to_string());
+
+    let (a1, a2) = path_stats_wrapper(graph, &wrapper);
+    for t in a1.iter().zip(a2.iter()){
+        result.push(t.0.to_string());
+        result.push(t.1.to_string());
+    }
+    result.push(graph_desity(graph).to_string());
 
     result
 }
@@ -102,4 +124,65 @@ pub fn inverted_edges(graph: &NCGfa<()>) -> usize{
     let inverted: usize = graph.edges.as_ref().unwrap().iter().filter(|n| n.to_dir != n.from_dir).count();
     inverted
 }
+
+
+/// Number of negative (neg-neg) edges
+pub fn neg_edges(graph: &NCGfa<()>) -> usize{
+    let inverted: usize = graph.edges.as_ref().unwrap().iter().filter(|n| (n.to_dir == n.from_dir) && (n.to_dir == false)).count();
+    inverted
+}
+
+
+/// Number edges of self stuff
+pub fn self_edge(graph: &NCGfa<()>) -> usize{
+    let inverted: usize = graph.edges.as_ref().unwrap().iter().filter(|n| (n.from, n.from_dir) == (n.to, n.to_dir)).count();
+    inverted
+}
+
+/// Number edges of self stuff
+pub fn node_size2(graph: &NCGfa<()>) -> [[usize; 4]; 2]{
+    let mut size_1 = 0;
+    let mut size_1_50 = 0;
+    let mut size_50_1000 = 0;
+    let mut size_1000 = 0;
+
+
+    let mut ssize_1 = 0;
+    let mut ssize_1_50 = 0;
+    let mut ssize_50_1000 = 0;
+    let mut ssize_1000 = 0;
+
+    for x in graph.nodes.iter(){
+        let length = x.seq.len();
+        if length == 1{
+            size_1 += 1;
+            ssize_1 += length;
+
+        } else if length < 50 {
+            size_1_50 += 1;
+            ssize_1_50 += length;
+
+        } else if length < 1000{
+            size_50_1000 += 1;
+            ssize_50_1000 += length;
+
+        } else {
+            size_1000 += 1;
+            ssize_1000 += length;
+
+        }
+    }
+
+    [[size_1, size_1_50, size_50_1000, size_1000], [ssize_1, ssize_1_50, ssize_50_1000, ssize_1000]]
+
+}
+
+
+pub fn size5pro(graph: &NCGfa<()>) -> (usize, f64) {
+    let mut a: Vec<usize> = graph.nodes.iter().map(|n| n.seq.len()).collect();
+    a.sort();
+    let top5: &[usize] = &a[0..(a.len() as f64 * 0.05) as usize];
+    (top5.iter().max().unwrap().clone(), mean(&top5.iter().map(|n| *n as u32).collect::<Vec<u32>>()))
+}
+
 

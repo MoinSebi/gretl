@@ -13,6 +13,9 @@ repository = "https://github.com/MoinSebi/gfastats"
 gfa-reader = {git = "https://github.com/MoinSebi/gfa-reader"}
 clap = "=3.0.0-beta.4"
 rand = "=0.6.1"
+nalgebra = "0.29.0"
+num-traits = "0.2.14"
+
 
 
 [dev-dependencies]
