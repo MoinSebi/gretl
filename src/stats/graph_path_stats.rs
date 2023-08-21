@@ -62,10 +62,10 @@ pub fn path_stats_wrapper(graph: &NCGfa<()>, gw: &GraphWrapper<NCPath>)  -> (Vec
 
     let mut p = Vec::new();
     let mut p2 = Vec::new();
-    for i in 0..res.len(){
+    for i in 0..res[0].len(){
         let mut temp = Vec::new();
-        for y in 0..res[0].len(){
-            temp.push(res[i][y] as u32)
+        for y in 0..res.len(){
+            temp.push(res[y][i] as u32)
         }
         p2.push(std(&temp));
         p.push(mean(&temp));

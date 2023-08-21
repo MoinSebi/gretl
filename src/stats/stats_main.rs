@@ -58,15 +58,14 @@ pub fn stats_main(matches: &ArgMatches){
             "#Seq[size=2]",
             "#Seq[size=3]",
             "#Seq[size=4]",
-
             "Pathseqlen",
             "PathNode",
-            "Path unique",
-            "Path inverted node",
-            "Path inverted seq",
-            "Path jumps total",
-            "Path jumps bigger",
-            "Graph density",
+            "Pathunique",
+            "Pathinvertednode",
+            "Pathinvertedseq",
+            "Pathjumpstotal",
+            "Pathjumpsbigger",
+            "Graphdensity",
 
         ];
         if matches.is_present("YAML"){
