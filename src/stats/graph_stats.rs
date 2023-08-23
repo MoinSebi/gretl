@@ -54,8 +54,13 @@ pub fn graph_stats_wrapper(graph: &NCGfa<()>) -> Vec<(String, String)>{
     result.push(("Bin3_Seq".to_string(), nodes1[1][2].to_string()));
     result.push(("Bin4_Seq".to_string(), nodes1[1][3].to_string()));
 
-    let hyrbrid_stats = path_stats_wrapper(graph, &wrapper);
-    for x in hyrbrid_stats.iter(){
+    let size5 = size5pro(graph);
+    result.push(("Max_node_size".to_string(), size5.0.to_string()));
+    result.push(("Average_node_size".to_string(), size5.1.to_string()));
+
+
+    let hybrid_stats = path_stats_wrapper(graph, &wrapper);
+    for x in hybrid_stats.iter(){
         result.push((x.0.to_string(), x.1.to_string()));
     }
 
@@ -184,7 +189,10 @@ pub fn size5pro(graph: &NCGfa<()>) -> (usize, f64) {
     let mut a: Vec<usize> = graph.nodes.iter().map(|n| n.seq.len()).collect();
     a.sort();
     let top5: &[usize] = &a[0..(a.len() as f64 * 0.05) as usize];
-    (top5.iter().max().unwrap().clone(), mean(&top5.iter().map(|n| *n as u32).collect::<Vec<u32>>()))
+
+    let maxx = a.iter().max().unwrap();
+
+    (*maxx, mean(&top5.iter().map(|n| *n as u32).collect::<Vec<u32>>()))
 }
 
 

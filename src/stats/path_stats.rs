@@ -157,6 +157,7 @@ pub fn path_cycle(path: &NCPath) -> usize{
 pub enum Arithmetic {
     MEAN,
     MEDIAN,
+    SUM,
 }
 
 pub fn mean_path_hm(path: &NCPath, count: &Vec<u32>, ari: Arithmetic) -> f64{
@@ -165,9 +166,11 @@ pub fn mean_path_hm(path: &NCPath, count: &Vec<u32>, ari: Arithmetic) -> f64{
         data.push(count[*x as usize - 1])
     }
     let mut result: f64 = 0.0;
+
     match ari {
         Arithmetic::MEAN =>  result = mean(&data),
-        _ => result = median(&mut data),
+        Arithmetic::MEDIAN => result = median(&mut data),
+        _ => {let f: u32 = data.iter().sum(); result = f as f64}
     }
     result
 }
