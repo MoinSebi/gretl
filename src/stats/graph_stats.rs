@@ -1,61 +1,63 @@
 use gfa_reader::{Gfa, GraphWrapper, NCEdge, NCGfa, NCPath};
 use std::collections::{HashMap};
 use crate::helpers::helper::node_degree;
-use crate::stats::graph_path_stats::path_stats_wrapper;
+use crate::stats::hybrid_stats::path_stats_wrapper;
 use crate::stats::helper::{mean, meanf, median};
 
 /// Wrapper for graph statistics
-pub fn graph_stats_wrapper(graph: &NCGfa<()>) -> Vec<String>{
+pub fn graph_stats_wrapper(graph: &NCGfa<()>) -> Vec<(String, String)>{
     let mut wrapper: GraphWrapper<NCPath> = GraphWrapper::new();
     wrapper.from_gfa(&graph.paths, " ");
     // Result vector
-    let mut result = Vec::new();
+    let mut result: Vec<(String, String)>= Vec::new();
 
     // Basic stats
     let path_number = graph_path_number(graph);
     let node_number = graph_node_number(graph);
     let edge_number = graph_edge_number(graph);
-    result.push(path_number.to_string());
-    result.push(node_number.to_string());
-    result.push(edge_number.to_string());
+    result.push(("Path_number".to_string(), path_number.to_string()));
+    result.push(("Node_number".to_string(), node_number.to_string()));
+    result.push(("Edge_number".to_string(), edge_number.to_string()));
 
     // Node stats (sizes)
     let (graph_node_average, graph_node_median, graph_node_sum) = graph_node_stats(graph);
-    result.push(graph_node_average.to_string());
-    result.push(graph_node_median.to_string());
-    result.push(graph_node_sum.to_string());
+    result.push(("Node_length_average[bp]".to_string(), graph_node_average.to_string()));
+    result.push( ("Node_length_median[bp]".to_string(), graph_node_median.to_string()));
+    result.push(("Node_length_sum[bp]".to_string(), graph_node_sum.to_string()));
 
     // Total length of paths
-    result.push(graph_path_seq_total(graph).to_string());
+    result.push(("Input_genomes[bp]".to_string(), graph_path_seq_total(graph).to_string()));
 
 
     // Node degree
     let (graph_degree_in_average, graph_degree_out_average, graph_degree_total_average) = node_degree(&graph);
-    result.push(mean(&graph_degree_in_average).to_string());
-    result.push(mean(&graph_degree_out_average).to_string());
-    result.push(mean(&graph_degree_total_average).to_string());
+    result.push(("Graph_degree_in".to_string(), mean(&graph_degree_in_average).to_string()));
+    result.push(("Graph_degree_out".to_string(), mean(&graph_degree_out_average).to_string()));
+    result.push(("Graph_degree_total".to_string(), mean(&graph_degree_total_average).to_string()));
 
     // Inverted edges
-    result.push(inverted_edges(graph).to_string());
-    result.push(neg_edges(graph).to_string());
-    result.push(self_edge(graph).to_string());
+    result.push(("Inverted_edges".to_string(), inverted_edges(graph).to_string()));
+    result.push(("Negative_edges".to_string(), neg_edges(graph).to_string()));
+    result.push(("Self_edges".to_string(), self_edge(graph).to_string()));
+
+    // Crazy stuff
+    result.push(("Graph_density".to_string(), graph_density(graph).to_string()));
+
 
     let nodes1 = node_size2(graph);
-    result.push(nodes1[0][0].to_string());
-    result.push(nodes1[0][1].to_string());
-    result.push(nodes1[0][2].to_string());
-    result.push(nodes1[0][3].to_string());
-    result.push(nodes1[1][0].to_string());
-    result.push(nodes1[1][1].to_string());
-    result.push(nodes1[1][2].to_string());
-    result.push(nodes1[1][3].to_string());
+    result.push(("Bin1_Node".to_string(), nodes1[0][0].to_string()));
+    result.push(("Bin2_Node".to_string(), nodes1[0][1].to_string()));
+    result.push(("Bin3_Node".to_string(), nodes1[0][2].to_string()));
+    result.push(("Bin4_Node".to_string(), nodes1[0][3].to_string()));
+    result.push(("Bin1_Seq".to_string(), nodes1[1][0].to_string()));
+    result.push(("Bin2_Seq".to_string(), nodes1[1][1].to_string()));
+    result.push(("Bin3_Seq".to_string(), nodes1[1][2].to_string()));
+    result.push(("Bin4_Seq".to_string(), nodes1[1][3].to_string()));
 
-    let (a1, a2) = path_stats_wrapper(graph, &wrapper);
-    for t in a1.iter().zip(a2.iter()){
-        result.push(t.0.to_string());
-        result.push(t.1.to_string());
+    let hyrbrid_stats = path_stats_wrapper(graph, &wrapper);
+    for x in hyrbrid_stats.iter(){
+        result.push((x.0.to_string(), x.1.to_string()));
     }
-    result.push(graph_desity(graph).to_string());
 
     result
 }
@@ -106,7 +108,7 @@ pub fn node_degree2(ncgraph: &GraphWrapper<NCPath>,  graph: &NCGfa<()>) -> (f64,
 }
 
 /// Calculate graph density
-pub fn graph_desity(graph: &NCGfa<()>) -> f64{
+pub fn graph_density(graph: &NCGfa<()>) -> f64{
     let n = graph.nodes.len();
     let e = graph.edges.as_ref().unwrap().len();
     let density = e as f64 / (n* (n-1)) as f64;

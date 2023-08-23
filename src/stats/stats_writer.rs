@@ -1,30 +1,38 @@
 use std::io::{BufWriter, Write};
 use std::fs::File;
 
-/// Write function for graph stats in yaml
-pub fn write_yaml(data: &Vec<String>, tab: &[&str], filename:  &str){
+/// Write statistics in a YAML file
+///
+/// Input:
+pub fn write_graph_yaml(data: &Vec<(String, String)>, filename:  &str){
     let f = File::create(filename).expect("Unable to create file");
     let mut f = BufWriter::new(f);
-    for (d, x) in data.iter().zip(tab){
-        write!(f, "{}: {}\n", x, d).expect("Not able to write");
+    for (d, x) in data.iter(){
+        write!(f, "{}: {}\n", d, x).expect("Not able to write");
     }
 }
 
-/// Write function for graph stats in tsv
-pub fn write_tsv(data: &Vec<String>, tab: &[&str], filename: &str){
+
+
+/// Write statistics in tab-separated file (tsv)
+pub fn write_graph_tsv(data: &Vec<(String, String)>, filename: &str){
     let f = File::create(filename).expect("Unable to create file");
     let mut f = BufWriter::new(f);
-    for y in tab.iter(){
-        write!(f, "{}\t", y).expect("Not able to write");
+    for (column_name, value_) in data.iter().take(data.len()-1){
+        write!(f, "{}\t", column_name).expect("Not able to write");
     }
-    write!(f, "\n").expect("Not able to write");
+    write!(f, "{}\n", data[data.len()-1].0).expect("Not able to write");
 
-    for y in data.iter(){
-        write!(f, "{}\t", y).expect("Not able to write");
+    for (column_name_, value) in data.iter().take(data.len()-1){
+        write!(f, "{}\t", value).expect("Not able to write");
     }
-    write!(f, "\n").expect("Not able to write");
+    write!(f, "{}\n", data[data.len()-1].1).expect("Not able to write");
+
+
+
 
 }
+
 
 
 

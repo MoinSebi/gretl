@@ -1,10 +1,10 @@
 use gfa_reader::{GraphWrapper, NCGfa, NCPath};
-use crate::helpers::helper::{calculate_core, calculate_depth, node_degree};
+use crate::helpers::helper::{calculate_core, calculate_depth, node_degree, transpose_matrix};
 use crate::stats::helper::{mean, std};
 use crate::stats::path_stats::{Arithmetic, mean_path_hm, path_jumps, path_jumps_bigger, path_node_inverted, path_node_len, path_seq_inverted, path_seq_len, path_unique};
 
 /// Wrapper for path statistics
-pub fn path_stats_wrapper(graph: &NCGfa<()>, gw: &GraphWrapper<NCPath>)  -> (Vec<f64>, Vec<f64>){
+pub fn path_stats_wrapper(graph: &NCGfa<()>, gw: &GraphWrapper<NCPath>)  -> Vec<(String, f64)>{
 
     // Total results
     let mut res = Vec::new();
@@ -17,7 +17,7 @@ pub fn path_stats_wrapper(graph: &NCGfa<()>, gw: &GraphWrapper<NCPath>)  -> (Vec
 
     // Calculate depth
     let depth = calculate_depth(&gw, graph);
-
+    let names: Vec<String> = Vec::new();
     // Iterate over all paths and calculate statistics
     for path in graph.paths.iter(){
         // Temporary results for each path
@@ -60,16 +60,16 @@ pub fn path_stats_wrapper(graph: &NCGfa<()>, gw: &GraphWrapper<NCPath>)  -> (Vec
 
     }
 
-    let mut p = Vec::new();
-    let mut p2 = Vec::new();
-    for i in 0..res[0].len(){
-        let mut temp = Vec::new();
-        for y in 0..res.len(){
-            temp.push(res[y][i] as u32)
-        }
-        p2.push(std(&temp));
-        p.push(mean(&temp));
+    let a = transpose_matrix(&res);
+
+    let mut result = Vec::new();
+    for (name, data) in names.iter().zip(a.iter()) {
+        result.push((name.to_string() + "_average", mean(&data.iter().map(|&x| x as u32).collect::<Vec<u32>>())));
+        result.push((name.to_string() + "_std", std(&data.iter().map(|&x| x as u32).collect::<Vec<u32>>())));
     }
-    (p, p2)
+    return result
+
+
+
 
 }

@@ -3,4 +3,4 @@ pub mod path_stats;
 pub mod helper;
 pub mod stats_writer;
 pub mod stats_main;
-pub mod graph_path_stats;
+pub mod hybrid_stats;

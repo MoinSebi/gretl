@@ -86,6 +86,13 @@ pub fn node_len(graph: &NCGfa<()>) ->  Vec<u32>{
     return result
 }
 
+pub fn transpose_matrix<T: Clone>(matrix: &Vec<Vec<T>>) -> Vec<Vec<T>> {
+    let cols = matrix[0].len();
 
+    let transposed: Vec<Vec<T>> = (0..cols)
+        .map(|j| matrix.iter().map(|row| row[j].clone()).collect())
+        .collect();
 
+    transposed
+}
 

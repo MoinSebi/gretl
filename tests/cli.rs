@@ -58,11 +58,27 @@ fn stats() -> Result<(), Box<dyn std::error::Error>> {
         .arg("--gfa")
         .arg("./data/example_data/testGraph.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/test.stats.txt");
+        .arg("/home/svorbrugg/code/gfastats/data/test/test.stats.tsv");
 
     cmd.assert().success();
     Ok(())
 }
+
+#[test]
+fn stats2() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("gfastats")?;
+    cmd
+        .arg("stats")
+        .arg("--gfa")
+        .arg("./data/example_data/testGraph.gfa")
+        .arg("-y")
+        .arg("--output")
+        .arg("/home/svorbrugg/code/gfastats/data/test/test.stats.yaml");
+
+    cmd.assert().success();
+    Ok(())
+}
+
 
 
 #[test]
