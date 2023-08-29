@@ -6,7 +6,7 @@ use crate::stats::path_stats::Arithmetic::MEDIAN;
 
 
 /// Wrapper for path statistics
-pub fn path_stats_wrapper(graph: &NCGfa<()>, gw: &GraphWrapper<NCPath>) -> Vec<(String, Vec<String>)>{
+pub fn path_stats_wrapper(graph: &NCGfa<()>, gw: &GraphWrapper<NCPath>) -> Vec<(String, Vec<(String, String)>)>{
 
     // Total results
     let mut res = Vec::new();
@@ -23,25 +23,25 @@ pub fn path_stats_wrapper(graph: &NCGfa<()>, gw: &GraphWrapper<NCPath>) -> Vec<(
     // Iterate over all paths and calculate statistics
      for path in graph.paths.iter(){
          // Temporary results for each path
-         let mut result_temp = Vec::new();
+         let mut result_temp: Vec<(String, String)> = Vec::new();
 
          // Amount of sequence and number of nodes in the path + number of unique nodes
-         result_temp.push(path_seq_len(path, &graph.nodes).to_string());
-         result_temp.push(path_node_len(&path.nodes).to_string());
-         result_temp.push(path_unique(path).to_string());
+         result_temp.push(("Path_len[seq]".to_string(), path_seq_len(path, &graph.nodes).to_string()));
+         result_temp.push(("Path_len_node".to_string(), path_node_len(&path.nodes).to_string()));
+         result_temp.push(("Path_unique_node".to_string(), path_unique(path).to_string()));
 
          // Number of inverted nodes + their sequence
-         result_temp.push(path_node_inverted(path).to_string());
-         result_temp.push(path_seq_inverted(path, &graph.nodes).to_string());
+         result_temp.push(("Path_inverted_node".to_string(), path_node_inverted(path).to_string()));
+         result_temp.push( ("Path_inverted_seq".to_string(), path_seq_inverted(path, &graph.nodes).to_string()));
 
          // Number of jumps - normalized + bigger than x
          let (jumps_total, jumps_normalized) = path_jumps(path);
-         result_temp.push(jumps_total.to_string());
-         result_temp.push(jumps_normalized.to_string());
+         result_temp.push(("Jumps_total".to_string(), jumps_total.to_string()));
+         result_temp.push(("Jumps_norm".to_string(), jumps_normalized.to_string()));
 
 
          let jumps_bigger_than_x = path_jumps_bigger(path, None);
-         result_temp.push(jumps_bigger_than_x.to_string());
+         result_temp.push(("Jumps_bigger_than_X".to_string(), jumps_bigger_than_x.to_string()));
 
          let mean_depth = mean_path_hm(path, &depth, Arithmetic::MEAN);
          let median_depth = mean_path_hm(path, &depth, Arithmetic::MEDIAN);
@@ -49,14 +49,13 @@ pub fn path_stats_wrapper(graph: &NCGfa<()>, gw: &GraphWrapper<NCPath>) -> Vec<(
          let median_similarity = mean_path_hm(path, &core, Arithmetic::MEDIAN);
 
          // Add to temporary result
-         result_temp.push(mean_depth.to_string());
-         result_temp.push(median_depth.to_string());
-         result_temp.push(mean_similarity.to_string());
-         result_temp.push(median_similarity.to_string());
+         result_temp.push(("Depth_mean".to_string(), mean_depth.to_string()));
+         result_temp.push(("Depth_median".to_string(), median_depth.to_string()));
+         result_temp.push(("Similiarity_mean".to_string(), mean_similarity.to_string()));
+         result_temp.push(("Similarity_median".to_string(), median_similarity.to_string()));
 
 
-         result_temp.push(mean_path_hm(path, &test.2, Arithmetic::MEAN).to_string());
-         result_temp.push("test".to_string());
+         result_temp.push(("Degree_mean".to_string(), mean_path_hm(path, &test.2, Arithmetic::MEAN).to_string()));
 
 
 
@@ -93,7 +92,7 @@ pub fn path_node_inverted(path: &NCPath) -> usize{
 #[allow(dead_code)]
 /// Count the number of inverted nodes for each path
 pub fn path_seq_inverted(path: &NCPath, nodes: &Vec<NCNode<()>>) -> usize{
-    let sums: usize = path.dir.iter().zip(&path.nodes).filter(|&n | *n.0 == false).map(|s| nodes.get(*s.1 as usize).unwrap().seq.len()).sum();
+    let sums: usize = path.dir.iter().zip(&path.nodes).filter(|&n | *n.0 == false).map(|s| nodes.get(*s.1 as usize - 1).unwrap().seq.len()).sum();
     return sums
 }
 

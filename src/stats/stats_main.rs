@@ -18,24 +18,11 @@ pub fn stats_main(matches: &ArgMatches){
 
     if matches.is_present("path"){
         let data = path_stats_wrapper(&graph, &wrapper);
-        let tab = [
-            "Node_length_(seq)",
-            "Nodes_length_(node)",
-            "Unique_nodes",
-            "Inverted_nodes",
-            "Inverted_nodes",
-            "Jumps_total",
-            "Jumps_ratio",
-            "Jumps_bigger than ",
-            "Average_depth",
-            "Median_depth",
-            "Average_similarity",
-            "Median_similarity",
-        "Degree"];
+
         if matches.is_present("YAML"){
-            write_yaml_path(&data, &tab, output);
+            write_yaml_path(&data, output);
         } else {
-            write_tsv_path(&data, &tab, output);
+            write_tsv_path(&data, output);
         }
     } else {
         let data = graph_stats_wrapper(&graph);
