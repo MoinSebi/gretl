@@ -44,7 +44,7 @@ pub fn write_yaml_path(data: &Vec<(String, Vec<(String, String)>)>, filename:  &
     for x1 in data.iter(){
         write!(f, "Path: {}\n", x1.0).expect("Not able to write");
         for (d, x) in x1.1.iter(){
-            write!(f, "{}: {}\n", d, x).expect("Not able to write");
+            write!(f, "- {}: {}\n", d, x).expect("Not able to write");
         }
     }
 }

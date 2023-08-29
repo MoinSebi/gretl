@@ -51,7 +51,7 @@ fn ps() -> Result<(), Box<dyn std::error::Error>> {
 
 
 #[test]
-fn stats() -> Result<(), Box<dyn std::error::Error>> {
+fn stats_tsv() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
     cmd
         .arg("stats")
@@ -65,7 +65,7 @@ fn stats() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn stats2() -> Result<(), Box<dyn std::error::Error>> {
+fn stats_yaml() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
     cmd
         .arg("stats")
@@ -74,6 +74,39 @@ fn stats2() -> Result<(), Box<dyn std::error::Error>> {
         .arg("-y")
         .arg("--output")
         .arg("/home/svorbrugg/code/gfastats/data/test/test.stats.yaml");
+
+    cmd.assert().success();
+    Ok(())
+}
+
+
+
+#[test]
+fn stats_path_tsv() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("gfastats")?;
+    cmd
+        .arg("stats")
+        .arg("--gfa")
+        .arg("./data/example_data/testGraph.gfa")
+        .arg("--path")
+        .arg("--output")
+        .arg("/home/svorbrugg/code/gfastats/data/test/test.stats.path.tsv");
+
+    cmd.assert().success();
+    Ok(())
+}
+
+#[test]
+fn stats_path_yaml() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("gfastats")?;
+    cmd
+        .arg("stats")
+        .arg("--gfa")
+        .arg("./data/example_data/testGraph.gfa")
+        .arg("--path")
+        .arg("-y")
+        .arg("--output")
+        .arg("/home/svorbrugg/code/gfastats/data/test/test.stats.path.yaml");
 
     cmd.assert().success();
     Ok(())
