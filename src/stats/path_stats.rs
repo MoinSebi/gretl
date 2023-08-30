@@ -51,7 +51,7 @@ pub fn path_stats_wrapper(graph: &NCGfa<()>, gw: &GraphWrapper<NCPath>) -> Vec<(
          // Add to temporary result
          result_temp.push(("Depth_mean".to_string(), mean_depth.to_string()));
          result_temp.push(("Depth_median".to_string(), median_depth.to_string()));
-         result_temp.push(("Similiarity_mean".to_string(), mean_similarity.to_string()));
+         result_temp.push(("Similarity_mean".to_string(), mean_similarity.to_string()));
          result_temp.push(("Similarity_median".to_string(), median_similarity.to_string()));
 
 
