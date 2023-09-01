@@ -45,8 +45,13 @@ fn main() {
                 .required(true))
             .arg(Arg::new("Pan-SN")
                 .long("pansn")
-                .about("Seperate by first entry in Pan-SN spec")
+                .about("Separate by first entry in Pan-SN spec")
                 .takes_value(true))
+            .arg(Arg::new("bins")
+                .long("bins")
+                .about("Size of bins. Foramt 10,20,30 -> (0-10, 11-20, 30+)[default: 1,50,100,1000]")
+                .takes_value(true))
+
 
             .arg(Arg::new("path")
                 .short('p')

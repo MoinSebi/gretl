@@ -5,7 +5,7 @@ use crate::stats::hybrid_stats::path_stats_wrapper;
 use crate::stats::helper::{mean, meanf, median};
 
 /// Wrapper for graph statistics
-pub fn graph_stats_wrapper(graph: &NCGfa<()>) -> Vec<(String, String)>{
+pub fn graph_stats_wrapper(graph: &NCGfa<()>, wrapper: &GraphWrapper<()>, bins: Vec<usize>) -> Vec<(String, String)>{
     let mut wrapper: GraphWrapper<NCPath> = GraphWrapper::new();
     wrapper.from_gfa(&graph.paths, " ");
     // Result vector
@@ -44,7 +44,7 @@ pub fn graph_stats_wrapper(graph: &NCGfa<()>) -> Vec<(String, String)>{
     result.push(("Graph_density".to_string(), graph_density(graph).to_string()));
 
 
-    let nodes1 = node_size2(graph);
+    let nodes1 = node_size_each_bin(graph);
     result.push(("Bin1_Node".to_string(), nodes1[0][0].to_string()));
     result.push(("Bin2_Node".to_string(), nodes1[0][1].to_string()));
     result.push(("Bin3_Node".to_string(), nodes1[0][2].to_string()));
@@ -146,8 +146,23 @@ pub fn self_edge(graph: &NCGfa<()>) -> usize{
     inverted
 }
 
+pub fn bin_nodes_count_and_size(graph: &NCGfa<()>, value: Vec<u32>, bins: Vec<u32>) {
+
+    let bins = bins.iter().chain(std::iter::once(&u32::MAX));
+    let mut result = vec![0; bins.len()+1];
+    for x in value.iter(){
+        for (i, y) in bins.iter().enumerate(){
+            if x < y{
+                result[i] += 1;
+            }
+    }
+
+}
+
+
+
 /// Number edges of self stuff
-pub fn node_size2(graph: &NCGfa<()>) -> [[usize; 4]; 2]{
+pub fn node_size_each_bin(graph: &NCGfa<()>) -> [[usize; 4]; 2]{
     let mut size_1 = 0;
     let mut size_1_50 = 0;
     let mut size_50_1000 = 0;
