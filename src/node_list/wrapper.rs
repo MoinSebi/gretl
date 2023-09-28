@@ -8,7 +8,8 @@ use std::io::{BufWriter, Write};
 use std::fs::File;
 use crate::helpers::helper::{calculate_core, calculate_depth, node_degree, node_len};
 
-/// This is wrapper a various stats that can be computed with GFA
+/// Wrapper function for node list analysis
+///
 pub fn wrapper_node(graph: &NCGfa<()>, wrapper: &GraphWrapper<NCPath>, filename: &str, what: Vec<&str>){
 
 
@@ -26,11 +27,10 @@ pub fn wrapper_node(graph: &NCGfa<()>, wrapper: &GraphWrapper<NCPath>, filename:
         let depth2 = calculate_depth(wrapper, graph);
         write_list(("Depth", &depth2), &mut ff);
     } if what.contains(&"ND"){
-        let (a1, a2, a3) = node_degree(graph);
-
-        write_list(("ND_out", &a1),  &mut ff);
-        write_list(("ND_in", &a2), &mut ff);
-        write_list(("ND_in", &a3), &mut ff);
+        let (nd_out, node_in, node_total) = node_degree(graph);
+        write_list(("ND_out", &nd_out), &mut ff);
+        write_list(("ND_in", &node_in), &mut ff);
+        write_list(("ND_in", &node_total), &mut ff);
     }
 }
 

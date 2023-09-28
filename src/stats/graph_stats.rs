@@ -1,11 +1,11 @@
 use gfa_reader::{Gfa, GraphWrapper, NCEdge, NCGfa, NCPath};
 use std::collections::{HashMap};
-use crate::helpers::helper::node_degree;
+use crate::helpers::helper::{node_degree, node_len};
 use crate::stats::hybrid_stats::path_stats_wrapper;
 use crate::stats::helper::{mean, meanf, median};
 
 /// Wrapper for graph statistics
-pub fn graph_stats_wrapper(graph: &NCGfa<()>, wrapper: &GraphWrapper<()>, bins: Vec<usize>) -> Vec<(String, String)>{
+pub fn graph_stats_wrapper(graph: &NCGfa<()>, wrapper: &GraphWrapper<NCPath>, bins: Vec<usize>) -> Vec<(String, String)>{
     let mut wrapper: GraphWrapper<NCPath> = GraphWrapper::new();
     wrapper.from_gfa(&graph.paths, " ");
     // Result vector
@@ -43,16 +43,12 @@ pub fn graph_stats_wrapper(graph: &NCGfa<()>, wrapper: &GraphWrapper<()>, bins: 
     // Crazy stuff
     result.push(("Graph_density".to_string(), graph_density(graph).to_string()));
 
+    let node_size = node_len(graph);
+    let nodes1 = bin_nodes_count_and_size(node_size, vec![1,50,100,1000,5000]);
 
-    let nodes1 = node_size_each_bin(graph);
-    result.push(("Bin1_Node".to_string(), nodes1[0][0].to_string()));
-    result.push(("Bin2_Node".to_string(), nodes1[0][1].to_string()));
-    result.push(("Bin3_Node".to_string(), nodes1[0][2].to_string()));
-    result.push(("Bin4_Node".to_string(), nodes1[0][3].to_string()));
-    result.push(("Bin1_Seq".to_string(), nodes1[1][0].to_string()));
-    result.push(("Bin2_Seq".to_string(), nodes1[1][1].to_string()));
-    result.push(("Bin3_Seq".to_string(), nodes1[1][2].to_string()));
-    result.push(("Bin4_Seq".to_string(), nodes1[1][3].to_string()));
+    for x in nodes1.iter(){
+        result.push((x.0.to_string(), x.1.to_string()));
+    }
 
     let size5 = size5pro(graph);
     result.push(("Max_node_size".to_string(), size5.0.to_string()));
@@ -146,17 +142,35 @@ pub fn self_edge(graph: &NCGfa<()>) -> usize{
     inverted
 }
 
-pub fn bin_nodes_count_and_size(graph: &NCGfa<()>, value: Vec<u32>, bins: Vec<u32>) {
 
-    let bins = bins.iter().chain(std::iter::once(&u32::MAX));
-    let mut result = vec![0; bins.len()+1];
-    for x in value.iter(){
-        for (i, y) in bins.iter().enumerate(){
-            if x < y{
+/// This is a very simple bin function for graphs LOL
+pub fn bin_nodes_count_and_size(value: Vec<u32>, bins: Vec<u32>) -> Vec<(String, u32)>{
+
+    let bins:Vec<u32> = bins.iter().chain(std::iter::once(&u32::MAX)).cloned().collect();
+    let mut result = vec![0; bins.len()];
+    for x in value.iter() {
+        for (i, y) in bins.iter().enumerate() {
+            if x < y {
                 result[i] += 1;
             }
+        }
+    }
+    let mut real_result = Vec::new();
+    for (i, x) in result.iter().zip(bins.iter()).enumerate(){
+        if i == 0{
+            real_result.push(("Bin[0-".to_string() + &x.1.to_string() + &"]".to_string(), x.1.clone()));
+        } else {
+            real_result.push(("Bin[".to_string() + &bins[i-1].to_string() + &"-".to_string() + &x.1.to_string() + &"]".to_string(), x.1.clone()));
+
+        }
+    }
+    let value = real_result[real_result.len()-1].0.split("-").next().unwrap().to_string() + &"-inf]".to_string();
+    if let Some(last_value) = real_result.last_mut() {
+        // Modify the last value (e.g., double it)
+        last_value.0 = value;
     }
 
+    real_result
 }
 
 
