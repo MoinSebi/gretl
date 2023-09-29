@@ -1,21 +1,23 @@
 use gfa_reader::{Gfa, GraphWrapper, NCGfa, NCPath, Path};
 use crate::helpers::helper::calculate_core;
 
-pub fn core_cal(gwrapper: &GraphWrapper<NCPath>, graph: &NCGfa<()>) -> (Vec<(usize, usize)>, Vec<(String, usize, usize)>){
+///
+pub fn pan_genome(gwrapper: &GraphWrapper<NCPath>, graph: &NCGfa<()>, stats: &Vec<u32>) -> (Vec<(usize, usize)>, Vec<(String, usize, usize)>){
     eprintln!("Running core analysis");
-    let cores = calculate_core(gwrapper, graph);
-    // Each entry hold information for its level (#nodes, seq)
+
+
 
     // Get additional information for private nodes
     let mut private_only: Vec<(String, usize, usize)> = Vec::new();
 
 
+    // Iterate over each path, then summarize the sequence and nodes which is only level 1
     for path in gwrapper.genomes.iter(){
         let mut nodes = 0;
         let mut seq = 0;
         for x in path.1.iter() {
             for node in x.nodes.iter() {
-                let level = cores[*node as usize - 1].clone() as usize;
+                let level = stats[*node as usize - 1].clone() as usize;
                 if level == 1 {
                     nodes += 1;
                     seq += graph.nodes[*node as usize -1].seq.len();
@@ -25,8 +27,10 @@ pub fn core_cal(gwrapper: &GraphWrapper<NCPath>, graph: &NCGfa<()>) -> (Vec<(usi
         private_only.push((path.0.clone(), nodes, seq));
     }
 
-    let mut similarity_level: Vec<(usize, usize)> = vec![(0, 0); graph.paths.len()+1];
-    for (i, x) in cores.iter().enumerate() {
+    // Iterate over the data set (e.g. similarity) and summarize the sequence and nodes for each node
+    let max_value = stats.iter().max().unwrap();
+    let mut similarity_level: Vec<(usize, usize)> = vec![(0, 0); *max_value as usize + 1];
+    for (i, x) in stats.iter().enumerate() {
         similarity_level[*x as usize].0 += 1;
         similarity_level[*x as usize].1 += graph.nodes[i].seq.len();
     }

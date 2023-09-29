@@ -117,6 +117,12 @@ fn main() {
                 .about("Input GFA file")
                 .takes_value(true)
                 .required(true))
+            .arg(Arg::new("statistics")
+                .short('s')
+                .long("stats")
+                .about("similarity, depth, nd [default: similarity]")
+                .default_value("similarity")
+                .takes_value(true))
             .arg(Arg::new("output")
                 .short('o')
                 .long("output")
@@ -124,9 +130,8 @@ fn main() {
                 .takes_value(true)
                 .required(true))
             .arg(Arg::new("Pan-SN")
-                .short('s')
                 .long("pansn")
-                .about("Seperate by first entry in Pan-SN spec")
+                .about("Separate by first entry in Pan-SN spec")
                 .takes_value(true)))
 
 

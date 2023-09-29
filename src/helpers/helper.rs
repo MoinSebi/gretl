@@ -74,6 +74,20 @@ pub fn node_degree(graph: &NCGfa<()>) -> (Vec<u32>, Vec<u32>, Vec<u32>){
 
 }
 
+/// Calculate node degree (in, out, total)
+pub fn node_degree_total(graph: &NCGfa<()>) -> Vec<u32>{
+    let mut degree_total: Vec<u32> = vec![0; graph.nodes.len()];
+    for x in graph.edges.as_ref().unwrap().iter(){
+        let fromu: usize = x.from.clone() as usize;
+        let tou: usize = x.to.clone() as usize;
+        degree_total[fromu-1] += 1;
+        degree_total[tou-1] += 1;
+
+    }
+    return degree_total
+
+}
+
 /// Compute the node len
 ///
 /// Return a vector

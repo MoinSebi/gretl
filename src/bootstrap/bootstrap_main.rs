@@ -29,7 +29,7 @@ pub fn bootstrap_main(matches: &ArgMatches){
     // Limit the amount of iterations
     amount = min(amount, 500);
 
-    // Calculate or read combinations
+    // Combination: {number of genomes, number of iteration, combination (HashSet)}
     let mut combinations: Vec<(usize, usize, HashSet<usize>)> = Vec::new();
     if matches.is_present("meta input"){
         combinations = read_meta(matches.value_of("meta input").unwrap());
@@ -63,11 +63,11 @@ pub fn bootstrap_main(matches: &ArgMatches){
     let f = calculate_core(&&wrapper, &graph);
 
     // Iterate over all combinations - calculate the core and the sequence
-    for (x, i, x1) in combinations.iter(){
-        let k: Vec<usize> = x1.iter().cloned().collect();
+    for (number_genomes, iterations, combination) in combinations.iter(){
+        let k: Vec<usize> = combination.iter().cloned().collect();
         let dd = one_iteration(&wrapper, &graph, &k, "core", &f);
-        total.push((*x, *i, dd));
-        metas.push((*x, *i, x1.clone()));
+        total.push((*number_genomes, *iterations, dd));
+        metas.push((*number_genomes, *iterations, combination.clone()));
     }
 
     // Write the meta data if wanted
