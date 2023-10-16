@@ -1,6 +1,6 @@
 use std::collections::{HashMap, HashSet};
 use gfa_reader::{Node, Path, Gfa, NCPath, NCNode, GraphWrapper, NCGfa};
-use crate::helpers::helper::{calculate_core, calculate_depth, node_degree};
+use crate::helpers::helper::{calculate_similarity, calculate_depth, node_degree};
 use crate::stats::helper::{mean, meanf, median};
 use crate::stats::path_stats::Arithmetic::MEDIAN;
 
@@ -12,10 +12,10 @@ pub fn path_stats_wrapper(graph: &NCGfa<()>, gw: &GraphWrapper<NCPath>) -> Vec<(
     let mut res = Vec::new();
 
     // Calculate similarity
-    let core = calculate_core(&gw, graph);
+    let core = calculate_similarity(&gw, graph);
 
     // Calculate node degree
-    let test = node_degree(&graph);
+    let node_degree = node_degree(&graph);
 
     // Calculate depth
     let depth = calculate_depth(&gw, graph);
@@ -55,7 +55,7 @@ pub fn path_stats_wrapper(graph: &NCGfa<()>, gw: &GraphWrapper<NCPath>) -> Vec<(
          result_temp.push(("Similarity_median".to_string(), median_similarity.to_string()));
 
 
-         result_temp.push(("Degree_mean".to_string(), mean_path_hm(path, &test.2, Arithmetic::MEAN).to_string()));
+         result_temp.push(("Degree_mean".to_string(), mean_path_hm(path, &node_degree.2, Arithmetic::MEAN).to_string()));
 
 
 

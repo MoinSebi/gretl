@@ -2,7 +2,7 @@
 use std::collections::{HashMap};
 use std::fmt::Debug;
 use gfa_reader::{GraphWrapper, NCGfa, NCPath, Path};
-use crate::helpers::helper::{calculate_core, node_len};
+use crate::helpers::helper::{calculate_similarity, node_len};
 use crate::sliding_window::sliding_window_main::metric;
 
 /// Wrapper for sliding window
@@ -11,7 +11,7 @@ use crate::sliding_window::sliding_window_main::metric;
 /// - add different metrics
 pub fn sliding_window_wrapper(graph: &NCGfa<()>, wrapper: &GraphWrapper<NCPath>, binsize: u32, steosize: u32, metric: metric, node: bool) -> Vec<(String, Vec<f64>)>{
     let mut result = Vec::new();
-    let mut core = calculate_core(wrapper, graph);
+    let mut core = calculate_similarity(wrapper, graph);
     match metric{
         metric::nodesizem => core = node_len(graph),
         metric::similarity => {}

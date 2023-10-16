@@ -36,7 +36,7 @@ pub fn calculate_depth(wrapper: &GraphWrapper<NCPath>, graph: &NCGfa<()>) -> Vec
 }
 
 /// Counting the amount of accessions and depth
-pub fn calculate_core(wrapper: &GraphWrapper<NCPath>, graph: &NCGfa<()> ) -> Vec<u32>{
+pub fn calculate_similarity(wrapper: &GraphWrapper<NCPath>, graph: &NCGfa<()> ) -> Vec<u32>{
     let mut depth: Vec<u32> = vec![0; graph.nodes.len()];
     for (name, p) in wrapper.genomes.iter() {
         let mut path_nodes: HashSet<&u32> = HashSet::new();

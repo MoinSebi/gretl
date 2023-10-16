@@ -7,7 +7,7 @@ use crate::bootstrap::helper::random_numbers;
 use crate::bootstrap::meta::{combinations_maker, combinations_maker_wrapper, one_iteration, reduce_meta};
 use crate::bootstrap::reader::read_meta;
 use crate::bootstrap::writer::{write_meta, write_output};
-use crate::helpers::helper::calculate_core;
+use crate::helpers::helper::calculate_similarity;
 use crate::stats::helper::get_filename;
 
 
@@ -60,7 +60,7 @@ pub fn bootstrap_main(matches: &ArgMatches){
     // Removes lines and unused similarity level from the meta data (file)
     reduce_meta(& mut combinations, line, core);
 
-    let f = calculate_core(&&wrapper, &graph);
+    let f = calculate_similarity(&&wrapper, &graph);
 
     // Iterate over all combinations - calculate the core and the sequence
     for (number_genomes, iterations, combination) in combinations.iter(){

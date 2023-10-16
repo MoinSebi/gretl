@@ -6,7 +6,7 @@ use crate::node_list::writer::{make_buffer, write_header, write_list};
 
 use std::io::{BufWriter, Write};
 use std::fs::File;
-use crate::helpers::helper::{calculate_core, calculate_depth, node_degree, node_len};
+use crate::helpers::helper::{calculate_similarity, calculate_depth, node_degree, node_len};
 
 /// Wrapper function for node list analysis
 ///
@@ -21,7 +21,7 @@ pub fn wrapper_node(graph: &NCGfa<()>, wrapper: &GraphWrapper<NCPath>, filename:
         let len = node_len(graph);
         write_list( ("Length", &len), &mut ff);
     } if what.contains(&"Core"){
-        let core = calculate_core(wrapper, graph);
+        let core = calculate_similarity(wrapper, graph);
         write_list(("Core", &core), &mut ff);
     } if what.contains(&"Depth"){
         let depth2 = calculate_depth(wrapper, graph);

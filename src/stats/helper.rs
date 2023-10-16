@@ -19,8 +19,7 @@ pub fn meanf(data: & [f32]) -> f64{
 }
 
 /// Calculate median of the vector
-pub fn median(data: &mut Vec<u32>) -> f64{
-    data.sort();
+pub fn median(data: & Vec<u32>) -> f64{
     return data[data.len()/2] as f64
 }
 
@@ -34,9 +33,12 @@ pub fn get_filename(name: &str) -> String{
 
 }
 
-pub fn std(data: & [u32]) -> f64{
+
+/// Standard deviation function
+pub fn stadard_deviation(data: & [u32]) -> f64{
     let mean = mean(data);
     let mut sum = 0.0;
+    // This is a alternative approach
     for i in data.iter(){
         sum += (*i as f64 - mean).powf(2.0);
     }
@@ -44,4 +46,12 @@ pub fn std(data: & [u32]) -> f64{
     return std
 }
 
+/// Combi function for average, median and std
+pub fn average_median_std(vec_size: &mut Vec<u32>) -> (f64, f64, f64){
+    vec_size.sort();
+    let med = median(& vec_size);
+    let average = mean(&vec_size);
+    let std = stadard_deviation(&vec_size);
 
+    (average, med, std)
+}

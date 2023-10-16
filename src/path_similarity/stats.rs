@@ -1,11 +1,11 @@
 use std::collections::{HashMap, HashSet};
 use gfa_reader::{Gfa, GraphWrapper, NCGfa, NCPath};
-use crate::helpers::helper::calculate_core;
+use crate::helpers::helper::calculate_similarity;
 
 
 /// Compute the amount of sequence in each similarity level
 pub fn accession2level(graph: &NCGfa<()>, wrapper: &GraphWrapper<NCPath>) -> Vec<(String, Vec<(u32, u32)>)>{
-    let cores = calculate_core(wrapper, graph);
+    let cores = calculate_similarity(wrapper, graph);
     let metric_maxval = cores.iter().max().unwrap();
     let mut res = Vec::new();
 

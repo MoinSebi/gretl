@@ -1,6 +1,6 @@
 use gfa_reader::{GraphWrapper, NCGfa, NCPath};
-use crate::helpers::helper::{calculate_core, calculate_depth, node_degree, node_len, transpose_matrix};
-use crate::stats::helper::{mean, std};
+use crate::helpers::helper::{calculate_similarity, calculate_depth, node_degree, node_len, transpose_matrix};
+use crate::stats::helper::{mean, stadard_deviation};
 use crate::stats::path_stats::{Arithmetic, mean_path_hm, path_jumps, path_jumps_bigger, path_node_inverted, path_node_len, path_seq_inverted, path_seq_len, path_unique};
 
 /// Wrapper for path statistics
@@ -10,7 +10,7 @@ pub fn path_stats_wrapper(graph: &NCGfa<()>, gw: &GraphWrapper<NCPath>)  -> Vec<
     let mut res = Vec::new();
 
     // Calculate similarity
-    let core = calculate_core(&gw, graph);
+    let core = calculate_similarity(&gw, graph);
 
     // Calculate node degree
     let degree = node_degree(&graph);
@@ -20,22 +20,24 @@ pub fn path_stats_wrapper(graph: &NCGfa<()>, gw: &GraphWrapper<NCPath>)  -> Vec<
     let total_nodes = graph.nodes.len();
     // Calculate depth
     let depth = calculate_depth(&gw, graph);
+
+
     let names: Vec<&str> = vec![
-        "Path_length[bp]",
-        "Path_nodes",
-        "Path_unique_nodes",
-        "Path_inverted_nodes",
-        "Path_inverted_nodes[bp]",
-        "Path_length_per_node",
-        "Path_jumps",
-        "Path_jumps_bigger_than_1000",
-        "Path_jumps_normalized",
-        "Path_mean_depth",
-        "Path_median_depth",
-        "Path_mean_similarity",
-        "Path_median_similarity",
-        "Path_mean_degree",
-        "Path_median_degree",
+        "Path length [bp]",
+        "Path nodes",
+        "Path unique nodes",
+        "Path inverted_nodes",
+        "Path inverted_nodes[bp]",
+        "Path length_per_node",
+        "Path jumps",
+        "Path jumps_bigger_than_1000",
+        "Path jumps_normalized",
+        "Path mean_depth",
+        "Path median_depth",
+        "Path mean_similarity",
+        "Path median_similarity",
+        "Path mean_degree",
+        "Path median_degree",
         "Nodes_touch",
     ];
     // Iterate over all paths and calculate statistics
@@ -46,6 +48,8 @@ pub fn path_stats_wrapper(graph: &NCGfa<()>, gw: &GraphWrapper<NCPath>)  -> Vec<
         // Amount of sequence and number of nodes in the path + number of unique nodes
         let path_len = path_seq_len(path, &graph.nodes);
         let path_nodes = path_node_len(&path.nodes);
+
+
         result_temp.push(path_len as f64);
         result_temp.push(path_nodes as f64);
         result_temp.push(path_unique(path) as f64);
@@ -92,13 +96,16 @@ pub fn path_stats_wrapper(graph: &NCGfa<()>, gw: &GraphWrapper<NCPath>)  -> Vec<
 
     }
 
+    // Transpose the matrix to be able to calculate mean and std
     let a = transpose_matrix(&res);
 
     let mut result = Vec::new();
     for (name, data) in names.iter().zip(a.iter()) {
-        result.push((name.to_string() + "_average", mean(&data.iter().map(|&x| x as u32).collect::<Vec<u32>>())));
-        result.push((name.to_string() + "_std", std(&data.iter().map(|&x| x as u32).collect::<Vec<u32>>())));
+        result.push((name.to_string() + " (average)", mean(&data.iter().map(|&x| x as u32).collect::<Vec<u32>>())));
+        result.push((name.to_string() + " (std)", stadard_deviation(&data.iter().map(|&x| x as u32).collect::<Vec<u32>>())));
     }
+
+    /
     return result
 
 

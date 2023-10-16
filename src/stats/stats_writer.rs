@@ -4,7 +4,7 @@ use std::fs::File;
 /// Write statistics in a YAML file
 ///
 /// Input:
-pub fn write_graph_yaml(data: &Vec<(String, String)>, filename:  &str){
+pub fn write_tsv_graph(data: &Vec<(String, String)>, filename:  &str){
     let f = File::create(filename).expect("Unable to create file");
     let mut f = BufWriter::new(f);
     for (d, x) in data.iter(){
@@ -15,7 +15,7 @@ pub fn write_graph_yaml(data: &Vec<(String, String)>, filename:  &str){
 
 
 /// Write statistics in tab-separated file (tsv)
-pub fn write_graph_tsv(data: &Vec<(String, String)>, filename: &str){
+pub fn write_yaml_graph(data: &Vec<(String, String)>, filename: &str){
     let f = File::create(filename).expect("Unable to create file");
     let mut f = BufWriter::new(f);
     for (column_name, value_) in data.iter().take(data.len()-1){
@@ -32,9 +32,6 @@ pub fn write_graph_tsv(data: &Vec<(String, String)>, filename: &str){
 
 
 }
-
-
-
 
 
 /// Write function for path stats in yaml
