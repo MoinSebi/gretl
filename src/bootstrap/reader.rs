@@ -2,9 +2,14 @@ use std::collections::HashSet;
 use std::fs::File;
 use std::io::{self, prelude::*, BufReader};
 
+
+/// Read the meta file
+///
+/// Format of the meta file
+/// [number of genomes, number of iteration, combination (HashSet)]
 pub fn read_meta(filename: &str) -> Vec<(usize, usize, HashSet<usize>)>{
     let mut data: Vec<(usize, usize, HashSet<usize>)> = vec![];
-    let file = File::open("foo.txt").expect("cant read");
+    let file = File::open(filename).expect("cant read");
     let reader = BufReader::new(file);
 
     for line in reader.lines() {

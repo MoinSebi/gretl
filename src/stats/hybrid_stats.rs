@@ -105,7 +105,7 @@ pub fn path_stats_wrapper(graph: &NCGfa<()>, gw: &GraphWrapper<NCPath>)  -> Vec<
         result.push((name.to_string() + " (std)", stadard_deviation(&data.iter().map(|&x| x as u32).collect::<Vec<u32>>())));
     }
 
-    /
+
     return result
 
 

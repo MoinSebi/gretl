@@ -42,13 +42,11 @@ pub fn combinations_maker(size: &usize, core_number: &usize, amount: &usize) -> 
     return result
 }
 
-/// Removes lines and unused similarity level from the meta data (file)
+/// Removes lines (combinations) based on given condition (meta file or core)
 pub fn reduce_meta(meta: &mut Vec<(usize, usize, HashSet<usize>)>, line: i32, core: i32){
     if line != -1{
         let value_to_retain = meta[line as usize].clone();
         meta.retain(|x| *x == value_to_retain );
-
-
     } else {
         if core != -1 {
             meta.retain(|x| x.0 == core as usize);
@@ -64,12 +62,13 @@ pub fn reduce_meta(meta: &mut Vec<(usize, usize, HashSet<usize>)>, line: i32, co
 pub fn one_iteration(gw: &GraphWrapper<NCPath>, graph: &NCGfa<()>, combination: &[usize], metric: &str, information: &Vec<u32>) -> (Vec<usize>, Vec<usize>){
 
     let info2 = test1(gw, graph, information, combination);
-    let macf = info2.iter().max().unwrap().clone();
+    let max_value = info2.iter().max().unwrap().clone();
 
-    let mut result: Vec<usize> = vec![0; macf as usize +1];             // NODES
-    let mut result2 = vec![0; macf as usize +1];             // Sequence
+    let mut result: Vec<usize> = vec![0; max_value as usize +1];             // NODES
+    let mut result2 = vec![0; max_value as usize +1];             // Sequence
 
 
+    // Add amount and sequence
     for (i, x) in info2.iter().enumerate(){
         result[*x as usize] += 1;
         result2[*x as usize] += graph.nodes[i].seq.len();
@@ -82,12 +81,16 @@ pub fn one_iteration(gw: &GraphWrapper<NCPath>, graph: &NCGfa<()>, combination: 
 
 }
 
+/// Reduce vector wrapper
+/// - Iterate over the genome with one combination
+/// - Check if the genome is in the combination
+/// - If not, remove it from the vector
 pub fn test1(wrapper: &GraphWrapper<NCPath>, graph: &NCGfa<()>, info: &Vec<u32>, comb: &[usize]) -> Vec<u32>{
     let mut info2 = info.clone();
     for (i, x) in wrapper.genomes.iter().enumerate(){
         if ! comb.contains(&i){
             let a = make_vec(&x.1, graph.nodes.len());
-            yo(& mut info2, &a);
+            remove_from_vec(& mut info2, &a);
         }
     }
     return info2
@@ -101,32 +104,14 @@ pub fn make_vec(t: &Vec<&NCPath>, length: usize) -> Vec<u32>{
     vec1
 }
 
-pub fn yo(t: &mut Vec<u32>, v: &Vec<u32>){
-    t.iter_mut().zip(v.iter()).for_each(|(x,y)| *x = *x - *y);
-    //
-}
 
-/// Calculate similarity level and ignore path which are not in the combination set
-pub fn calculate_core_reduced(graph2: &GraphWrapper<NCPath>, graph: &NCGfa<()>, combination: &[usize]) -> HashMap<u32, u32>{
-    let mut count: HashMap<u32, u32> = HashMap::new();
-    for x in &graph.nodes{
-        count.insert(x.id, 0);
+/// Remove one vector from the other
+/// Vectors must be of same size
+/// Inplace operation
+pub fn remove_from_vec(origin: &mut Vec<u32>, sub: &Vec<u32>){
+    if origin.len() != sub.len(){
+        panic!("Vectors must be of same size")
     }
-
-    for (i, x) in graph2.genomes.iter().enumerate(){
-        if combination.contains(&i){
-            let mut vv: HashSet<u32> = HashSet::new();
-            for y in x.1.iter(){
-                let v: HashSet<_> = y.nodes.iter().cloned().collect();
-                vv.extend(v);
-            }
-
-            for y in vv{
-                *count.get_mut(&y).unwrap() += 1;
-            }
-        }
-    }
-    count.shrink_to_fit();
-    count
+    origin.iter_mut().zip(sub.iter()).for_each(|(o, s)| *o = *o - *s);
 }
 

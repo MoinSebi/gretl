@@ -15,6 +15,7 @@ clap = "=3.0.0-beta.4"
 rand = "=0.6.1"
 nalgebra = "0.29.0"
 num-traits = "0.2.14"
+rayon = "1.8.0"
 
 
 

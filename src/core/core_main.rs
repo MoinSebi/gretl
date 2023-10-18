@@ -16,7 +16,7 @@ pub fn core_main(matches: &ArgMatches){
     eprintln!("Running core analysis");
 
     // Check for panSN separator
-    let mut sep = "";
+    let mut sep = " ";
     if matches.is_present("Pan-SN"){
         sep = matches.value_of("Pan-SN").unwrap();
     }

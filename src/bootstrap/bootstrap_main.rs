@@ -14,11 +14,20 @@ use crate::stats::helper::get_filename;
 /// Main function for bootstrapping
 pub fn bootstrap_main(matches: &ArgMatches){
 
+    let mut sep = " ";
+    if matches.is_present("Pan-SN"){
+        sep = matches.value_of("Pan-SN").unwrap();
+    }
+
+
     // Read the graph
     let mut graph: NCGfa<()> = NCGfa::new();
     graph.parse_gfa_file_and_convert(matches.value_of("gfa").unwrap(), false);
     let mut wrapper: GraphWrapper<NCPath> = GraphWrapper::new();
-    wrapper.from_gfa(&graph.paths, " ");
+
+
+
+    wrapper.from_gfa(&graph.paths, sep);
     let output = matches.value_of("output").unwrap();
 
     // Get the amount of iterations
@@ -26,7 +35,8 @@ pub fn bootstrap_main(matches: &ArgMatches){
     if matches.is_present("number"){
         amount = matches.value_of("number").unwrap().parse().unwrap();
     }
-    // Limit the amount of iterations
+
+    // Limit the amount of iterations (maximum 500)
     amount = min(amount, 500);
 
     // Combination: {number of genomes, number of iteration, combination (HashSet)}
@@ -35,7 +45,6 @@ pub fn bootstrap_main(matches: &ArgMatches){
         combinations = read_meta(matches.value_of("meta input").unwrap());
     } else {
         combinations = combinations_maker_wrapper(&wrapper.genomes.len(), &amount);
-
     }
 
     // Which line should be read
@@ -53,20 +62,27 @@ pub fn bootstrap_main(matches: &ArgMatches){
     eprintln!("Running bootstrap");
     let amount_path = wrapper.genomes.len();
 
-    //let c: usize = matches.value_of("number").unwrap().parse().unwrap();
+    // The which "geomes" have been used in this run
     let mut metas = Vec::new();
+
+    // How much sequence, nodes have been used
     let mut total = Vec::new();
 
     // Removes lines and unused similarity level from the meta data (file)
     reduce_meta(& mut combinations, line, core);
 
-    let f = calculate_similarity(&&wrapper, &graph);
+    // We use the similarity measure
+    let similarity = calculate_similarity(&&wrapper, &graph);
+
+
 
     // Iterate over all combinations - calculate the core and the sequence
     for (number_genomes, iterations, combination) in combinations.iter(){
-        let k: Vec<usize> = combination.iter().cloned().collect();
-        let dd = one_iteration(&wrapper, &graph, &k, "core", &f);
-        total.push((*number_genomes, *iterations, dd));
+        let combi: Vec<usize> = combination.iter().cloned().collect();
+        let result_one_iteration = one_iteration(&wrapper, &graph, &combi, "similarity", &similarity);
+
+        // Add results
+        total.push((*number_genomes, *iterations, result_one_iteration));
         metas.push((*number_genomes, *iterations, combination.clone()));
     }
 
@@ -76,7 +92,7 @@ pub fn bootstrap_main(matches: &ArgMatches){
         write_meta(metas, metas_output);
     }
 
-    // Write the output
+    // Write the main output
     write_output(total, output);
 
 }
