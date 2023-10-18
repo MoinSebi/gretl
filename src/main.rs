@@ -77,6 +77,12 @@ fn main() {
                 .long("meta-input")
                 .about("Take a specific meta file as input")
                 .takes_value(true))
+            .arg(Arg::new("Threads")
+                .long("threads")
+                .short('t')
+                .takes_value(true)
+                .about("Number of threads")
+                .default_value("1"))
 
             .help_heading("Modifications")
             .arg(Arg::new("meta line")

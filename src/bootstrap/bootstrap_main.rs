@@ -3,12 +3,13 @@ use std::cmp::{max, min};
 use std::collections::{HashMap, HashSet};
 use clap::{ArgMatches};
 use gfa_reader::{Gfa, GraphWrapper, NCGfa, NCPath};
-use crate::bootstrap::helper::random_numbers;
-use crate::bootstrap::meta::{combinations_maker, combinations_maker_wrapper, one_iteration, reduce_meta};
+use rayon::max_num_threads;
+use crate::bootstrap::meta::{combinations_maker_wrapper, one_iteration, reduce_meta};
 use crate::bootstrap::reader::read_meta;
 use crate::bootstrap::writer::{write_meta, write_output};
 use crate::helpers::helper::calculate_similarity;
-use crate::stats::helper::get_filename;
+use rayon::prelude::*;
+
 
 
 /// Main function for bootstrapping
@@ -18,6 +19,8 @@ pub fn bootstrap_main(matches: &ArgMatches){
     if matches.is_present("Pan-SN"){
         sep = matches.value_of("Pan-SN").unwrap();
     }
+
+    let threads = matches.value_of("Threads").unwrap().parse::<usize>().unwrap();
 
 
     // Read the graph
@@ -63,10 +66,10 @@ pub fn bootstrap_main(matches: &ArgMatches){
     let amount_path = wrapper.genomes.len();
 
     // The which "geomes" have been used in this run
-    let mut metas = Vec::new();
+    // let mut metas = Vec::new();
 
     // How much sequence, nodes have been used
-    let mut total = Vec::new();
+    // let mut total = Vec::new();
 
     // Removes lines and unused similarity level from the meta data (file)
     reduce_meta(& mut combinations, line, core);
@@ -74,17 +77,45 @@ pub fn bootstrap_main(matches: &ArgMatches){
     // We use the similarity measure
     let similarity = calculate_similarity(&&wrapper, &graph);
 
+    let thread_pool = rayon::ThreadPoolBuilder::new()
+        .num_threads(threads)
+        .build()
+        .unwrap();
 
+    let results: Vec<_> = thread_pool.install(|| {
+        combinations.par_chunks(5) // Process in chunks of 3 elements (you can adjust the chunk size).
+            .flat_map(|chunk| {
+                chunk.into_iter().map(|(number_genomes, iterations, combination)| {
+                    let combi: Vec<usize> = combination.iter().cloned().collect();
+                    let result_one_iteration = one_iteration(&wrapper, &graph, &combi, "similarity", &similarity);
 
-    // Iterate over all combinations - calculate the core and the sequence
-    for (number_genomes, iterations, combination) in combinations.iter(){
-        let combi: Vec<usize> = combination.iter().cloned().collect();
-        let result_one_iteration = one_iteration(&wrapper, &graph, &combi, "similarity", &similarity);
+                    // Return results without a semicolon
+                    (*number_genomes, *iterations, result_one_iteration, combination)
+                }).into_iter().collect::<Vec<_>>()
+            }).into_par_iter() // Pass external data to the processing function.
+            .collect()
 
-        // Add results
-        total.push((*number_genomes, *iterations, result_one_iteration));
-        metas.push((*number_genomes, *iterations, combination.clone()));
+    });
+
+    let mut metas = Vec::new();
+    for x in results.iter(){
+        metas.push((x.0, x.1, x.3.clone()));
     }
+
+    let mut total = Vec::new();
+    for x in results.iter(){
+        total.push((x.0, x.1, x.2.clone()));
+    }
+
+    // // Iterate over all combinations - calculate the core and the sequence
+    // for (number_genomes, iterations, combination) in combinations.iter(){
+    //     let combi: Vec<usize> = combination.iter().cloned().collect();
+    //     let result_one_iteration = one_iteration(&wrapper, &graph, &combi, "similarity", &similarity);
+    //
+    //     // Add results
+    //     total.push((*number_genomes, *iterations, result_one_iteration));
+    //     metas.push((*number_genomes, *iterations, combination.clone()));
+    // }
 
     // Write the meta data if wanted
     if matches.is_present("meta"){
@@ -96,4 +127,5 @@ pub fn bootstrap_main(matches: &ArgMatches){
     write_output(total, output);
 
 }
+
 
