@@ -44,7 +44,6 @@ pub fn graph_stats_wrapper(graph: &NCGfa<()>, wrapper: &GraphWrapper<NCPath>, bi
     let nodes1 = bin_nodes_count_and_size(&node_size, bins.clone());
 
     for x in nodes1.iter(){
-        println!("x {:?}", x);
         result.push((x.0.to_string(), x.1.to_string()));
     }
 
