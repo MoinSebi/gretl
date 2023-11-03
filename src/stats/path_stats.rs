@@ -1,9 +1,7 @@
-use std::collections::{HashMap, HashSet};
-use gfa_reader::{Node, Path, Gfa, NCPath, NCNode, GraphWrapper, NCGfa};
+use std::collections::{HashSet};
+use gfa_reader::{NCPath, NCNode, GraphWrapper, NCGfa};
 use crate::helpers::helper::{calculate_similarity, calculate_depth, node_degree, node_len};
-use crate::sliding_window::sliding_window_main::metric::similarity;
-use crate::stats::helper::{mean, mean_usize, meanf, median, median2, std_usize};
-use crate::stats::path_stats::Arithmetic::MEDIAN;
+use crate::stats::helper::{mean, mean_usize, median, median2, std_usize};
 
 
 /// Wrapper for path statistics
@@ -35,11 +33,11 @@ pub fn path_stats_wrapper(graph: &NCGfa<()>, gw: &GraphWrapper<NCPath>) -> Vec<(
 
 
          // Amount of sequence and number of nodes in the path + number of unique nodes
-         result_temp.push(("Path sequence [bp]".to_string(), path_seq));
-         result_temp.push(("Path nodes".to_string(), path_nodes));
-         result_temp.push(("Number of unique edges".to_string(), edges_numb));
+         result_temp.push(("Sequence [bp]".to_string(), path_seq));
+         result_temp.push(("Nodes".to_string(), path_nodes));
+         result_temp.push(("Unique edges".to_string(), edges_numb));
          // Dumb info, but well
-         result_temp.push(("Number of all edges".to_string(), edges_numb));
+         result_temp.push(("Edges".to_string(), edges_numb));
 
 
          let path_unique_val = path_unique2(path, &graph.nodes);
@@ -54,10 +52,10 @@ pub fn path_stats_wrapper(graph: &NCGfa<()>, gw: &GraphWrapper<NCPath>) -> Vec<(
          let inverted = path_seq_inverted(path, &graph.nodes);
 
 
-         result_temp.push(("#Inverted nodes".to_string(), inverted.0 as f64));
+         result_temp.push(("Inverted nodes".to_string(), inverted.0 as f64));
          result_temp.push(("Inverted nodes [bp]".to_string(), inverted.1 as f64));
 
-         result_temp.push(("#Inverted nodes (normalized)".to_string(), inverted.0 as f64/path_nodes));
+         result_temp.push(("Inverted nodes (normalized)".to_string(), inverted.0 as f64/path_nodes));
          result_temp.push(("Inverted nodes [bp] (normalized)".to_string(), inverted.1 as f64/path_seq));
 
 

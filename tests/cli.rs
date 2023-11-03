@@ -12,7 +12,7 @@ fn core_pansnno_sim() -> Result<(), Box<dyn std::error::Error>> {
         .arg("--gfa")
         .arg("./data/example_data/testGraph_complex.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/test.core.pansnno.sim.txt")
+        .arg("/home/svorbrugg/code/gfastats/data/test/core.pansnno.sim.txt")
         .arg("--pansn")
         .arg("_");
     cmd.assert().success();
@@ -91,21 +91,21 @@ fn ps() -> Result<(), Box<dyn std::error::Error>> {
 
 
 #[test]
-fn stats_tsv() -> Result<(), Box<dyn std::error::Error>> {
+fn stats_graph_tsv() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
     cmd
         .arg("stats")
         .arg("--gfa")
         .arg("./data/example_data/testGraph.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/test.stats.tsv");
+        .arg("/home/svorbrugg/code/gfastats/data/test/stats.graph.tsv");
 
     cmd.assert().success();
     Ok(())
 }
 
 #[test]
-fn stats_yaml() -> Result<(), Box<dyn std::error::Error>> {
+fn stats_graph_yaml() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
     cmd
         .arg("stats")
@@ -113,7 +113,7 @@ fn stats_yaml() -> Result<(), Box<dyn std::error::Error>> {
         .arg("./data/example_data/testGraph.gfa")
         .arg("-y")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/test.stats.yaml");
+        .arg("/home/svorbrugg/code/gfastats/data/test/stats.graph.yaml");
 
     cmd.assert().success();
     Ok(())
@@ -130,7 +130,7 @@ fn stats_path_tsv() -> Result<(), Box<dyn std::error::Error>> {
         .arg("./data/example_data/testGraph.gfa")
         .arg("--path")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/test.stats.path.tsv");
+        .arg("/home/svorbrugg/code/gfastats/data/test/stats.path.tsv");
 
     cmd.assert().success();
     Ok(())
@@ -146,7 +146,7 @@ fn stats_path_yaml() -> Result<(), Box<dyn std::error::Error>> {
         .arg("--path")
         .arg("-y")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/test.stats.path.yaml");
+        .arg("/home/svorbrugg/code/gfastats/data/test/stats.path.yaml");
 
     cmd.assert().success();
     Ok(())

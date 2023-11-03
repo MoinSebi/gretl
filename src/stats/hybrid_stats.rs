@@ -1,6 +1,6 @@
 use gfa_reader::{GraphWrapper, NCGfa, NCPath};
 use crate::stats::helper::{mean, stadard_deviation};
-use crate::stats::path_stats::{Arithmetic, mean_path_hm, path_jumps, path_jumps_bigger, path_node_inverted, path_node_len, path_seq_inverted, path_seq_len, path_stats_wrapper, path_unique};
+use crate::stats::path_stats::{path_stats_wrapper};
 
 /// Wrapper for path statistics
 pub fn path_stats_wrapper2(graph: &NCGfa<()>, gw: &GraphWrapper<NCPath>)  -> Vec<(String, f64)>{
@@ -17,18 +17,20 @@ pub fn path_stats_wrapper2(graph: &NCGfa<()>, gw: &GraphWrapper<NCPath>)  -> Vec
         }
         break
     }
-
-    for x in path_stats.iter(){
+    println!("{}", tmp_names.len());
+    for x in 0..path_stats[0].1.len(){
         let mut res2 = Vec::new();
-        for y in x.1.iter(){
-            res2.push(y.1);
+        for y in 0..path_stats.len(){
+            res2.push(path_stats[y].1[x].1);
         }
         tmp_res.push(res2)
     }
+
+
     let mut result = Vec::new();
     for (data, name) in tmp_res.iter().zip(tmp_names.iter()){
-        result.push(("Path".to_string() + &name + " (average)", mean(&data.iter().map(|&x| x as u32).collect::<Vec<u32>>())));
-        result.push(("Path".to_string() + &name + " (std)", stadard_deviation(&data.iter().map(|&x| x as u32).collect::<Vec<u32>>())));
+        result.push(("Path ".to_string() + &name + " (average)", mean(&data.iter().map(|&x| x as u32).collect::<Vec<u32>>())));
+        result.push(("Path ".to_string() + &name + " (std)", stadard_deviation(&data.iter().map(|&x| x as u32).collect::<Vec<u32>>())));
     }
 
     return result

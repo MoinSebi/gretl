@@ -10,6 +10,6 @@ pub fn random_numbers(size: &usize, number: &usize) -> Vec<usize>{
     let sample: Vec<&usize>= v.iter().choose_multiple(&mut rng, *number);
 
     // Clone (so no reference)
-    let sample: Vec<usize> = sample.iter().map(|n| n.clone()).cloned().collect();
+    let sample: Vec<usize> = sample.iter().map(|n| *n).cloned().collect();
     sample
 }

@@ -1,8 +1,8 @@
-use gfa_reader::{Gfa, GraphWrapper, NCEdge, NCGfa, NCPath};
-use std::collections::{HashMap};
+use std::cmp::max;
+use gfa_reader::{Gfa, GraphWrapper, NCGfa, NCPath};
 use crate::helpers::helper::{calculate_similarity, calculate_depth, node_degree, node_len};
 use crate::stats::hybrid_stats::{path_stats_wrapper2};
-use crate::stats::helper::{average_median_std, mean, meanf, median};
+use crate::stats::helper::{average_median_std, mean, median};
 
 /// Wrapper for graph statistics
 pub fn graph_stats_wrapper(graph: &NCGfa<()>, wrapper: &GraphWrapper<NCPath>, bins: Vec<usize>) -> Vec<(String, String)>{
@@ -18,27 +18,33 @@ pub fn graph_stats_wrapper(graph: &NCGfa<()>, wrapper: &GraphWrapper<NCPath>, bi
     let path_number = graph_path_number(graph);
     let node_number = graph_node_number(graph);
     let edge_number = graph_edge_number(graph);
-    result.push(("#Paths".to_string(), path_number.to_string()));
-    result.push(("#Samples".to_string(), wrapper.genomes.len().to_string()));
-    result.push(("#Nodes".to_string(), node_number.to_string()));
-    result.push(("#Edges".to_string(), edge_number.to_string()));
+    result.push(("Paths".to_string(), path_number.to_string()));
+    result.push(("Samples".to_string(), wrapper.genomes.len().to_string()));
+    result.push(("Nodes".to_string(), node_number.to_string()));
+    result.push(("Edges".to_string(), edge_number.to_string()));
     result.push(("N/E ration".to_string(), (node_number as f64/edge_number as f64).to_string()));
 
     // Node stats (sizes)
     let (graph_node_average, graph_node_median, graph_node_sum) = graph_node_stats(graph);
+    result.push(("Graph size [bp]".to_string(), graph_node_sum.to_string()));
+    let input_seq = graph_path_seq_total(graph);
+    result.push(("Input genomes size [bp]".to_string(), input_seq.to_string()));
+    result.push(("Compression".to_string(), (input_seq as f64/graph_node_sum as f64).to_string()));
+
+
     result.push(("Node length (average) [bp]".to_string(), graph_node_average.to_string()));
     result.push( ("Node length (median) [bp]".to_string(), graph_node_median.to_string()));
-    result.push(("Node length  (sum) [bp]".to_string(), graph_node_sum.to_string()));
 
     let mut node_size = node_len(graph);
 
     let size5 = size5pro(& mut node_size);
-    result.push(("Node length (max) [bp]".to_string(), size5.0.to_string()));
-    result.push(("Node length (average, top 5%) [bp]".to_string(), size5.1.to_string()));
+    result.push(("Node length top 5% (median) [bp]".to_string(), size5.0.to_string()));
+    result.push(("Node length top 5% (average [bp]".to_string(), size5.1.to_string()));
 
     let nodes1 = bin_nodes_count_and_size(&node_size, vec![1,50,100,1000,5000]);
 
     for x in nodes1.iter(){
+        println!("x {:?}", x);
         result.push((x.0.to_string(), x.1.to_string()));
     }
 
@@ -54,9 +60,6 @@ pub fn graph_stats_wrapper(graph: &NCGfa<()>, wrapper: &GraphWrapper<NCPath>, bi
     result.push(("Depth (median)".to_string(), a2.to_string()));
     result.push(("Depth (std)".to_string(), a2.to_string()));
     // Total length of paths
-    let input_seq = graph_path_seq_total(graph);
-    result.push(("Input genomes size [bp]".to_string(), input_seq.to_string()));
-    result.push(("Compression".to_string(), (input_seq as f64/graph_node_sum as f64).to_string()));
 
 
     // Node degree
@@ -66,9 +69,15 @@ pub fn graph_stats_wrapper(graph: &NCGfa<()>, wrapper: &GraphWrapper<NCPath>, bi
     result.push(("Node degree (total)".to_string(), mean(&graph_degree_total_average).to_string()));
 
     // Inverted edges
-    result.push(("#Inverted edges".to_string(), inverted_edges(graph).to_string()));
-    result.push(("#Negative edges".to_string(), neg_edges(graph).to_string()));
-    result.push(("#Self edges".to_string(), self_edge(graph).to_string()));
+    result.push(("Inverted edges".to_string(), inverted_edges(graph).to_string()));
+    result.push(("Inverted edges (normalized)".to_string(), (inverted_edges(graph) as f64/ edge_number as f64).to_string()));
+
+    result.push(("Negative edges".to_string(), neg_edges(graph).to_string()));
+    result.push(("Negative edges (normalized)".to_string(), (neg_edges(graph) as f64/ edge_number as f64).to_string()));
+
+    result.push(("Self edges".to_string(), self_edge(graph).to_string()));
+    result.push(("Self edges (normalized)".to_string(), (self_edge(graph) as f64/ edge_number as f64).to_string()));
+
 
     // Crazy stuff
     result.push(("Graph density".to_string(), graph_density(graph).to_string()));
@@ -172,8 +181,9 @@ pub fn bin_nodes_count_and_size(value: &Vec<u32>, bins: Vec<u32>) -> Vec<(String
     let mut result = vec![0; bins.len()];
     for x in value.iter() {
         for (i, y) in bins.iter().enumerate() {
-            if x < y {
+            if x <= y {
                 result[i] += 1;
+                break
             }
         }
     }
@@ -182,9 +192,9 @@ pub fn bin_nodes_count_and_size(value: &Vec<u32>, bins: Vec<u32>) -> Vec<(String
     let mut real_result = Vec::new();
     for (i, x) in result.iter().zip(bins.iter()).enumerate(){
         if i == 0{
-            real_result.push(("Bin[0-".to_string() + &x.1.to_string() + &"]".to_string(), x.1.clone()));
+            real_result.push(("Bin[0-".to_string() + &x.1.to_string() + &"]".to_string(), x.0.clone()));
         } else {
-            real_result.push(("Bin[".to_string() + &bins[i-1].to_string() + &"-".to_string() + &x.1.to_string() + &"]".to_string(), x.1.clone()));
+            real_result.push(("Bin[".to_string() + &(bins[i-1]+1).to_string() + &"-".to_string() + &x.1.to_string() + &"]".to_string(), x.0.clone()));
 
         }
     }
@@ -199,14 +209,14 @@ pub fn bin_nodes_count_and_size(value: &Vec<u32>, bins: Vec<u32>) -> Vec<(String
 }
 
 /// Top 5 percent of something
-pub fn size5pro(f: &mut Vec<u32>) -> (usize, f64) {
+pub fn size5pro(f: &mut Vec<u32>) -> (f64, f64) {
     let mut a = f.iter().map(|n| *n as usize).collect::<Vec<usize>>();
-    a.sort();
-    let top5: &[usize] = &a[0..(a.len() as f64 * 0.05) as usize];
+    a.sort_by(|a, b| b.cmp(a));
+    let top5: &[usize] = &a[0..max(1, (a.len() as f64 * 0.05) as usize)];
 
     let maxx = a.iter().max().unwrap();
 
-    (*maxx, mean(&top5.iter().map(|n| *n as u32).collect::<Vec<u32>>()))
+    (median(&top5.iter().map(|n| *n as u32).collect()), mean(&top5.iter().map(|n| *n as u32).collect::<Vec<u32>>()))
 }
 
 
