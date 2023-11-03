@@ -17,7 +17,6 @@ pub fn path_stats_wrapper2(graph: &NCGfa<()>, gw: &GraphWrapper<NCPath>)  -> Vec
         }
         break
     }
-    println!("{}", tmp_names.len());
     for x in 0..path_stats[0].1.len(){
         let mut res2 = Vec::new();
         for y in 0..path_stats.len(){
