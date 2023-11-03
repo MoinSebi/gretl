@@ -1,7 +1,7 @@
 use gfa_reader::{Gfa, GraphWrapper, NCEdge, NCGfa, NCPath};
 use std::collections::{HashMap};
 use crate::helpers::helper::{calculate_similarity, calculate_depth, node_degree, node_len};
-use crate::stats::hybrid_stats::path_stats_wrapper;
+use crate::stats::hybrid_stats::{path_stats_wrapper2};
 use crate::stats::helper::{average_median_std, mean, meanf, median};
 
 /// Wrapper for graph statistics
@@ -75,7 +75,7 @@ pub fn graph_stats_wrapper(graph: &NCGfa<()>, wrapper: &GraphWrapper<NCPath>, bi
 
 
 
-    let hybrid_stats = path_stats_wrapper(graph, &wrapper);
+    let hybrid_stats = path_stats_wrapper2(graph, &wrapper);
     for x in hybrid_stats.iter(){
         result.push((x.0.to_string(), x.1.to_string()));
     }

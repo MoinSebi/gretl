@@ -1,7 +1,7 @@
 use clap::ArgMatches;
 use gfa_reader::{GraphWrapper, NCGfa, NCPath};
 use crate::stats::graph_stats::graph_stats_wrapper;
-use crate::stats::path_stats::path_stats_wrapper;
+use crate::stats::path_stats::{convert_data, path_stats_wrapper, remove_unsorted};
 use crate::stats::stats_writer::{write_yaml_graph, write_tsv_path, write_tsv_graph, write_yaml_path};
 
 
@@ -23,7 +23,9 @@ pub fn stats_main(matches: &ArgMatches){
 
 
     if matches.is_present("path"){
-        let data = path_stats_wrapper(&graph, &wrapper);
+        let mut data = path_stats_wrapper(&graph, &wrapper);
+        let mut data =  convert_data(&mut data);
+        remove_unsorted(&mut data, &graph);
 
         if matches.is_present("YAML"){
             write_yaml_path(&data, output);

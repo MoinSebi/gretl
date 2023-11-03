@@ -10,6 +10,13 @@ pub fn mean(data: & [u32]) -> f64{
     return sums
 }
 
+pub fn mean_usize(data: & [usize]) -> f64{
+    let sums1: usize = data.iter().sum();
+    let sums = (sums1 as f64)/data.iter().len() as f64;
+    return sums
+}
+
+
 
 /// Calculate average of the vector
 pub fn meanf(data: & [f32]) -> f64{
@@ -21,6 +28,22 @@ pub fn meanf(data: & [f32]) -> f64{
 /// Calculate median of the vector
 pub fn median(data: & Vec<u32>) -> f64{
     return data[data.len()/2] as f64
+}
+
+pub fn median2(data: & Vec<usize>) -> usize{
+    return data[data.len()/2]
+}
+
+// standard deviation of a usize vector
+pub fn std_usize(data: & Vec<usize>) -> f64{
+    let mean = mean_usize(data);
+    let mut sum = 0.0;
+    // This is a alternative approach
+    for i in data.iter(){
+        sum += (*i as f64 - mean).powf(2.0);
+    }
+    let std = (sum/(data.len() as f64)).sqrt();
+    return std
 }
 
 /// Get the file name
