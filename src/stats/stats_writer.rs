@@ -18,7 +18,7 @@ pub fn write_tsv_graph(data: &Vec<(String, String)>, filename:  &str){
 pub fn write_yaml_graph(data: &Vec<(String, String)>, filename: &str){
     let f = File::create(filename).expect("Unable to create file");
     let mut f = BufWriter::new(f);
-    for (column_name, value_) in data.iter().take(data.len()-1){
+    for (column_name, _value) in data.iter().take(data.len()-1){
         write!(f, "{}\t", column_name).expect("Not able to write");
     }
     write!(f, "{}\n", data[data.len()-1].0).expect("Not able to write");
@@ -60,7 +60,7 @@ pub fn write_tsv_path(data: &Vec<(String, Vec<(String, String)>)>, filename:  &s
     }
     for data1 in data.iter(){
         write!(f, "{}\t", data1.0).expect("Not able to write");
-        for (column_name, value_) in data1.1.iter().take(data1.1.len()-1){
+        for (_column_name, value_) in data1.1.iter().take(data1.1.len()-1){
             write!(f, "{}\t", value_).expect("Not able to write");
         }
         write!(f, "{}\n", data1.1[data1.1.len()-1].1).expect("Not able to write");

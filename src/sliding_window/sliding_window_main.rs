@@ -1,9 +1,7 @@
 use clap::ArgMatches;
-use gfa_reader::{GraphWrapper, NCEdge, NCGfa, NCPath};
-use crate::sliding_window::sliding_window_main::metric::nodesizem;
+use gfa_reader::{GraphWrapper, NCGfa, NCPath};
 use crate::sliding_window::window::sliding_window_wrapper;
 use crate::sliding_window::writer::write_window;
-use crate::stats::helper::get_filename;
 
 /// Main function for node id to integer function
 pub fn window_main(matches: &ArgMatches){
@@ -33,12 +31,12 @@ pub fn window_main(matches: &ArgMatches){
 
 
     // similarity
-    let mut metric = metric::similarity;
+    let mut metric = Metric::Similarity;
     if matches.is_present("metric"){
         match matches.value_of("metric").unwrap(){
-            "metric" => metric = metric::nodesizem,
-            "nodesize" => metric = metric::similarity,
-            _ => metric = metric::similarity,
+            "metric" => metric = Metric::Nodesizem,
+            "nodesize" => metric = Metric::Similarity,
+            _ => metric = Metric::Similarity,
         }
     }
 
@@ -48,8 +46,8 @@ pub fn window_main(matches: &ArgMatches){
 
 }
 
-pub enum metric{
-    similarity,
-    nodesizem
+pub enum Metric {
+    Similarity,
+    Nodesizem
 }
 

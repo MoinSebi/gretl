@@ -1,7 +1,7 @@
 use std::collections::{HashSet};
 use gfa_reader::{NCPath, NCNode, GraphWrapper, NCGfa};
 use crate::helpers::helper::{calculate_similarity, calculate_depth, node_degree, node_len};
-use crate::stats::helper::{mean, mean_usize, median, median2, std_usize};
+use crate::stats::helper::{mean_usize, median2, std_usize};
 
 
 /// Wrapper for path statistics
@@ -179,7 +179,7 @@ pub fn path_seq_inverted(path: &NCPath, nodes: &Vec<NCNode<()>>) -> (usize, usiz
 ///
 /// TODO
 /// - running average (no overflow)
-pub fn path_jumps(path: &NCPath) -> (usize){
+pub fn path_jumps(path: &NCPath) -> usize{
     let mut c: usize = 0;
     let mut last = path.nodes[0];
     for node_id in path.nodes.iter().skip(1){
@@ -206,13 +206,6 @@ pub fn path_jumps_bigger(path: &NCPath, val: Option<i32> ) -> u32{
     return c
 }
 
-/// Number of unique nodes in a path
-pub fn path_unique(path: &NCPath) -> usize{
-    let hp: HashSet<u32> = path.nodes.iter().cloned().collect();
-    return hp.len()
-}
-
-
 pub fn path_unique2(path: &NCPath, nodes: &Vec<NCNode<()>>) -> (usize, usize){
     let hp: HashSet<u32> = path.nodes.iter().cloned().collect();
     let unique_seq = hp.iter().map(|x| nodes[*x as usize - 1].seq.len()).sum();
@@ -234,26 +227,7 @@ pub fn path_cycle(path: &NCPath) -> usize{
     _c
 }
 
-pub enum Arithmetic {
-    MEAN,
-    MEDIAN,
-    SUM,
-}
 
-pub fn mean_path_hm(path: &NCPath, count: &Vec<u32>, ari: Arithmetic) -> f64{
-    let mut data = Vec::new();
-    for x in path.nodes.iter(){
-        data.push(count[*x as usize - 1])
-    }
-    let mut result: f64 = 0.0;
-
-    match ari {
-        Arithmetic::MEAN =>  result = mean(&data),
-        Arithmetic::MEDIAN => result = median(&mut data),
-        _ => {let f: u32 = data.iter().sum(); result = f as f64}
-    }
-    result
-}
 
 
 pub fn convert_data(input: &mut Vec<(String, Vec<(String, f64)>)>) -> Vec<(String, Vec<(String, String)>)>{

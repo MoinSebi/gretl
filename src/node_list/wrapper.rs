@@ -1,11 +1,5 @@
-use std::collections::{HashMap, HashSet};
-use std::hash::Hash;
-use std::vec;
-use gfa_reader::{Gfa, GraphWrapper, NCGfa, NCPath};
+use gfa_reader::{GraphWrapper, NCGfa, NCPath};
 use crate::node_list::writer::{make_buffer, write_header, write_list};
-
-use std::io::{BufWriter, Write};
-use std::fs::File;
 use crate::helpers::helper::{calculate_similarity, calculate_depth, node_degree, node_len};
 
 /// Wrapper function for node list analysis

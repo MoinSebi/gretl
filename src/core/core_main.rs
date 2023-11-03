@@ -1,9 +1,8 @@
 use clap::ArgMatches;
-use gfa_reader::{Edge, Gfa, GraphWrapper, NCGfa, NCPath};
+use gfa_reader::{GraphWrapper, NCGfa, NCPath};
 use crate::core::core_calc::pan_genome;
 use crate::core::writer::writer_core;
 use crate::helpers::graphs::get_stats;
-use crate::stats::helper::{get_filename};
 
 
 /// Core main function

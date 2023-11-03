@@ -1,8 +1,7 @@
 use clap::ArgMatches;
-use gfa_reader::{Gfa, GraphWrapper, NCGfa, NCPath};
+use gfa_reader::{GraphWrapper, NCGfa, NCPath};
 use crate::path_similarity::stats::accession2level;
 use crate::path_similarity::writer_test::write_ps;
-use crate::stats::helper::get_filename;
 
 /// Main function for path related stats
 pub fn ps_main(matches: &ArgMatches){

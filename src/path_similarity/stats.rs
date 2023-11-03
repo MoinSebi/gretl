@@ -1,5 +1,5 @@
-use std::collections::{HashMap, HashSet};
-use gfa_reader::{Gfa, GraphWrapper, NCGfa, NCPath};
+use std::collections::{HashSet};
+use gfa_reader::{GraphWrapper, NCGfa, NCPath};
 use crate::helpers::helper::calculate_similarity;
 
 

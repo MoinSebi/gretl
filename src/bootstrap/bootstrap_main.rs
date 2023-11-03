@@ -1,9 +1,7 @@
-use std::borrow::BorrowMut;
-use std::cmp::{max, min};
-use std::collections::{HashMap, HashSet};
+use std::cmp::{min};
+use std::collections::{HashSet};
 use clap::{ArgMatches};
-use gfa_reader::{Gfa, GraphWrapper, NCGfa, NCPath};
-use rayon::max_num_threads;
+use gfa_reader::{GraphWrapper, NCGfa, NCPath};
 use crate::bootstrap::meta::{combinations_maker_wrapper, one_iteration, reduce_meta};
 use crate::bootstrap::reader::read_meta;
 use crate::bootstrap::writer::{write_meta, write_output};
@@ -43,7 +41,7 @@ pub fn bootstrap_main(matches: &ArgMatches){
     amount = min(amount, 500);
 
     // Combination: {number of genomes, number of iteration, combination (HashSet)}
-    let mut combinations: Vec<(usize, usize, HashSet<usize>)> = Vec::new();
+    let mut combinations: Vec<(usize, usize, HashSet<usize>)>;
     if matches.is_present("meta input"){
         combinations = read_meta(matches.value_of("meta input").unwrap());
     } else {
@@ -63,7 +61,6 @@ pub fn bootstrap_main(matches: &ArgMatches){
     }
 
     eprintln!("Running bootstrap");
-    let amount_path = wrapper.genomes.len();
 
     // The which "geomes" have been used in this run
     // let mut metas = Vec::new();

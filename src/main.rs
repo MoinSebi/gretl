@@ -8,14 +8,12 @@ mod helpers;
 mod sliding_window;
 
 use clap::{Arg, App, AppSettings};
-use gfa_reader::{Gfa, GraphWrapper};
 use crate::bootstrap::bootstrap_main::bootstrap_main;
 use crate::core::core_main::core_main;
 use crate::id2int::id2int_main::id2int_main;
 use crate::node_list::node_list_main::nodelist_main;
 use crate::path_similarity::ps_main::ps_main;
 use crate::sliding_window::sliding_window_main::window_main;
-use crate::stats::helper::get_filename;
 use crate::stats::stats_main::stats_main;
 
 fn main() {

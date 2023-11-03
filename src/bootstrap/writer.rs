@@ -1,4 +1,3 @@
-use std::cmp::max;
 use std::collections::HashSet;
 use std::io::{BufWriter, Write};
 use std::fs::File;

@@ -1,8 +1,3 @@
-use std::collections::{HashMap, HashSet};
-use gfa_reader::{Gfa, GraphWrapper, NCEdge, NCGfa, NCPath};
-
-
-
 /// Calculate average of the vector
 pub fn mean(data: & [u32]) -> f64{
     let sums1: u32 = data.iter().sum();
@@ -18,12 +13,7 @@ pub fn mean_usize(data: & [usize]) -> f64{
 
 
 
-/// Calculate average of the vector
-pub fn meanf(data: & [f32]) -> f64{
-    let sums1: f32 = data.iter().sum();
-    let sums = (sums1 as f64)/data.iter().len() as f64;
-    return sums
-}
+
 
 /// Calculate median of the vector
 pub fn median(data: & Vec<u32>) -> f64{
@@ -46,15 +36,7 @@ pub fn std_usize(data: & Vec<usize>) -> f64{
     return std
 }
 
-/// Get the file name
-///
-/// Remove folder structure
-///
-pub fn get_filename(name: &str) -> String{
-    let u: Vec<&str> = name.split("/").collect();
-    u.last().unwrap().to_string()
 
-}
 
 
 /// Standard deviation function

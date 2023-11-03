@@ -1,12 +1,10 @@
-use std::collections::HashMap;
 use std::io::{BufWriter, Write};
 use std::fs::File;
-use std::ptr::write;
 
 
 pub fn make_buffer(filename: &str) -> BufWriter<File>{
     let f = File::create(filename).expect("Unable to create file");
-    let mut f = BufWriter::new(f);
+    let f = BufWriter::new(f);
     return f
 }
 
@@ -22,7 +20,7 @@ pub fn write_list(data: (&str, &Vec<u32>), f: &mut BufWriter<File>){
     write!(f, "{}\t", data.0).expect("hilfe");
 
     for x in data.1.iter(){
-        write!(f, "{}\t", x).expect("hilfe"); ;
+        write!(f, "{}\t", x).expect("hilfe");
     }
     write!(f, "\n").expect("hilfe");
 }

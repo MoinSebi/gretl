@@ -1,5 +1,4 @@
-use gfa_reader::{Gfa, GraphWrapper, NCGfa, NCPath, Path};
-use crate::helpers::helper::calculate_similarity;
+use gfa_reader::{GraphWrapper, NCGfa, NCPath};
 
 ///
 pub fn pan_genome(gwrapper: &GraphWrapper<NCPath>, graph: &NCGfa<()>, stats: &Vec<u32>) -> (Vec<(usize, usize)>, Vec<(String, usize, usize)>){

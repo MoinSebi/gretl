@@ -1,7 +1,6 @@
 use clap::ArgMatches;
-use gfa_reader::{Gfa, GraphWrapper, NCGfa, NCPath};
+use gfa_reader::{GraphWrapper, NCGfa, NCPath};
 use crate::node_list::wrapper::wrapper_node;
-use crate::stats::helper::get_filename;
 
 
 /// Main function for node list

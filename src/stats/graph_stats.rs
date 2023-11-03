@@ -1,11 +1,11 @@
 use std::cmp::max;
-use gfa_reader::{Gfa, GraphWrapper, NCGfa, NCPath};
+use gfa_reader::{GraphWrapper, NCGfa, NCPath};
 use crate::helpers::helper::{calculate_similarity, calculate_depth, node_degree, node_len};
 use crate::stats::hybrid_stats::{path_stats_wrapper2};
 use crate::stats::helper::{average_median_std, mean, median};
 
 /// Wrapper for graph statistics
-pub fn graph_stats_wrapper(graph: &NCGfa<()>, wrapper: &GraphWrapper<NCPath>, bins: Vec<usize>) -> Vec<(String, String)>{
+pub fn graph_stats_wrapper(graph: &NCGfa<()>, wrapper: &GraphWrapper<NCPath>, bins: Vec<u32>) -> Vec<(String, String)>{
     let mut wrapper: GraphWrapper<NCPath> = GraphWrapper::new();
     wrapper.from_gfa(&graph.paths, " ");
     // Result vector
@@ -41,7 +41,7 @@ pub fn graph_stats_wrapper(graph: &NCGfa<()>, wrapper: &GraphWrapper<NCPath>, bi
     result.push(("Node length top 5% (median) [bp]".to_string(), size5.0.to_string()));
     result.push(("Node length top 5% (average [bp]".to_string(), size5.1.to_string()));
 
-    let nodes1 = bin_nodes_count_and_size(&node_size, vec![1,50,100,1000,5000]);
+    let nodes1 = bin_nodes_count_and_size(&node_size, bins.clone());
 
     for x in nodes1.iter(){
         println!("x {:?}", x);
@@ -54,11 +54,11 @@ pub fn graph_stats_wrapper(graph: &NCGfa<()>, wrapper: &GraphWrapper<NCPath>, bi
     let (a1,a2, a3) = average_median_std(&mut core);
     result.push( ("Similarity (mean)".to_string(), a1.to_string()));
     result.push(("Similarity (median)".to_string(), a2.to_string()));
-    result.push(("Similarity (std)".to_string(), a2.to_string()));
+    result.push(("Similarity (std)".to_string(), a3.to_string()));
     let (a1,a2, a3) = average_median_std(&mut depth);
     result.push( ("Depth (mean)".to_string(), a1.to_string()));
     result.push(("Depth (median)".to_string(), a2.to_string()));
-    result.push(("Depth (std)".to_string(), a2.to_string()));
+    result.push(("Depth (std)".to_string(), a3.to_string()));
     // Total length of paths
 
 
@@ -127,15 +127,7 @@ pub fn graph_node_stats(graph: &NCGfa<()>) -> (f64, f64, u32){
 
 
 
-/// Calculate node degree (in, out, total)
-pub fn node_degree2(ncgraph: &GraphWrapper<NCPath>,  graph: &NCGfa<()>) -> (f64, f64, f64){
-    let (degree_in_values, degree_out_values, degree_total_values) = node_degree(graph);
 
-    let graph_degree_in_average = mean(&degree_in_values);
-    let graph_degree_out_average = mean(&degree_out_values);
-    let graph_degree_total_average = mean(&degree_total_values);
-    (graph_degree_in_average, graph_degree_out_average, graph_degree_total_average)
-}
 
 /// Calculate graph density
 pub fn graph_density(graph: &NCGfa<()>) -> f64{
@@ -213,8 +205,6 @@ pub fn size5pro(f: &mut Vec<u32>) -> (f64, f64) {
     let mut a = f.iter().map(|n| *n as usize).collect::<Vec<usize>>();
     a.sort_by(|a, b| b.cmp(a));
     let top5: &[usize] = &a[0..max(1, (a.len() as f64 * 0.05) as usize)];
-
-    let maxx = a.iter().max().unwrap();
 
     (median(&top5.iter().map(|n| *n as u32).collect()), mean(&top5.iter().map(|n| *n as u32).collect::<Vec<u32>>()))
 }

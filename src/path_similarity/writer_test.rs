@@ -1,6 +1,5 @@
 use std::io::{BufWriter, Write};
 use std::fs::File;
-use gfa_reader::Gfa;
 
 /// Write path similarity data to a file
 pub fn write_ps(data: &Vec<(String, Vec<(u32, u32)>)>, filename: &str){

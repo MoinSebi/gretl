@@ -1,7 +1,6 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::{HashSet};
 use std::fmt::Debug;
-use std::path::Path;
-use gfa_reader::{Edge, Gfa, GraphWrapper, NCGfa, NCPath};
+use gfa_reader::{GraphWrapper, NCGfa, NCPath};
 
 fn calculate_average<T>(v: &[T]) -> Option<f64>
     where T:  Into<f64> + Copy + Debug
@@ -14,7 +13,7 @@ fn calculate_average<T>(v: &[T]) -> Option<f64>
     let mut count: f64 = 0.0;
 
     for &value in v {
-        mean += ((value.into() - mean.clone())/ f64::from(count.clone() + 1.0));
+        mean += (value.into() - mean.clone())/ f64::from(count.clone() + 1.0);
         count += 1.0;
     }
 
@@ -24,7 +23,7 @@ fn calculate_average<T>(v: &[T]) -> Option<f64>
 /// Counting the amount of accessions and depth
 pub fn calculate_depth(wrapper: &GraphWrapper<NCPath>, graph: &NCGfa<()>) -> Vec<u32>{
     let mut depth: Vec<u32> = vec![0; graph.nodes.len()];
-    for (name, p) in wrapper.genomes.iter() {
+    for (_name, p) in wrapper.genomes.iter() {
         for path in p.iter() {
             for x in path.nodes.iter() {
                 depth[*x as usize-1] += 1;
@@ -38,7 +37,7 @@ pub fn calculate_depth(wrapper: &GraphWrapper<NCPath>, graph: &NCGfa<()>) -> Vec
 /// Counting the amount of accessions and depth
 pub fn calculate_similarity(wrapper: &GraphWrapper<NCPath>, graph: &NCGfa<()> ) -> Vec<u32>{
     let mut depth: Vec<u32> = vec![0; graph.nodes.len()];
-    for (name, p) in wrapper.genomes.iter() {
+    for (_name, p) in wrapper.genomes.iter() {
         let mut path_nodes: HashSet<&u32> = HashSet::new();
         for path in p.iter() {
             for node in path.nodes.iter() {
@@ -100,13 +99,4 @@ pub fn node_len(graph: &NCGfa<()>) ->  Vec<u32>{
     return result
 }
 
-pub fn transpose_matrix<T: Clone>(matrix: &Vec<Vec<T>>) -> Vec<Vec<T>> {
-    let cols = matrix[0].len();
-
-    let transposed: Vec<Vec<T>> = (0..cols)
-        .map(|j| matrix.iter().map(|row| row[j].clone()).collect())
-        .collect();
-
-    transposed
-}
 

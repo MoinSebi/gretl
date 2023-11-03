@@ -15,10 +15,10 @@ pub fn stats_main(matches: &ArgMatches){
     wrapper.from_gfa(&graph.paths, " ");
     let output = matches.value_of("output").unwrap();
 
-    let mut bins = vec![1, 50, 100, 1000];
+    let mut bins : Vec<u32> = vec![1, 50, 100, 1000];
     if matches.is_present("bins"){
         let bins_str = matches.value_of("bins").unwrap();
-        bins = bins_str.split(",").map(|x| x.parse::<usize>().unwrap()).collect();
+        bins = bins_str.split(",").map(|x| x.parse::<u32>().unwrap()).collect();
     }
 
 
