@@ -41,13 +41,13 @@ pub fn path_stats_wrapper(graph: &NCGfa<()>, gw: &GraphWrapper<NCPath>) -> Vec<(
 
 
          let path_unique_val = path_unique2(path, &graph.nodes);
-         result_temp.push(("Unique nodes (count)".to_string(), path_unique_val.0 as f64));
-         result_temp.push(("Unique nodes (sequence)".to_string(), path_unique_val.1 as f64));
+         result_temp.push(("Unique nodes".to_string(), path_unique_val.0 as f64));
+         result_temp.push(("Unique nodes [bp]".to_string(), path_unique_val.1 as f64));
 
-         result_temp.push(("Unique nodes (count) [normalized]".to_string(), path_unique_val.0 as f64/path_nodes));
-         result_temp.push(("Unique nodes (sequence) [normalized]".to_string(), path_unique_val.1 as f64/path_seq));
+         result_temp.push(("Unique nodes (normalized)".to_string(), path_unique_val.0 as f64/path_nodes));
+         result_temp.push(("Unique nodes [bp] (normalized)".to_string(), path_unique_val.1 as f64/path_seq));
 
-         result_temp.push(("Edges unique (normalized)".to_string(), edges_numb/edges_total_numb));
+         result_temp.push(("Unique edges (normalized)".to_string(), edges_numb/edges_total_numb));
 
          let inverted = path_seq_inverted(path, &graph.nodes);
 
@@ -77,16 +77,25 @@ pub fn path_stats_wrapper(graph: &NCGfa<()>, gw: &GraphWrapper<NCPath>) -> Vec<(
          result_temp.push(("Node size std [bp]".to_string(), node_size_std as f64));
 
 
+
          let (depth_avg, depth_median, depth_std) = node_size_cal(path, &depth);
-         result_temp.push(("Depth average".to_string(), depth_avg as f64));
-         result_temp.push(("Depth median".to_string(), depth_median as f64));
-         result_temp.push(("Depth std".to_string(), depth_std as f64));
+         result_temp.push(("Depth average".to_string(), depth_avg/gw.genomes.len() as f64));
+         result_temp.push(("Depth median".to_string(), depth_median/gw.genomes.len() as f64));
+         result_temp.push(("Depth std".to_string(), depth_std/gw.genomes.len() as f64));
+
+         result_temp.push(("Depth average (normalized)".to_string(), depth_avg/gw.genomes.len() as f64));
+         result_temp.push(("Depth median (normalized)".to_string(), depth_median/gw.genomes.len() as f64));
+         result_temp.push(("Depth std (normalized)".to_string(), depth_std/gw.genomes.len() as f64));
 
 
          let (sim_avg, sim_median, sim_std) = node_size_cal(path, &core);
          result_temp.push(("Similarity average".to_string(), sim_avg as f64));
          result_temp.push(("Similarity median".to_string(), sim_median as f64));
          result_temp.push(("Similarity std".to_string(), sim_std as f64));
+
+         result_temp.push(("Similarity average (normalized)".to_string(), sim_avg/gw.genomes.len() as f64));
+         result_temp.push(("Similarity median (normalized)".to_string(), sim_median/gw.genomes.len() as f64));
+         result_temp.push(("Similarity std (normalized)".to_string(), sim_std/gw.genomes.len() as f64));
 
 
          let (degree_avg, degree_median, degree_std) = node_size_cal(path, &node_degree.2);

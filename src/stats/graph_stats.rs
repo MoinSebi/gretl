@@ -51,13 +51,23 @@ pub fn graph_stats_wrapper(graph: &NCGfa<()>, wrapper: &GraphWrapper<NCPath>, bi
 
     // Depth
     let (a1,a2, a3) = average_median_std(&mut core);
-    result.push( ("Similarity (mean)".to_string(), a1.to_string()));
-    result.push(("Similarity (median)".to_string(), a2.to_string()));
-    result.push(("Similarity (std)".to_string(), a3.to_string()));
+    result.push( ("Similarity mean".to_string(), a1.to_string()));
+    result.push(("Similarity median".to_string(), a2.to_string()));
+    result.push(("Similarity std".to_string(), a3.to_string()));
+
+    result.push( ("Similarity mean (normalized)".to_string(), (a1/wrapper.genomes.len() as f64).to_string()));
+    result.push(("Similarity median (normalized)".to_string(),  (a2/wrapper.genomes.len() as f64).to_string()));
+    result.push(("Similarity std (normalized)".to_string(),  (a3/wrapper.genomes.len() as f64).to_string()));
+
+
     let (a1,a2, a3) = average_median_std(&mut depth);
-    result.push( ("Depth (mean)".to_string(), a1.to_string()));
-    result.push(("Depth (median)".to_string(), a2.to_string()));
-    result.push(("Depth (std)".to_string(), a3.to_string()));
+    result.push( ("Depth mean".to_string(), a1.to_string()));
+    result.push(("Depth median".to_string(), a2.to_string()));
+    result.push(("Depth std".to_string(), a3.to_string()));
+
+    result.push( ("Depth mean (normalized)".to_string(),  (a1/wrapper.genomes.len() as f64).to_string()));
+    result.push(("Depth median (normalized)".to_string(),  (a2/wrapper.genomes.len() as f64).to_string()));
+    result.push(("Depth std (normalized)".to_string(),  (a3/wrapper.genomes.len() as f64).to_string()));
     // Total length of paths
 
 
