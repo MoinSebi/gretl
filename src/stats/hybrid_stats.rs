@@ -1,5 +1,5 @@
 use gfa_reader::{GraphWrapper, NCGfa, NCPath};
-use crate::stats::helper::{mean, stadard_deviation};
+use crate::stats::helper::{mean321, stadard_deviation, stadard_deviation_2};
 use crate::stats::path_stats::{path_stats_wrapper};
 
 /// Wrapper for path statistics
@@ -28,8 +28,9 @@ pub fn path_stats_wrapper2(graph: &NCGfa<()>, gw: &GraphWrapper<NCPath>)  -> Vec
 
     let mut result = Vec::new();
     for (data, name) in tmp_res.iter().zip(tmp_names.iter()){
-        result.push(("Path ".to_string() + &name + " (average)", mean(&data.iter().map(|&x| x as u32).collect::<Vec<u32>>())));
-        result.push(("Path ".to_string() + &name + " (std)", stadard_deviation(&data.iter().map(|&x| x as u32).collect::<Vec<u32>>())));
+
+        result.push(("Path ".to_string() + &name + " (average)", mean321(&data)));
+        result.push(("Path ".to_string() + &name + " (std)", stadard_deviation_2(&data)));
     }
 
     return result

@@ -1,10 +1,15 @@
 /// Calculate average of the vector
+pub fn mean321(data: & [f64]) -> f64{
+    let sums1: f64 = data.iter().sum();
+    let sums = (sums1 as f64)/data.iter().len() as f64;
+    return sums
+}
+
 pub fn mean(data: & [u32]) -> f64{
     let sums1: u32 = data.iter().sum();
     let sums = (sums1 as f64)/data.iter().len() as f64;
     return sums
 }
-
 pub fn mean_usize(data: & [usize]) -> f64{
     let sums1: usize = data.iter().sum();
     let sums = (sums1 as f64)/data.iter().len() as f64;
@@ -42,6 +47,17 @@ pub fn std_usize(data: & Vec<usize>) -> f64{
 /// Standard deviation function
 pub fn stadard_deviation(data: & [u32]) -> f64{
     let mean = mean(data);
+    let mut sum = 0.0;
+    // This is a alternative approach
+    for i in data.iter(){
+        sum += (*i as f64 - mean).powf(2.0);
+    }
+    let std = (sum/(data.len() as f64)).sqrt();
+    return std
+}
+
+pub fn stadard_deviation_2(data: & [f64]) -> f64{
+    let mean = mean321(data);
     let mut sum = 0.0;
     // This is a alternative approach
     for i in data.iter(){

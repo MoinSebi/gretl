@@ -2,7 +2,7 @@ use std::cmp::max;
 use gfa_reader::{GraphWrapper, NCGfa, NCPath};
 use crate::helpers::helper::{calculate_similarity, calculate_depth, node_degree, node_len};
 use crate::stats::hybrid_stats::{path_stats_wrapper2};
-use crate::stats::helper::{average_median_std, mean, median};
+use crate::stats::helper::{average_median_std, mean, mean321, median};
 
 /// Wrapper for graph statistics
 pub fn graph_stats_wrapper(graph: &NCGfa<()>, wrapper: &GraphWrapper<NCPath>, bins: Vec<u32>) -> Vec<(String, String)>{
@@ -215,7 +215,7 @@ pub fn size5pro(f: &mut Vec<u32>) -> (f64, f64) {
     a.sort_by(|a, b| b.cmp(a));
     let top5: &[usize] = &a[0..max(1, (a.len() as f64 * 0.05) as usize)];
 
-    (median(&top5.iter().map(|n| *n as u32).collect()), mean(&top5.iter().map(|n| *n as u32).collect::<Vec<u32>>()))
+    (median(&top5.iter().map(|n| *n as u32).collect()), mean321(&top5.iter().map(|n| *n as f64).collect::<Vec<f64>>()))
 }
 
 

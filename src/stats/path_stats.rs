@@ -130,6 +130,8 @@ pub fn get_all_stats(input: &Vec<usize>) -> (f64, f64, f64){
     (mean, median, std)
 }
 
+
+/// Calculate the noed size
 pub fn node_size_cal(path: &NCPath, node_sizes: &Vec<u32>) -> (f64, f64, f64){
     let mut  result = Vec::new();
     for x in path.nodes.iter(){
