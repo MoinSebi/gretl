@@ -6,9 +6,6 @@ use crate::stats::helper::{average_median_std, mean, mean321, median};
 
 /// Wrapper for graph statistics
 pub fn graph_stats_wrapper(graph: &NCGfa<()>, wrapper: &GraphWrapper<NCPath>, bins: Vec<u32>) -> Vec<(String, String)>{
-    let mut wrapper: GraphWrapper<NCPath> = GraphWrapper::new();
-    wrapper.from_gfa(&graph.paths, " ");
-    // Result vector
     let mut result: Vec<(String, String)>= Vec::new();
 
     let mut depth = calculate_depth(&wrapper, graph);

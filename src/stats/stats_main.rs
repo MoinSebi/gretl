@@ -9,11 +9,18 @@ use crate::stats::stats_writer::{write_yaml_graph, write_tsv_path, write_tsv_gra
 ///
 /// This command should return statistics for total graph or path + write everything to a file
 pub fn stats_main(matches: &ArgMatches){
+    let mut sep = " ";
+    if matches.is_present("Pan-SN"){
+        sep = matches.value_of("Pan-SN").unwrap();
+        sep = sep.trim();
+
+    }
     let mut graph: NCGfa<()> = NCGfa::new();
     graph.parse_gfa_file_and_convert(matches.value_of("gfa").unwrap(), true);
     let mut wrapper: GraphWrapper<NCPath> = GraphWrapper::new();
-    wrapper.from_gfa(&graph.paths, " ");
+    wrapper.from_gfa(&graph.paths, &sep);
     let output = matches.value_of("output").unwrap();
+
 
     let mut bins : Vec<u32> = vec![1, 50, 100, 1000];
     if matches.is_present("bins"){
@@ -40,4 +47,5 @@ pub fn stats_main(matches: &ArgMatches){
             write_yaml_graph(&data, output);
         }
     }
+
 }

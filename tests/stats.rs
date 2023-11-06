@@ -24,6 +24,8 @@ fn stats_graph_yaml() -> Result<(), Box<dyn std::error::Error>> {
         .arg("--gfa")
         .arg("./data/example_data/testGraph_complex.gfa")
         .arg("-y")
+        .arg("--pansn")
+        .arg("#")
         .arg("--output")
         .arg("/home/svorbrugg/code/gfastats/data/test/stats/stats.graph.yaml");
 
@@ -57,7 +59,7 @@ fn stats_path_tsv_yaml() -> Result<(), Box<dyn std::error::Error>> {
         .arg("./data/example_data/testGraph_complex.gfa")
         .arg("--path")
         .arg("--pansn")
-        .arg("#")
+        .arg("test")
         .arg("--output")
         .arg("/home/svorbrugg/code/gfastats/data/test/stats/stats.path2.tsv");
 
