@@ -5,6 +5,8 @@ use crate::stats::helper::{mean_usize, median2, std_usize};
 
 
 /// Wrapper for path statistics
+///
+/// Output is a vector of [pathname, vec<(stat_name, value)>]
 pub fn path_stats_wrapper(graph: &NCGfa<()>, gw: &GraphWrapper<NCPath>) -> Vec<(String, Vec<(String, f64)>)>{
 
     // Total results

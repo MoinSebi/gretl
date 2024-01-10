@@ -6,12 +6,17 @@ mod path_similarity;
 mod node_list;
 mod helpers;
 mod sliding_window;
+mod path;
+mod feature;
 
+use std::env::args;
 use clap::{Arg, App, AppSettings};
 use crate::bootstrap::bootstrap_main::bootstrap_main;
 use crate::core::core_main::core_main;
+use crate::feature::feature_main::feature_main2;
 use crate::id2int::id2int_main::id2int_main;
 use crate::node_list::node_list_main::nodelist_main;
+use crate::path::path_main::path_main;
 use crate::path_similarity::ps_main::ps_main;
 use crate::sliding_window::sliding_window_main::window_main;
 use crate::stats::stats_main::stats_main;
@@ -68,7 +73,7 @@ fn main() {
                 .required(true))
             .arg(Arg::new("Pan-SN")
                 .long("pansn")
-                .about("Seperate by first entry in Pan-SN spec")
+                .about("Separate by first entry in Pan-SN spec")
                 .takes_value(true))
 
             .arg(Arg::new("meta input")
@@ -248,6 +253,110 @@ fn main() {
                 .long("feature")
                 .takes_value(true)
                 .about("Name the features you need. If nothing is used, report everything. Example -f Length, Core")))
+
+
+
+
+        .subcommand(App::new("feature")
+            .about("Get list of nodes which do not fall into settings")
+            .arg(Arg::new("gfa")
+                .short('g')
+                .long("gfa")
+                .about("Input GFA file")
+                .required(true)
+                .takes_value(true))
+            .arg(Arg::new("output")
+                .short('o')
+                .long("output")
+                .about("Output file name")
+                .takes_value(true)
+                .required(true)
+            )
+            .arg(Arg::new("min-len")
+                .short('l')
+                .long("min-len")
+                .about("Minimum length")
+                .takes_value(true)
+
+            )
+            .arg(Arg::new("max-len")
+                .short('L')
+                .long("max-len")
+                .about("Maximum node length ")
+                .takes_value(true)
+
+            )
+            .arg(Arg::new("min-degree")
+                .short('n')
+                .long("min-degree")
+                .about("Minimum degree")
+                .takes_value(true)
+
+            )
+            .arg(Arg::new("max-degree")
+                .short('N')
+                .long("max-degree")
+                .about("Maximum node degree ")
+                .takes_value(true)
+
+            )
+            .arg(Arg::new("min-depth")
+            .short('d')
+            .long("min-depth")
+            .about("Minimum depth")
+            .takes_value(true)
+
+        )
+            .arg(Arg::new("max-depth")
+                .short('D')
+                .long("max-depth")
+                .about("Maximum node depth")
+                .takes_value(true)
+            )
+        )
+
+
+        .subcommand(App::new("path")
+            .about("Remove paths")
+            .arg(Arg::new("gfa")
+                .short('g')
+                .long("gfa")
+                .about("Input GFA file")
+                .takes_value(true)
+                .required(true)
+            )
+            .arg(Arg::new("output")
+                .short('o')
+                .long("output")
+                .about("Output file")
+                .takes_value(true)
+                .required(true)
+            )
+            .arg(Arg::new("stats")
+                .short('s')
+                .long("stats")
+                .about("Which stats to filter?")
+                .takes_value(true)
+                .required(true)
+                .multiple_occurrences(true)
+            )
+            .arg(Arg::new("mins")
+                .short('m')
+                .long("mins")
+                .takes_value(true)
+                .required(true)
+                .multiple_occurrences(true)
+            )
+            .arg(Arg::new("maxs")
+                .short('M')
+                .long("maxs")
+                .takes_value(true)
+                .required(true)
+                .multiple_occurrences(true)
+            )
+
+        )
+
         .get_matches();
 
     // Read the graph
@@ -267,6 +376,10 @@ fn main() {
         nodelist_main(&matches);
     }  else if let Some(ref matches) = matches.subcommand_matches("window"){
         window_main(&matches);
+    } else if let Some(ref matches) = matches.subcommand_matches("feature"){
+        feature_main2(&matches);
+    } else if let Some(ref matches) = matches.subcommand_matches("path"){
+        path_main(&matches);
     }
 
 }

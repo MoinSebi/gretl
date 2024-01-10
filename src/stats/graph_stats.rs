@@ -122,13 +122,18 @@ pub fn graph_path_seq_total(graph: &NCGfa<()>) ->  usize{
 /// Sum all nodes in the graph and divide it by the number of nodes
 pub fn graph_node_stats(graph: &NCGfa<()>) -> (f64, f64, u32){
 
-    let mut vec_size: Vec<u32> = graph.nodes.iter().map(|n| n.seq.len() as u32).collect();
+    let mut vec_size: Vec<u32> = calculate_node_size(&graph);
 
     vec_size.sort();
     let average = mean(&vec_size);
     let med = median(&mut vec_size);
     let sums: u32 = vec_size.iter().sum();
     (average, med, sums)
+}
+
+pub fn calculate_node_size(graph: &NCGfa<()>) -> Vec<u32>{
+    let mut vec_size: Vec<u32> = graph.nodes.iter().map(|n| n.seq.len() as u32).collect();
+    return vec_size
 }
 
 
