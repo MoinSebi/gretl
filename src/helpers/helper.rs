@@ -2,6 +2,8 @@ use std::collections::{HashSet};
 use std::fmt::Debug;
 use gfa_reader::{GraphWrapper, NCGfa, NCPath};
 
+#[allow(dead_code)]
+/// Calculate the average
 fn calculate_average<T>(v: &[T]) -> Option<f64>
     where T:  Into<f64> + Copy + Debug
 {

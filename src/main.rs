@@ -9,7 +9,6 @@ mod sliding_window;
 mod path;
 mod feature;
 
-use std::env::args;
 use clap::{Arg, App, AppSettings};
 use crate::bootstrap::bootstrap_main::bootstrap_main;
 use crate::core::core_main::core_main;

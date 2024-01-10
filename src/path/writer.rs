@@ -6,6 +6,6 @@ pub fn write_paths(data: &Vec<String>, filename: &str){
     let mut f = BufWriter::new(f);
 
     for x in data.iter(){
-        write!(f, "{}\n", x);
+        write!(f, "{}\n", x).expect("Write path writer");
     }
 }

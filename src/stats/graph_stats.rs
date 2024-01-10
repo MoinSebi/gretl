@@ -132,7 +132,7 @@ pub fn graph_node_stats(graph: &NCGfa<()>) -> (f64, f64, u32){
 }
 
 pub fn calculate_node_size(graph: &NCGfa<()>) -> Vec<u32>{
-    let mut vec_size: Vec<u32> = graph.nodes.iter().map(|n| n.seq.len() as u32).collect();
+    let vec_size: Vec<u32> = graph.nodes.iter().map(|n| n.seq.len() as u32).collect();
     return vec_size
 }
 

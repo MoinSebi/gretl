@@ -1,10 +1,7 @@
 use clap::ArgMatches;
 use gfa_reader::{GraphWrapper, NCGfa, NCPath};
-use crate::helpers::helper::{calculate_depth, node_degree};
 use crate::path::writer::write_paths;
-use crate::path_similarity::stats::accession2level;
-use crate::stats::graph_stats::calculate_node_size;
-use crate::stats::path_stats::{node_size_cal, path_stats_wrapper};
+use crate::stats::path_stats::{path_stats_wrapper};
 
 pub fn path_main(matches: &ArgMatches){
     let graph_file = matches.value_of("gfa").unwrap();

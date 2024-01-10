@@ -1,11 +1,8 @@
 use clap::ArgMatches;
 use gfa_reader::{GraphWrapper, NCGfa, NCPath};
-use rayon::iter::MinLen;
 use crate::feature::writer::write_list;
 use crate::helpers::helper::{calculate_depth, node_degree};
-use crate::path_similarity::stats::accession2level;
 use crate::stats::graph_stats::calculate_node_size;
-use crate::stats::path_stats::node_size_cal;
 
 pub fn feature_main2(matches: &ArgMatches){
 

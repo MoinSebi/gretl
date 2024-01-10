@@ -1,5 +1,5 @@
 use gfa_reader::{GraphWrapper, NCGfa, NCPath};
-use crate::stats::helper::{mean321, stadard_deviation, stadard_deviation_2};
+use crate::stats::helper::{mean321, stadard_deviation_2};
 use crate::stats::path_stats::{path_stats_wrapper};
 
 /// Wrapper for path statistics

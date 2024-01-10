@@ -59,7 +59,7 @@ pub fn reduce_meta(meta: &mut Vec<(usize, usize, HashSet<usize>)>, line: i32, co
 /// Calculation for one iteration
 ///
 /// Take core and then remove stuff from it
-pub fn one_iteration(gw: &GraphWrapper<NCPath>, graph: &NCGfa<()>, combination: &[usize], metric: &str, information: &Vec<u32>) -> (Vec<usize>, Vec<usize>){
+pub fn one_iteration(gw: &GraphWrapper<NCPath>, graph: &NCGfa<()>, combination: &[usize], _metric: &str, information: &Vec<u32>) -> (Vec<usize>, Vec<usize>){
 
     let info2 = test1(gw, graph, information, combination);
     let max_value = info2.iter().max().unwrap().clone();

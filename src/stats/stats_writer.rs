@@ -23,7 +23,7 @@ pub fn write_yaml_graph(data: &Vec<(String, String)>, filename: &str){
     }
     write!(f, "{}\n", data[data.len()-1].0).expect("Not able to write");
 
-    for (column_name_, value) in data.iter().take(data.len()-1){
+    for (_column_name_, value) in data.iter().take(data.len()-1){
         write!(f, "{}\t", value).expect("Not able to write");
     }
     write!(f, "{}\n", data[data.len()-1].1).expect("Not able to write");

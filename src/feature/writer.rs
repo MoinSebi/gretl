@@ -6,6 +6,6 @@ pub fn write_list(data: &Vec<usize>, filename: &str){
     let mut f = BufWriter::new(f);
 
     for x in data.iter(){
-        write!(f, "{}\n", x);
+        write!(f, "{}\n", x).expect("Write list error");
     }
 }
