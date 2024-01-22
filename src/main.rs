@@ -1,15 +1,14 @@
-mod stats;
 mod bootstrap;
 mod core;
-mod id2int;
-mod path_similarity;
-mod node_list;
-mod helpers;
-mod sliding_window;
-mod path;
 mod feature;
+mod helpers;
+mod id2int;
+mod node_list;
+mod path;
+mod path_similarity;
+mod sliding_window;
+mod stats;
 
-use clap::{Arg, App, AppSettings};
 use crate::bootstrap::bootstrap_main::bootstrap_main;
 use crate::core::core_main::core_main;
 use crate::feature::feature_main::feature_main2;
@@ -19,10 +18,9 @@ use crate::path::path_main::path_main;
 use crate::path_similarity::ps_main::ps_main;
 use crate::sliding_window::sliding_window_main::window_main;
 use crate::stats::stats_main::stats_main;
+use clap::{App, AppSettings, Arg};
 
 fn main() {
-
-
     let matches = App::new("gfastats")
         .setting(AppSettings::ArgRequiredElseHelp)
         .version("0.1.0")
@@ -360,25 +358,23 @@ fn main() {
 
     // Read the graph
 
-    if let Some(ref matches) = matches.subcommand_matches("core"){
+    if let Some(ref matches) = matches.subcommand_matches("core") {
         core_main(matches);
-
     } else if let Some(ref matches) = matches.subcommand_matches("bootstrap") {
         bootstrap_main(&matches);
-    } else if let Some(ref matches) = matches.subcommand_matches("stats"){
+    } else if let Some(ref matches) = matches.subcommand_matches("stats") {
         stats_main(&matches);
-    } else if let Some(ref matches) = matches.subcommand_matches("id2int"){
+    } else if let Some(ref matches) = matches.subcommand_matches("id2int") {
         id2int_main(&matches);
-    } else if let Some(ref matches) = matches.subcommand_matches("ps"){
+    } else if let Some(ref matches) = matches.subcommand_matches("ps") {
         ps_main(&matches);
-    } else if let Some(ref matches) = matches.subcommand_matches("node-list"){
+    } else if let Some(ref matches) = matches.subcommand_matches("node-list") {
         nodelist_main(&matches);
-    }  else if let Some(ref matches) = matches.subcommand_matches("window"){
+    } else if let Some(ref matches) = matches.subcommand_matches("window") {
         window_main(&matches);
-    } else if let Some(ref matches) = matches.subcommand_matches("feature"){
+    } else if let Some(ref matches) = matches.subcommand_matches("feature") {
         feature_main2(&matches);
-    } else if let Some(ref matches) = matches.subcommand_matches("path"){
+    } else if let Some(ref matches) = matches.subcommand_matches("path") {
         path_main(&matches);
     }
-
 }

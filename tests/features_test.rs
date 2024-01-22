@@ -1,12 +1,10 @@
 use assert_cmd::prelude::*; // Add methods on commands
 use std::process::Command;
 
-
 #[test]
 fn stats_graph_feature() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
-    cmd
-        .arg("feature")
+    cmd.arg("feature")
         .arg("--gfa")
         .arg("./data/example_data/testGraph.gfa")
         .arg("--output")
@@ -21,8 +19,7 @@ fn stats_graph_feature() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 fn stats_graph_path() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
-    cmd
-        .arg("path")
+    cmd.arg("path")
         .arg("--gfa")
         .arg("./data/example_data/testGraph.gfa")
         .arg("--output")

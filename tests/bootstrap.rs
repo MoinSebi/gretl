@@ -3,8 +3,7 @@ use std::process::Command;
 #[test]
 fn node_bootstrap() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
-    cmd
-        .arg("bootstrap")
+    cmd.arg("bootstrap")
         .arg("--gfa")
         .arg("./data/example_data/testGraph.gfa")
         .arg("--output")
@@ -18,8 +17,7 @@ fn node_bootstrap() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 fn node_bootstrap3() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
-    cmd
-        .arg("bootstrap")
+    cmd.arg("bootstrap")
         .arg("--gfa")
         .arg("./data/example_data/testGraph.gfa")
         .arg("--output")
@@ -28,12 +26,10 @@ fn node_bootstrap3() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-
 #[test]
 fn node_bootstrap2() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
-    cmd
-        .arg("bootstrap")
+    cmd.arg("bootstrap")
         .arg("--gfa")
         .arg("./data/example_data/testGraph.gfa")
         .arg("--output")

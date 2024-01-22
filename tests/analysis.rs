@@ -7,8 +7,7 @@ use std::process::Command;
 /// -stats -> similarity
 fn core_no_pansn_similarity() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
-    cmd
-        .arg("core")
+    cmd.arg("core")
         .arg("--gfa")
         .arg("./data/example_data/testGraph_complex.gfa")
         .arg("--output")
@@ -19,12 +18,10 @@ fn core_no_pansn_similarity() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-
 #[test]
 fn core_pansn_similarity() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
-    cmd
-        .arg("core")
+    cmd.arg("core")
         .arg("--gfa")
         .arg("./data/example_data/testGraph_complex.gfa")
         .arg("--output")
@@ -35,13 +32,10 @@ fn core_pansn_similarity() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-
-
 #[test]
 fn core_pansn_depth() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
-    cmd
-        .arg("core")
+    cmd.arg("core")
         .arg("--gfa")
         .arg("./data/example_data/testGraph_complex.gfa")
         .arg("--output")
@@ -54,15 +48,10 @@ fn core_pansn_depth() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-
-
-
-
 #[test]
 fn id2int() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
-    cmd
-        .arg("id2int")
+    cmd.arg("id2int")
         .arg("--gfa")
         .arg("./data/example_data/testGraph.gfa")
         .arg("--output")
@@ -72,12 +61,10 @@ fn id2int() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-
 #[test]
 fn ps() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
-    cmd
-        .arg("ps")
+    cmd.arg("ps")
         .arg("--gfa")
         .arg("./data/example_data/testGraph.gfa")
         .arg("--output")
@@ -89,12 +76,10 @@ fn ps() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-
 #[test]
 fn node_list_path() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
-    cmd
-        .arg("node-list")
+    cmd.arg("node-list")
         .arg("--gfa")
         .arg("./data/example_data/testGraph.gfa")
         .arg("--output")
@@ -104,12 +89,10 @@ fn node_list_path() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-
 #[test]
 fn sliding_window_2s() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
-    cmd
-        .arg("window")
+    cmd.arg("window")
         .arg("--gfa")
         .arg("./data/example_data/testGraph.gfa")
         .arg("--output")
@@ -120,4 +103,3 @@ fn sliding_window_2s() -> Result<(), Box<dyn std::error::Error>> {
     cmd.assert().success();
     Ok(())
 }
-

@@ -1,17 +1,20 @@
-use gfa_reader::{GraphWrapper, NCGfa, NCPath};
+use gfa_reader::{NCGfa, NCPath, Pansn};
 
 ///
-pub fn pan_genome(gwrapper: &GraphWrapper<NCPath>, graph: &NCGfa<()>, stats: &Vec<u32>) -> (Vec<(usize, usize)>, Vec<(String, usize, usize)>){
+pub fn pan_genome(
+    gwrapper: &Pansn<NCPath>,
+    graph: &NCGfa<()>,
+    stats: &Vec<u32>,
+) -> (Vec<(usize, usize)>, Vec<(String, usize, usize)>) {
     eprintln!("Running core analysis");
 
-
+    let mut paths = gwrapper.get_path_genome();
 
     // Get additional information for private nodes
     let mut private_only: Vec<(String, usize, usize)> = Vec::new();
 
-
     // Iterate over each path, then summarize the sequence and nodes which is only level 1
-    for path in gwrapper.genomes.iter(){
+    for path in paths.iter() {
         let mut nodes = 0;
         let mut seq = 0;
         for x in path.1.iter() {
@@ -19,7 +22,7 @@ pub fn pan_genome(gwrapper: &GraphWrapper<NCPath>, graph: &NCGfa<()>, stats: &Ve
                 let level = stats[*node as usize - 1].clone() as usize;
                 if level == 1 {
                     nodes += 1;
-                    seq += graph.nodes[*node as usize -1].seq.len();
+                    seq += graph.nodes[*node as usize - 1].seq.len();
                 }
             }
         }
@@ -34,13 +37,10 @@ pub fn pan_genome(gwrapper: &GraphWrapper<NCPath>, graph: &NCGfa<()>, stats: &Ve
         similarity_level[*x as usize].1 += graph.nodes[i].seq.len();
     }
 
-
-
-
     // Check if both values are the same (should be)
     let total_sum: usize = private_only.iter().map(|n| n.2).sum();
-    if total_sum == similarity_level.get(1).unwrap().1.clone() as usize{
+    if total_sum == similarity_level.get(1).unwrap().1.clone() as usize {
         eprintln!("Statistic is fine")
     }
-    return (similarity_level, private_only)
+    return (similarity_level, private_only);
 }

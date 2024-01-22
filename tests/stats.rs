@@ -1,12 +1,10 @@
 use assert_cmd::prelude::*; // Add methods on commands
 use std::process::Command;
 
-
 #[test]
 fn stats_graph_tsv() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
-    cmd
-        .arg("stats")
+    cmd.arg("stats")
         .arg("--gfa")
         .arg("./data/example_data/testGraph.gfa")
         .arg("--output")
@@ -19,8 +17,7 @@ fn stats_graph_tsv() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 fn stats_graph_yaml() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
-    cmd
-        .arg("stats")
+    cmd.arg("stats")
         .arg("--gfa")
         .arg("./data/example_data/testGraph_complex.gfa")
         .arg("-y")
@@ -33,13 +30,10 @@ fn stats_graph_yaml() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-
-
 #[test]
 fn stats_path_tsv() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
-    cmd
-        .arg("stats")
+    cmd.arg("stats")
         .arg("--gfa")
         .arg("./data/example_data/testGraph.gfa")
         .arg("--path")
@@ -53,8 +47,7 @@ fn stats_path_tsv() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 fn stats_path_tsv_yaml() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
-    cmd
-        .arg("stats")
+    cmd.arg("stats")
         .arg("--gfa")
         .arg("./data/example_data/testGraph_complex.gfa")
         .arg("--path")
@@ -70,8 +63,7 @@ fn stats_path_tsv_yaml() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 fn stats_path_yaml() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
-    cmd
-        .arg("stats")
+    cmd.arg("stats")
         .arg("--gfa")
         .arg("./data/example_data/testGraph_complex.gfa")
         .arg("--path")
@@ -82,5 +74,3 @@ fn stats_path_yaml() -> Result<(), Box<dyn std::error::Error>> {
     cmd.assert().success();
     Ok(())
 }
-
-
