@@ -1,3 +1,4 @@
+use std::fs;
 use assert_cmd::prelude::*; // Add methods on commands
 use std::process::Command;
 
@@ -13,6 +14,8 @@ fn stats_graph_feature() -> Result<(), Box<dyn std::error::Error>> {
         .arg("5");
 
     cmd.assert().success();
+    fs::remove_file("data/test/feature_paths/stats.node.s10.txt")?;
+
     Ok(())
 }
 
@@ -32,5 +35,7 @@ fn stats_graph_path() -> Result<(), Box<dyn std::error::Error>> {
         .arg("40");
 
     cmd.assert().success();
+    fs::remove_file("data/test/feature_paths/stats.path.m10M40.txt")?;
+
     Ok(())
 }

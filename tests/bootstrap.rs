@@ -1,3 +1,4 @@
+use std::fs;
 use assert_cmd::prelude::*; // Add methods on commands
 use std::process::Command;
 #[test]
@@ -11,6 +12,8 @@ fn node_bootstrap() -> Result<(), Box<dyn std::error::Error>> {
         .arg("--meta")
         .arg("testmeta.txt");
     cmd.assert().success();
+    fs::remove_file("data/test/bootstrap/test.stats.bootstrap.txt")?;
+
     Ok(())
 }
 
@@ -23,6 +26,8 @@ fn node_bootstrap3() -> Result<(), Box<dyn std::error::Error>> {
         .arg("--output")
         .arg("/home/svorbrugg/code/gfastats/data/test/bootstrap/test.stats.bootstrap3.txt");
     cmd.assert().success();
+    fs::remove_file("data/test/bootstrap/test.stats.bootstrap3.txt")?;
+
     Ok(())
 }
 
@@ -37,5 +42,7 @@ fn node_bootstrap2() -> Result<(), Box<dyn std::error::Error>> {
         .arg("--level")
         .arg("2");
     cmd.assert().success();
+    fs::remove_file("data/test/bootstrap/test.stats.bootstrap2.txt")?;
+
     Ok(())
 }

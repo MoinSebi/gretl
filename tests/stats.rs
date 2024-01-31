@@ -1,5 +1,6 @@
 use assert_cmd::prelude::*; // Add methods on commands
 use std::process::Command;
+use std::fs;
 
 #[test]
 fn stats_graph_tsv() -> Result<(), Box<dyn std::error::Error>> {
@@ -11,6 +12,8 @@ fn stats_graph_tsv() -> Result<(), Box<dyn std::error::Error>> {
         .arg("/home/svorbrugg/code/gfastats/data/test/stats/stats.graph.tsv");
 
     cmd.assert().success();
+    fs::remove_file("data/test/stats/stats.graph.tsv")?;
+
     Ok(())
 }
 
@@ -27,6 +30,8 @@ fn stats_graph_yaml() -> Result<(), Box<dyn std::error::Error>> {
         .arg("/home/svorbrugg/code/gfastats/data/test/stats/stats.graph.yaml");
 
     cmd.assert().success();
+    fs::remove_file("data/test/stats/stats.graph.yaml")?;
+
     Ok(())
 }
 
@@ -41,6 +46,9 @@ fn stats_path_tsv() -> Result<(), Box<dyn std::error::Error>> {
         .arg("/home/svorbrugg/code/gfastats/data/test/stats/stats.path.tsv");
 
     cmd.assert().success();
+    fs::remove_file("data/test/stats/stats.path.tsv")?;
+
+
     Ok(())
 }
 
@@ -57,6 +65,8 @@ fn stats_path_tsv_yaml() -> Result<(), Box<dyn std::error::Error>> {
         .arg("/home/svorbrugg/code/gfastats/data/test/stats/stats.path2.tsv");
 
     cmd.assert().success();
+    fs::remove_file("data/test/stats/stats.path2.tsv")?;
+
     Ok(())
 }
 
@@ -72,5 +82,6 @@ fn stats_path_yaml() -> Result<(), Box<dyn std::error::Error>> {
         .arg("/home/svorbrugg/code/gfastats/data/test/stats/stats.path.yaml");
 
     cmd.assert().success();
+    fs::remove_file("data/test/stats/stats.path.yaml")?;
     Ok(())
 }

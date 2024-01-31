@@ -1,3 +1,4 @@
+use std::fs;
 use assert_cmd::prelude::*; // Add methods on commands
 use std::process::Command;
 
@@ -15,6 +16,8 @@ fn core_no_pansn_similarity() -> Result<(), Box<dyn std::error::Error>> {
         .arg("--pansn")
         .arg("_");
     cmd.assert().success();
+    fs::remove_file("data/test/analysis/core.pansnno.sim.txt")?;
+
     Ok(())
 }
 
@@ -29,6 +32,8 @@ fn core_pansn_similarity() -> Result<(), Box<dyn std::error::Error>> {
         .arg("--pansn")
         .arg("#");
     cmd.assert().success();
+    fs::remove_file("data/test/analysis/core.pansn.sim.txt")?;
+
     Ok(())
 }
 
@@ -45,6 +50,8 @@ fn core_pansn_depth() -> Result<(), Box<dyn std::error::Error>> {
         .arg("--stats")
         .arg("depth");
     cmd.assert().success();
+    fs::remove_file("data/test/analysis/core.pansn.depth.txt")?;
+
     Ok(())
 }
 
@@ -58,6 +65,8 @@ fn id2int() -> Result<(), Box<dyn std::error::Error>> {
         .arg("/home/svorbrugg/code/gfastats/data/test/analysis/id2int.txt");
 
     cmd.assert().success();
+    fs::remove_file("data/test/analysis/id2int.txt")?;
+
     Ok(())
 }
 
@@ -73,6 +82,8 @@ fn ps() -> Result<(), Box<dyn std::error::Error>> {
         .arg("_");
 
     cmd.assert().success();
+    fs::remove_file("data/test/analysis/ps.txt")?;
+
     Ok(())
 }
 
@@ -86,6 +97,8 @@ fn node_list_path() -> Result<(), Box<dyn std::error::Error>> {
         .arg("/home/svorbrugg/code/gfastats/data/test/analysis/nodelist.txt");
 
     cmd.assert().success();
+    fs::remove_file("data/test/analysis/nodelist.txt")?;
+
     Ok(())
 }
 
@@ -101,5 +114,7 @@ fn sliding_window_2s() -> Result<(), Box<dyn std::error::Error>> {
         .arg("2");
 
     cmd.assert().success();
+    fs::remove_file("data/test/analysis/slidingwindow.txt")?;
+
     Ok(())
 }
