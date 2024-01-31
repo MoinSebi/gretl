@@ -7,6 +7,8 @@ pub fn path_main(matches: &ArgMatches) {
     let graph_file = matches.value_of("gfa").unwrap();
     let output = matches.value_of("output").unwrap();
 
+    let haplo = matches.is_present("haplo");
+
     let stats: Vec<&str> = matches.values_of("stats").unwrap().collect();
     let mins: Vec<&str> = matches.values_of("mins").unwrap().collect();
     let maxs: Vec<&str> = matches.values_of("maxs").unwrap().collect();
@@ -14,9 +16,9 @@ pub fn path_main(matches: &ArgMatches) {
     let maxs_u32 = parse_max_min(maxs, true);
     let mut graph: NCGfa<()> = NCGfa::new();
     graph.parse_gfa_file_and_convert(graph_file, true);
-    let mut wrapper: Pansn<NCPath> = Pansn::from_graph(&graph.paths, " ");
+    let wrapper: Pansn<NCPath> = Pansn::from_graph(&graph.paths, " ");
 
-    let result = path_runner(&stats, &mins_u32, &maxs_u32, &graph, &wrapper);
+    let result = path_runner(&stats, &mins_u32, &maxs_u32, &graph, &wrapper, haplo);
     write_paths(&result, output);
 }
 
@@ -27,8 +29,9 @@ pub fn path_runner(
     maxs_u32: &Vec<usize>,
     graph: &NCGfa<()>,
     wrapper: &Pansn<NCPath>,
+    haplo: bool,
 ) -> Vec<String> {
-    let f = path_stats_wrapper(&graph, &wrapper);
+    let f = path_stats_wrapper(graph, wrapper, haplo);
 
     let mut result = Vec::with_capacity(f.len());
 
@@ -47,7 +50,7 @@ pub fn path_runner(
         }
     }
 
-    return result;
+    result
 }
 
 pub fn parse_max_min(val: Vec<&str>, is_max: bool) -> Vec<usize> {
@@ -69,5 +72,5 @@ pub fn parse_max_min(val: Vec<&str>, is_max: bool) -> Vec<usize> {
             }
         }
     }
-    return result_usize;
+    result_usize
 }

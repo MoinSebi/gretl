@@ -1,4 +1,5 @@
 use crate::stats::graph_stats::graph_stats_wrapper;
+
 use crate::stats::path_stats::{convert_data, path_stats_wrapper, remove_unsorted};
 use crate::stats::stats_writer::{
     write_tsv_graph, write_tsv_path, write_yaml_graph, write_yaml_path,
@@ -15,23 +16,25 @@ pub fn stats_main(matches: &ArgMatches) {
         sep = matches.value_of("Pan-SN").unwrap();
         sep = sep.trim();
     }
+    let _haplo = matches.is_present("haplo");
+
     let mut graph: NCGfa<()> = NCGfa::new();
     println!("{}", matches.value_of("gfa").unwrap());
     graph.parse_gfa_file_and_convert(matches.value_of("gfa").unwrap(), true);
-    let mut wrapper: Pansn<NCPath> = Pansn::from_graph(&graph.paths, &sep);
+    let wrapper: Pansn<NCPath> = Pansn::from_graph(&graph.paths, sep);
     let output = matches.value_of("output").unwrap();
 
     let mut bins: Vec<u32> = vec![1, 50, 100, 1000];
     if matches.is_present("bins") {
         let bins_str = matches.value_of("bins").unwrap();
         bins = bins_str
-            .split(",")
+            .split(',')
             .map(|x| x.parse::<u32>().unwrap())
             .collect();
     }
 
     if matches.is_present("path") {
-        let mut data = path_stats_wrapper(&graph, &wrapper);
+        let mut data = path_stats_wrapper(&graph, &wrapper, matches.is_present("haplo"));
         let mut data = convert_data(&mut data);
         remove_unsorted(&mut data, &graph);
 
@@ -41,7 +44,7 @@ pub fn stats_main(matches: &ArgMatches) {
             write_tsv_path(&data, output);
         }
     } else {
-        let data = graph_stats_wrapper(&graph, &wrapper, bins);
+        let data = graph_stats_wrapper(&graph, &wrapper, bins, matches.is_present("haplo"));
         if matches.is_present("YAML") {
             write_tsv_graph(&data, output);
         } else {

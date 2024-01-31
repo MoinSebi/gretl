@@ -1,4 +1,4 @@
-use gfa_reader::{NCGfa, NCPath, Pansn};
+use gfa_reader::{NCGfa, NCPath};
 use std::collections::HashSet;
 use std::fmt::Debug;
 
@@ -16,7 +16,7 @@ where
     let mut count: f64 = 0.0;
 
     for &value in v {
-        mean += (value.into() - mean.clone()) / f64::from(count.clone() + 1.0);
+        mean += (value.into() - mean) / (count + 1.0);
         count += 1.0;
     }
 
@@ -61,27 +61,27 @@ pub fn node_degree(graph: &NCGfa<()>) -> (Vec<u32>, Vec<u32>, Vec<u32>) {
     let mut degree_out: Vec<u32> = vec![0; graph.nodes.len()];
     let mut degree_total: Vec<u32> = vec![0; graph.nodes.len()];
     for x in graph.edges.as_ref().unwrap().iter() {
-        let fromu: usize = x.from.clone() as usize;
-        let tou: usize = x.to.clone() as usize;
+        let fromu: usize = x.from as usize;
+        let tou: usize = x.to as usize;
 
         degree_out[fromu - 1] += 1;
         degree_in[tou - 1] += 1;
         degree_total[fromu - 1] += 1;
         degree_total[tou - 1] += 1;
     }
-    return (degree_in, degree_out, degree_total);
+    (degree_in, degree_out, degree_total)
 }
 
 /// Calculate node degree (in, out, total)
 pub fn node_degree_total(graph: &NCGfa<()>) -> Vec<u32> {
     let mut degree_total: Vec<u32> = vec![0; graph.nodes.len()];
     for x in graph.edges.as_ref().unwrap().iter() {
-        let fromu: usize = x.from.clone() as usize;
-        let tou: usize = x.to.clone() as usize;
+        let fromu: usize = x.from as usize;
+        let tou: usize = x.to as usize;
         degree_total[fromu - 1] += 1;
         degree_total[tou - 1] += 1;
     }
-    return degree_total;
+    degree_total
 }
 
 /// Compute the node len
@@ -93,5 +93,5 @@ pub fn node_len(graph: &NCGfa<()>) -> Vec<u32> {
     for node in graph.nodes.iter() {
         result.push(node.seq.len() as u32);
     }
-    return result;
+    result
 }

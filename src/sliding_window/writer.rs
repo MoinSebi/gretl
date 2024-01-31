@@ -16,7 +16,7 @@ pub fn write_window(data: Vec<(String, Vec<f64>)>, filename: &str) {
     for dat in data.iter() {
         let mut vec_s: Vec<String> = dat.1.iter().map(|n| n.to_string()).collect();
         filler(&mut vec_s, maxsize);
-        write!(f, "{}\t{}\n", dat.0, vec_s.join("\t")).expect("Not able to write");
+        writeln!(f, "{}\t{}", dat.0, vec_s.join("\t")).expect("Not able to write");
     }
 }
 

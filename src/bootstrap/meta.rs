@@ -12,7 +12,7 @@ pub fn combinations_maker_wrapper(
 ) -> Vec<(usize, usize, HashSet<usize>)> {
     let mut data = vec![];
     for number in 2..size + 1 {
-        let test_comb = combinations_maker(&size, &number, amount);
+        let test_comb = combinations_maker(size, &number, amount);
         for (run, combination) in test_comb.iter().enumerate() {
             data.push((number, run, combination.clone()))
         }
@@ -45,7 +45,7 @@ pub fn combinations_maker(
         }
         counter += 1;
     }
-    return result;
+    result
 }
 
 /// Removes lines (combinations) based on given condition (meta file or core)
@@ -53,10 +53,8 @@ pub fn reduce_meta(meta: &mut Vec<(usize, usize, HashSet<usize>)>, line: i32, co
     if line != -1 {
         let value_to_retain = meta[line as usize].clone();
         meta.retain(|x| *x == value_to_retain);
-    } else {
-        if core != -1 {
-            meta.retain(|x| x.0 == core as usize);
-        }
+    } else if core != -1 {
+        meta.retain(|x| x.0 == core as usize);
     }
 }
 
@@ -72,7 +70,7 @@ pub fn one_iteration(
 ) -> (Vec<usize>, Vec<usize>) {
     let paths = gw.get_path_genome();
     let info2 = test1(&paths, graph, information, combination);
-    let max_value = info2.iter().max().unwrap().clone();
+    let max_value = *info2.iter().max().unwrap();
 
     let mut result: Vec<usize> = vec![0; max_value as usize + 1]; // NODES
     let mut result2 = vec![0; max_value as usize + 1]; // Sequence
@@ -85,7 +83,7 @@ pub fn one_iteration(
     result2.remove(0);
     result.remove(0);
 
-    return (result, result2);
+    (result, result2)
 }
 
 /// Reduce vector wrapper
@@ -105,7 +103,7 @@ pub fn test1(
             remove_from_vec(&mut info2, &a);
         }
     }
-    return info2;
+    info2
 }
 
 /// For the subset of path get all vectors covered
@@ -127,5 +125,5 @@ pub fn remove_from_vec(origin: &mut Vec<u32>, sub: &Vec<u32>) {
     origin
         .iter_mut()
         .zip(sub.iter())
-        .for_each(|(o, s)| *o = *o - *s);
+        .for_each(|(o, s)| *o -= *s);
 }

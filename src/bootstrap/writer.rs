@@ -10,9 +10,9 @@ pub fn write_meta(data: Vec<(usize, usize, HashSet<usize>)>, filename: &str) {
     let mut f = BufWriter::new(f);
 
     for x in data.iter() {
-        write!(
+        writeln!(
             f,
-            "{}\t{}\t{}\n",
+            "{}\t{}\t{}",
             x.0,
             x.1,
             x.2.iter()
@@ -35,7 +35,7 @@ pub fn write_output(data: Vec<(usize, usize, (Vec<usize>, Vec<usize>))>, filenam
     let f = File::create(filename).expect("Unable to create file");
     let mut f = BufWriter::new(f);
     let header = make_header(max_len);
-    write!(f, "{}\n", header).expect("Not able to write");
+    writeln!(f, "{}", header).expect("Not able to write");
     for (size, run, data) in data.iter() {
         let mut y = data
             .0
@@ -51,9 +51,9 @@ pub fn write_output(data: Vec<(usize, usize, (Vec<usize>, Vec<usize>))>, filenam
             .iter()
             .map(|n| n.to_string())
             .collect::<Vec<String>>();
-        write!(
+        writeln!(
             f,
-            "{}\t{}\t{}\t{}\n",
+            "{}\t{}\t{}\t{}",
             size,
             run,
             fillerback(&mut y, max_len),
@@ -80,7 +80,7 @@ pub fn fillerback(stri: &mut Vec<String>, maxlen: usize) -> String {
     let mut act_len = stri.len();
     let mut a = stri.join("\t");
     while act_len < maxlen {
-        a = a + "\t";
+        a += "\t";
         act_len += 1;
     }
     a

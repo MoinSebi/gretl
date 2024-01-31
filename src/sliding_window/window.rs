@@ -15,7 +15,7 @@ pub fn sliding_window_wrapper(
     metric: Metric,
     node: bool,
 ) -> Vec<(String, Vec<f64>)> {
-    let mut paths = wrapper.get_path_genome();
+    let paths = wrapper.get_path_genome();
 
     let mut result = Vec::new();
     let mut core = calculate_similarity(&paths, graph);
@@ -30,7 +30,7 @@ pub fn sliding_window_wrapper(
         let sww = sliding_window(vector, binsize, steosize);
         result.push((path.name.clone(), sww));
     }
-    return result;
+    result
 }
 
 /// Create the vector for sliding window
@@ -39,14 +39,14 @@ pub fn make_vector(path: &NCPath, node_len: &Vec<u32>, core: &Vec<u32>, node: &b
     if *node {
         for n in path.nodes.iter() {
             let level = core[*n as usize];
-            vv.push(level.clone());
+            vv.push(level);
         }
     } else {
         for n in path.nodes.iter() {
             let size = node_len[*n as usize - 1];
             let level = core[*n as usize - 1];
             for _x in 0..size {
-                vv.push(level.clone());
+                vv.push(level);
             }
         }
     }
@@ -86,7 +86,7 @@ where
     let mut count: f64 = 0.0;
 
     for &value in v {
-        mean += (value.into() - mean) / f64::from(count + 1.0);
+        mean += (value.into() - mean) / (count + 1.0);
         count += 1.0;
     }
 

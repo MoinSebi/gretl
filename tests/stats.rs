@@ -1,6 +1,6 @@
 use assert_cmd::prelude::*; // Add methods on commands
-use std::process::Command;
 use std::fs;
+use std::process::Command;
 
 #[test]
 fn stats_graph_tsv() -> Result<(), Box<dyn std::error::Error>> {
@@ -47,7 +47,6 @@ fn stats_path_tsv() -> Result<(), Box<dyn std::error::Error>> {
 
     cmd.assert().success();
     fs::remove_file("data/test/stats/stats.path.tsv")?;
-
 
     Ok(())
 }

@@ -47,6 +47,9 @@ fn main() {
                 .long("pansn")
                 .about("Separate by first entry in Pan-SN spec")
                 .takes_value(true))
+            .arg(Arg::new("Haplo")
+                .long("haplo")
+                .about("Make stats for each haplotype (not sample, not path). Only in combination with Pan-SN"))
             .arg(Arg::new("bins")
                 .long("bins")
                 .about("Size of bins. Example: Format 10,20,30 -> (0-10, 11-20, 30+)[default: 1,50,100,1000]")
@@ -351,6 +354,10 @@ fn main() {
                 .required(true)
                 .multiple_occurrences(true)
             )
+            .arg(Arg::new("haplo")
+                .long("haplo")
+                .about("Haplo mode")
+            )
 
         )
 
@@ -358,23 +365,23 @@ fn main() {
 
     // Read the graph
 
-    if let Some(ref matches) = matches.subcommand_matches("core") {
+    if let Some(matches) = matches.subcommand_matches("core") {
         core_main(matches);
-    } else if let Some(ref matches) = matches.subcommand_matches("bootstrap") {
-        bootstrap_main(&matches);
-    } else if let Some(ref matches) = matches.subcommand_matches("stats") {
-        stats_main(&matches);
-    } else if let Some(ref matches) = matches.subcommand_matches("id2int") {
-        id2int_main(&matches);
-    } else if let Some(ref matches) = matches.subcommand_matches("ps") {
-        ps_main(&matches);
-    } else if let Some(ref matches) = matches.subcommand_matches("node-list") {
-        nodelist_main(&matches);
-    } else if let Some(ref matches) = matches.subcommand_matches("window") {
-        window_main(&matches);
-    } else if let Some(ref matches) = matches.subcommand_matches("feature") {
-        feature_main2(&matches);
-    } else if let Some(ref matches) = matches.subcommand_matches("path") {
-        path_main(&matches);
+    } else if let Some(matches) = matches.subcommand_matches("bootstrap") {
+        bootstrap_main(matches);
+    } else if let Some(matches) = matches.subcommand_matches("stats") {
+        stats_main(matches);
+    } else if let Some(matches) = matches.subcommand_matches("id2int") {
+        id2int_main(matches);
+    } else if let Some(matches) = matches.subcommand_matches("ps") {
+        ps_main(matches);
+    } else if let Some(matches) = matches.subcommand_matches("node-list") {
+        nodelist_main(matches);
+    } else if let Some(matches) = matches.subcommand_matches("window") {
+        window_main(matches);
+    } else if let Some(matches) = matches.subcommand_matches("feature") {
+        feature_main2(matches);
+    } else if let Some(matches) = matches.subcommand_matches("path") {
+        path_main(matches);
     }
 }

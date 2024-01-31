@@ -8,7 +8,7 @@ pub fn pan_genome(
 ) -> (Vec<(usize, usize)>, Vec<(String, usize, usize)>) {
     eprintln!("Running core analysis");
 
-    let mut paths = gwrapper.get_path_genome();
+    let paths = gwrapper.get_path_genome();
 
     // Get additional information for private nodes
     let mut private_only: Vec<(String, usize, usize)> = Vec::new();
@@ -19,7 +19,7 @@ pub fn pan_genome(
         let mut seq = 0;
         for x in path.1.iter() {
             for node in x.nodes.iter() {
-                let level = stats[*node as usize - 1].clone() as usize;
+                let level = stats[*node as usize - 1] as usize;
                 if level == 1 {
                     nodes += 1;
                     seq += graph.nodes[*node as usize - 1].seq.len();
@@ -39,8 +39,8 @@ pub fn pan_genome(
 
     // Check if both values are the same (should be)
     let total_sum: usize = private_only.iter().map(|n| n.2).sum();
-    if total_sum == similarity_level.get(1).unwrap().1.clone() as usize {
+    if total_sum == similarity_level.get(1).unwrap().1 as usize {
         eprintln!("Statistic is fine")
     }
-    return (similarity_level, private_only);
+    (similarity_level, private_only)
 }

@@ -3,8 +3,12 @@ use crate::stats::path_stats::path_stats_wrapper;
 use gfa_reader::{NCGfa, NCPath, Pansn};
 
 /// Wrapper for path statistics
-pub fn path_stats_wrapper2(graph: &NCGfa<()>, gw: &Pansn<NCPath>) -> Vec<(String, f64)> {
-    let path_stats = path_stats_wrapper(graph, gw);
+pub fn path_stats_wrapper2(
+    graph: &NCGfa<()>,
+    gw: &Pansn<NCPath>,
+    haplo: bool,
+) -> Vec<(String, f64)> {
+    let path_stats = path_stats_wrapper(graph, gw, haplo);
 
     let mut tmp_res = Vec::new();
     let mut tmp_names = Vec::new();
@@ -24,12 +28,12 @@ pub fn path_stats_wrapper2(graph: &NCGfa<()>, gw: &Pansn<NCPath>) -> Vec<(String
 
     let mut result = Vec::new();
     for (data, name) in tmp_res.iter().zip(tmp_names.iter()) {
-        result.push(("Path ".to_string() + &name + " (average)", mean321(&data)));
+        result.push(("Path ".to_string() + &name + " (average)", mean321(data)));
         result.push((
             "Path ".to_string() + &name + " (std)",
-            stadard_deviation_2(&data),
+            stadard_deviation_2(data),
         ));
     }
 
-    return result;
+    result
 }

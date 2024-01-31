@@ -24,7 +24,7 @@ pub fn bootstrap_main(matches: &ArgMatches) {
     // Read the graph
     let mut graph: NCGfa<()> = NCGfa::new();
     graph.parse_gfa_file_and_convert(matches.value_of("gfa").unwrap(), false);
-    let mut wrapper: Pansn<NCPath> = Pansn::from_graph(&graph.paths, sep);
+    let wrapper: Pansn<NCPath> = Pansn::from_graph(&graph.paths, sep);
 
     let output = matches.value_of("output").unwrap();
 
@@ -68,7 +68,7 @@ pub fn bootstrap_main(matches: &ArgMatches) {
     // Removes lines and unused similarity level from the meta data (file)
     reduce_meta(&mut combinations, line, core);
 
-    let mut paths = wrapper.get_path_genome();
+    let paths = wrapper.get_path_genome();
 
     // We use the similarity measure
     let similarity = calculate_similarity(&paths, &graph);
@@ -83,7 +83,7 @@ pub fn bootstrap_main(matches: &ArgMatches) {
             .par_chunks(5) // Process in chunks of 3 elements (you can adjust the chunk size).
             .flat_map(|chunk| {
                 chunk
-                    .into_iter()
+                    .iter()
                     .map(|(number_genomes, iterations, combination)| {
                         let combi: Vec<usize> = combination.iter().cloned().collect();
                         let result_one_iteration =
@@ -97,7 +97,6 @@ pub fn bootstrap_main(matches: &ArgMatches) {
                             combination,
                         )
                     })
-                    .into_iter()
                     .collect::<Vec<_>>()
             })
             .into_par_iter() // Pass external data to the processing function.

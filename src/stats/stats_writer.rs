@@ -8,7 +8,7 @@ pub fn write_tsv_graph(data: &Vec<(String, String)>, filename: &str) {
     let f = File::create(filename).expect("Unable to create file");
     let mut f = BufWriter::new(f);
     for (d, x) in data.iter() {
-        write!(f, "{}: {}\n", d, x).expect("Not able to write");
+        writeln!(f, "{}: {}", d, x).expect("Not able to write");
     }
 }
 
@@ -19,12 +19,12 @@ pub fn write_yaml_graph(data: &Vec<(String, String)>, filename: &str) {
     for (column_name, _value) in data.iter().take(data.len() - 1) {
         write!(f, "{}\t", column_name).expect("Not able to write");
     }
-    write!(f, "{}\n", data[data.len() - 1].0).expect("Not able to write");
+    writeln!(f, "{}", data[data.len() - 1].0).expect("Not able to write");
 
     for (_column_name_, value) in data.iter().take(data.len() - 1) {
         write!(f, "{}\t", value).expect("Not able to write");
     }
-    write!(f, "{}\n", data[data.len() - 1].1).expect("Not able to write");
+    writeln!(f, "{}", data[data.len() - 1].1).expect("Not able to write");
 }
 
 /// Write function for path stats in yaml
@@ -32,9 +32,9 @@ pub fn write_yaml_path(data: &Vec<(String, Vec<(String, String)>)>, filename: &s
     let f = File::create(filename).expect("Unable to create file");
     let mut f = BufWriter::new(f);
     for x1 in data.iter() {
-        write!(f, "{}:\n", x1.0).expect("Not able to write");
+        writeln!(f, "{}:", x1.0).expect("Not able to write");
         for (d, x) in x1.1.iter() {
-            write!(f, "- {}: {}\n", d, x).expect("Not able to write");
+            writeln!(f, "- {}: {}", d, x).expect("Not able to write");
         }
     }
 }
@@ -48,7 +48,7 @@ pub fn write_tsv_path(data: &Vec<(String, Vec<(String, String)>)>, filename: &st
         for y in x.1.iter().take(x.1.len() - 1) {
             write!(f, "{}\t", y.0).expect("Not able to write");
         }
-        write!(f, "{}\n", x.1[x.1.len() - 1].0).expect("Not able to write");
+        writeln!(f, "{}", x.1[x.1.len() - 1].0).expect("Not able to write");
         break;
     }
     for data1 in data.iter() {
@@ -56,6 +56,6 @@ pub fn write_tsv_path(data: &Vec<(String, Vec<(String, String)>)>, filename: &st
         for (_column_name, value_) in data1.1.iter().take(data1.1.len() - 1) {
             write!(f, "{}\t", value_).expect("Not able to write");
         }
-        write!(f, "{}\n", data1.1[data1.1.len() - 1].1).expect("Not able to write");
+        writeln!(f, "{}", data1.1[data1.1.len() - 1].1).expect("Not able to write");
     }
 }

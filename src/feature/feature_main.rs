@@ -31,11 +31,11 @@ pub fn feature_main2(matches: &ArgMatches) {
         .unwrap_or("-9")
         .parse()
         .unwrap();
-    let pansn = matches.value_of("pansn").unwrap_or(" ");
+    let _pansn = matches.value_of("pansn").unwrap_or(" ");
 
     let mut graph: NCGfa<()> = NCGfa::new();
     graph.parse_gfa_file_and_convert(graph_file, true);
-    let mut wrapper: Pansn<NCPath> = Pansn::from_graph(&graph.paths, " ");
+    let wrapper: Pansn<NCPath> = Pansn::from_graph(&graph.paths, " ");
     println!("{}", minlen);
 
     if maxdegree == maxdepth
@@ -78,12 +78,12 @@ pub fn runner1(
     maxdegree: i128,
     maxdepth: i128,
 ) -> Vec<usize> {
-    let mut paths = wrapper.get_path_genome();
+    let paths = wrapper.get_path_genome();
 
     let mut result = Vec::new();
-    let size = calculate_node_size(&graph);
-    let degree = node_degree(&graph);
-    let depth = calculate_depth(&paths, &graph);
+    let size = calculate_node_size(graph);
+    let degree = node_degree(graph);
+    let depth = calculate_depth(&paths, graph);
     for (i, (s, (deg, dep))) in size
         .iter()
         .zip(degree.2.iter().zip(depth.iter()))
@@ -99,5 +99,5 @@ pub fn runner1(
             result.push(i)
         }
     }
-    return result;
+    result
 }

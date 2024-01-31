@@ -7,7 +7,7 @@ pub fn accession2level(
     graph: &NCGfa<()>,
     wrapper: &Pansn<NCPath>,
 ) -> Vec<(String, Vec<(u32, u32)>)> {
-    let mut paths = wrapper.get_path_genome();
+    let paths = wrapper.get_path_genome();
     let cores = calculate_similarity(&paths, graph);
     let metric_maxval = cores.iter().max().unwrap();
     let mut res = Vec::new();
@@ -30,5 +30,5 @@ pub fn accession2level(
         res.push((name.clone(), depth));
     }
 
-    return res;
+    res
 }

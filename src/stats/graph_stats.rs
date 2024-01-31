@@ -9,10 +9,16 @@ pub fn graph_stats_wrapper(
     graph: &NCGfa<()>,
     wrapper: &Pansn<NCPath>,
     bins: Vec<u32>,
+    haplo: bool,
 ) -> Vec<(String, String)> {
     let mut result: Vec<(String, String)> = Vec::new();
 
-    let mut paths = wrapper.get_path_genome();
+    let paths;
+    if haplo {
+        paths = wrapper.get_haplo_path();
+    } else {
+        paths = wrapper.get_path_genome();
+    }
     let number_samples = wrapper.genomes.len();
     let mut depth = calculate_depth(&paths, graph);
     let mut core = calculate_similarity(&paths, graph);
@@ -107,7 +113,7 @@ pub fn graph_stats_wrapper(
 
     // Node degree
     let (graph_degree_in_average, graph_degree_out_average, graph_degree_total_average) =
-        node_degree(&graph);
+        node_degree(graph);
     result.push((
         "Node degree (in)".to_string(),
         mean(&graph_degree_in_average).to_string(),
@@ -149,7 +155,7 @@ pub fn graph_stats_wrapper(
         graph_density(graph).to_string(),
     ));
 
-    let hybrid_stats = path_stats_wrapper2(graph, &wrapper);
+    let hybrid_stats = path_stats_wrapper2(graph, wrapper, haplo);
     for x in hybrid_stats.iter() {
         result.push((x.0.to_string(), x.1.to_string()));
     }
@@ -159,12 +165,12 @@ pub fn graph_stats_wrapper(
 
 /// Number of paths
 fn graph_path_number(graph: &NCGfa<()>) -> usize {
-    return graph.paths.len();
+    graph.paths.len()
 }
 
 /// Number of nodes
 fn graph_node_number(graph: &NCGfa<()>) -> usize {
-    return graph.nodes.len();
+    graph.nodes.len()
 }
 
 /// Number of edges
@@ -191,7 +197,7 @@ pub fn graph_path_seq_total(graph: &NCGfa<()>) -> usize {
 ///
 /// Sum all nodes in the graph and divide it by the number of nodes
 pub fn graph_node_stats(graph: &NCGfa<()>) -> (f64, f64, u32) {
-    let mut vec_size: Vec<u32> = calculate_node_size(&graph);
+    let mut vec_size: Vec<u32> = calculate_node_size(graph);
 
     vec_size.sort();
     let average = mean(&vec_size);
@@ -202,15 +208,15 @@ pub fn graph_node_stats(graph: &NCGfa<()>) -> (f64, f64, u32) {
 
 pub fn calculate_node_size(graph: &NCGfa<()>) -> Vec<u32> {
     let vec_size: Vec<u32> = graph.nodes.iter().map(|n| n.seq.len() as u32).collect();
-    return vec_size;
+    vec_size
 }
 
 /// Calculate graph density
 pub fn graph_density(graph: &NCGfa<()>) -> f64 {
     let n = graph.nodes.len();
     let e = graph.edges.as_ref().unwrap().len();
-    let density = e as f64 / (n * (n - 1)) as f64;
-    density
+    
+    e as f64 / (n * (n - 1)) as f64
 }
 
 /// Calculate number of inverted edges
@@ -233,7 +239,7 @@ pub fn neg_edges(graph: &NCGfa<()>) -> usize {
         .as_ref()
         .unwrap()
         .iter()
-        .filter(|n| (n.to_dir == n.from_dir) && (n.to_dir == false))
+        .filter(|n| (n.to_dir == n.from_dir) && !n.to_dir)
         .count();
     inverted
 }
@@ -275,28 +281,28 @@ pub fn bin_nodes_count_and_size(value: &Vec<u32>, bins: Vec<u32>) -> Vec<(String
     for (i, x) in result.iter().zip(bins.iter()).enumerate() {
         if i == 0 {
             real_result.push((
-                "Bin[0-".to_string() + &x.1.to_string() + &"]".to_string(),
-                x.0.clone(),
+                "Bin[0-".to_string() + &x.1.to_string() + "]",
+                *x.0,
             ));
         } else {
             real_result.push((
                 "Bin[".to_string()
                     + &(bins[i - 1] + 1).to_string()
-                    + &"-".to_string()
+                    + "-"
                     + &x.1.to_string()
-                    + &"]".to_string(),
-                x.0.clone(),
+                    + "]",
+                *x.0,
             ));
         }
     }
     // Add the last bin
     let value = real_result[real_result.len() - 1]
         .0
-        .split("-")
+        .split('-')
         .next()
         .unwrap()
         .to_string()
-        + &"-inf]".to_string();
+        + "-inf]";
     if let Some(last_value) = real_result.last_mut() {
         // Modify the last value (e.g., double it)
         last_value.0 = value;

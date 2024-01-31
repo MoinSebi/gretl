@@ -9,17 +9,23 @@ use std::collections::HashSet;
 pub fn path_stats_wrapper(
     graph: &NCGfa<()>,
     wrapper: &Pansn<NCPath>,
+    haplo: bool,
 ) -> Vec<(String, Vec<(String, f64)>)> {
     // Total results
     let mut res = Vec::new();
-    let mut paths = wrapper.get_path_genome();
-    let number_samples = wrapper.genomes.len();
+    let paths;
+    if haplo {
+        paths = wrapper.get_haplo_path();
+    } else {
+        paths = wrapper.get_path_genome();
+    }
+    let _number_samples = wrapper.genomes.len();
 
     // Calculate similarity
     let core = calculate_similarity(&paths, graph);
 
     // Calculate node degree
-    let node_degree = node_degree(&graph);
+    let node_degree = node_degree(graph);
 
     // Calculate depth
     let depth = calculate_depth(&paths, graph);
@@ -31,7 +37,7 @@ pub fn path_stats_wrapper(
         let mut result_temp: Vec<(String, f64)> = Vec::new();
         let path_seq = path_seq_len(path, &graph.nodes) as f64;
         let path_nodes = path_node_len(&path.nodes) as f64;
-        let edges_numb = edges_num(&path) as f64;
+        let edges_numb = edges_num(path) as f64;
         let edges_total_numb = path_nodes - 1.0;
 
         // Amount of sequence and number of nodes in the path + number of unique nodes
@@ -92,9 +98,9 @@ pub fn path_stats_wrapper(
         ));
 
         let (node_sizes_avg, node_size_median, node_size_std) = node_size_cal(path, &node_size);
-        result_temp.push(("Node size average [bp]".to_string(), node_sizes_avg as f64));
-        result_temp.push(("Node size median [bp]".to_string(), node_size_median as f64));
-        result_temp.push(("Node size std [bp]".to_string(), node_size_std as f64));
+        result_temp.push(("Node size average [bp]".to_string(), node_sizes_avg));
+        result_temp.push(("Node size median [bp]".to_string(), node_size_median));
+        result_temp.push(("Node size std [bp]".to_string(), node_size_std));
 
         let (depth_avg, depth_median, depth_std) = node_size_cal(path, &depth);
         result_temp.push((
@@ -124,9 +130,9 @@ pub fn path_stats_wrapper(
         ));
 
         let (sim_avg, sim_median, sim_std) = node_size_cal(path, &core);
-        result_temp.push(("Similarity average".to_string(), sim_avg as f64));
-        result_temp.push(("Similarity median".to_string(), sim_median as f64));
-        result_temp.push(("Similarity std".to_string(), sim_std as f64));
+        result_temp.push(("Similarity average".to_string(), sim_avg));
+        result_temp.push(("Similarity median".to_string(), sim_median));
+        result_temp.push(("Similarity std".to_string(), sim_std));
 
         result_temp.push((
             "Similarity average (normalized)".to_string(),
@@ -142,9 +148,9 @@ pub fn path_stats_wrapper(
         ));
 
         let (degree_avg, degree_median, degree_std) = node_size_cal(path, &node_degree.2);
-        result_temp.push(("Degree average".to_string(), degree_avg as f64));
-        result_temp.push(("Degree median".to_string(), degree_median as f64));
-        result_temp.push(("Degree std".to_string(), degree_std as f64));
+        result_temp.push(("Degree average".to_string(), degree_avg));
+        result_temp.push(("Degree median".to_string(), degree_median));
+        result_temp.push(("Degree std".to_string(), degree_std));
 
         res.push((path.name.to_string(), result_temp))
     }
@@ -190,7 +196,7 @@ pub fn path_seq_len(path: &NCPath, nodes: &Vec<NCNode<()>>) -> usize {
     for x in path.nodes.iter() {
         size += nodes[*x as usize - 1].seq.len();
     }
-    return size;
+    size
 }
 
 pub fn edges_num(path: &NCPath) -> usize {
@@ -204,21 +210,21 @@ pub fn edges_num(path: &NCPath) -> usize {
 #[allow(dead_code)]
 /// Count the number of inverted nodes for each path
 pub fn path_node_inverted(path: &NCPath) -> usize {
-    path.dir.iter().filter(|&n| *n == false).count()
+    path.dir.iter().filter(|&n| !(*n)).count()
 }
 
 #[allow(dead_code)]
 /// Count the number of inverted nodes for each path
 pub fn path_seq_inverted(path: &NCPath, nodes: &Vec<NCNode<()>>) -> (usize, usize) {
-    let inverted = path.dir.iter().filter(|&n| *n == false).count();
+    let inverted = path.dir.iter().filter(|&n| !(*n)).count();
     let sums: usize = path
         .dir
         .iter()
         .zip(&path.nodes)
-        .filter(|&n| *n.0 == false)
+        .filter(|&n| !(*n.0))
         .map(|s| nodes.get(*s.1 as usize - 1).unwrap().seq.len())
         .sum();
-    return (inverted, sums);
+    (inverted, sums)
 }
 
 /// Calculate the total number of jumps
@@ -233,10 +239,10 @@ pub fn path_jumps(path: &NCPath) -> usize {
     let mut c: usize = 0;
     let mut last = path.nodes[0];
     for node_id in path.nodes.iter().skip(1) {
-        c += (*node_id as i64 - last as i64).abs() as usize;
+        c += (*node_id as i64 - last as i64).unsigned_abs() as usize;
         last = *node_id
     }
-    return c;
+    c
 }
 
 /// Count the number of jumps bigger than X
@@ -252,13 +258,13 @@ pub fn path_jumps_bigger(path: &NCPath, val: Option<i32>) -> u32 {
         }
     }
 
-    return c;
+    c
 }
 
 pub fn path_unique2(path: &NCPath, nodes: &Vec<NCNode<()>>) -> (usize, usize) {
     let hp: HashSet<u32> = path.nodes.iter().cloned().collect();
     let unique_seq = hp.iter().map(|x| nodes[*x as usize - 1].seq.len()).sum();
-    return (hp.len(), unique_seq);
+    (hp.len(), unique_seq)
 }
 
 #[allow(dead_code)]

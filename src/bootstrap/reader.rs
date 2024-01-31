@@ -13,9 +13,9 @@ pub fn read_meta(filename: &str) -> Vec<(usize, usize, HashSet<usize>)> {
 
     for line in reader.lines() {
         let lu = line.unwrap();
-        let ls: Vec<&str> = lu.split("\t").collect();
+        let ls: Vec<&str> = lu.split('\t').collect();
         let f: HashSet<usize> = ls[2]
-            .split(",")
+            .split(',')
             .map(|n| n.to_string().parse().unwrap())
             .collect();
         data.push((
@@ -24,5 +24,5 @@ pub fn read_meta(filename: &str) -> Vec<(usize, usize, HashSet<usize>)> {
             f,
         ));
     }
-    return data;
+    data
 }

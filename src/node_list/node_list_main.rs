@@ -9,13 +9,13 @@ pub fn nodelist_main(matches: &ArgMatches) {
     // Parse GFA file + Wrapper
     let mut graph: NCGfa<()> = NCGfa::new();
     graph.parse_gfa_file_and_convert(matches.value_of("gfa").unwrap(), true);
-    let mut wrapper: Pansn<NCPath> = Pansn::from_graph(&graph.paths, " ");
+    let wrapper: Pansn<NCPath> = Pansn::from_graph(&graph.paths, " ");
 
     let output = matches.value_of("output").unwrap();
     let splits = vec!["Core", "Length", "Depth", "Core", "ND"];
     let mut split_vec = Vec::new();
     if matches.is_present("Features") {
-        split_vec = matches.value_of("Features").unwrap().split(",").collect();
+        split_vec = matches.value_of("Features").unwrap().split(',').collect();
     }
     let mut final_features = Vec::new();
     for x in split_vec.iter() {
@@ -24,7 +24,7 @@ pub fn nodelist_main(matches: &ArgMatches) {
         }
     }
 
-    if final_features.len() == 0 {
+    if final_features.is_empty() {
         final_features = splits.clone();
     }
     // This wrapper also writes data to a file
