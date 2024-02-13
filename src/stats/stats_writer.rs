@@ -44,13 +44,12 @@ pub fn write_tsv_path(data: &Vec<(String, Vec<(String, String)>)>, filename: &st
     let f = File::create(filename).expect("Unable to create file");
     let mut f = BufWriter::new(f);
     write!(f, "Path\t").expect("Not able to write");
-    for x in data.iter() {
-        for y in x.1.iter().take(x.1.len() - 1) {
-            write!(f, "{}\t", y.0).expect("Not able to write");
-        }
-        writeln!(f, "{}", x.1[x.1.len() - 1].0).expect("Not able to write");
-        break;
+    let x = &data[0];
+    for y in data[0].1.iter().take(x.1.len() - 1) {
+        write!(f, "{}\t", y.0).expect("Not able to write");
     }
+    writeln!(f, "{}", x.1[x.1.len() - 1].0).expect("Not able to write");
+
     for data1 in data.iter() {
         write!(f, "{}\t", data1.0).expect("Not able to write");
         for (_column_name, value_) in data1.1.iter().take(data1.1.len() - 1) {

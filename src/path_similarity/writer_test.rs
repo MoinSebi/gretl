@@ -27,13 +27,7 @@ pub fn write_ps(data: &Vec<(String, Vec<(u32, u32)>)>, filename: &str) {
     for entry in data.iter() {
         let test1: Vec<String> = entry.1.iter().map(|n| n.0.to_string()).collect();
         let test2: Vec<String> = entry.1.iter().map(|n| n.1.to_string()).collect();
-        writeln!(
-            f,
-            "{}\t{}\t{}",
-            entry.0,
-            test1.join("\t"),
-            test2.join("\t")
-        )
-        .expect("Not able to write");
+        writeln!(f, "{}\t{}\t{}", entry.0, test1.join("\t"), test2.join("\t"))
+            .expect("Not able to write");
     }
 }

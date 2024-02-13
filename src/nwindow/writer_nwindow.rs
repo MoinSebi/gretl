@@ -13,11 +13,11 @@ pub fn write_header(data: &Vec<String>, f: &mut BufWriter<File>) {
 }
 
 /// Write
-pub fn write_list(data: (&str, &Vec<u32>), f: &mut BufWriter<File>) {
-    write!(f, "{}\t", data.0).expect("hilfe");
+pub fn write_list(data: &Vec<[u128; 3]>, f: &mut BufWriter<File>) {
+    write!(f, "node\tsequence\tjumps\n").expect("hilfe");
 
-    for x in data.1.iter() {
-        write!(f, "{}\t", x).expect("hilfe");
+    for x in data.iter() {
+        write!(f, "{}\t{}\t{}\n", x[0], x[1], x[2]).expect("hilfe");
     }
     writeln!(f).expect("hilfe");
 }

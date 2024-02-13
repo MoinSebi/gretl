@@ -215,7 +215,7 @@ pub fn calculate_node_size(graph: &NCGfa<()>) -> Vec<u32> {
 pub fn graph_density(graph: &NCGfa<()>) -> f64 {
     let n = graph.nodes.len();
     let e = graph.edges.as_ref().unwrap().len();
-    
+
     e as f64 / (n * (n - 1)) as f64
 }
 
@@ -280,17 +280,10 @@ pub fn bin_nodes_count_and_size(value: &Vec<u32>, bins: Vec<u32>) -> Vec<(String
     let mut real_result = Vec::new();
     for (i, x) in result.iter().zip(bins.iter()).enumerate() {
         if i == 0 {
-            real_result.push((
-                "Bin[0-".to_string() + &x.1.to_string() + "]",
-                *x.0,
-            ));
+            real_result.push(("Bin[0-".to_string() + &x.1.to_string() + "]", *x.0));
         } else {
             real_result.push((
-                "Bin[".to_string()
-                    + &(bins[i - 1] + 1).to_string()
-                    + "-"
-                    + &x.1.to_string()
-                    + "]",
+                "Bin[".to_string() + &(bins[i - 1] + 1).to_string() + "-" + &x.1.to_string() + "]",
                 *x.0,
             ));
         }

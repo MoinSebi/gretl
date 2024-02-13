@@ -4,6 +4,7 @@ mod feature;
 mod helpers;
 mod id2int;
 mod node_list;
+mod nwindow;
 mod path;
 mod path_similarity;
 mod sliding_window;
@@ -14,6 +15,7 @@ use crate::core::core_main::core_main;
 use crate::feature::feature_main::feature_main2;
 use crate::id2int::id2int_main::id2int_main;
 use crate::node_list::node_list_main::nodelist_main;
+use crate::nwindow::nwindow_main::nwindow_main;
 use crate::path::path_main::path_main;
 use crate::path_similarity::ps_main::ps_main;
 use crate::sliding_window::sliding_window_main::window_main;
@@ -228,6 +230,56 @@ fn main() {
                 .takes_value(true)))
 
 
+        .subcommand(App::new("nwindow")
+            .about("Node-based sliding window")
+            .help_heading("Input options")
+            .arg(Arg::new("gfa")
+                .short('g')
+                .long("gfa")
+                .about("Input GFA file")
+                .takes_value(true)
+                .required(true))
+            .arg(Arg::new("Pan-SN")
+                .long("pansn")
+                .about("Seperate by first entry in Pan-SN spec")
+                .takes_value(true))
+
+            .help_heading("Window criteria options")
+            .about("Criteria when to stop collecting nodes for the window")
+            .arg(Arg::new("steps")
+                .long("step")
+                .about("Number of steps away from the starting node")
+                .takes_value(true))
+            .arg(Arg::new("sequence")
+                .long("sequence")
+                .about("Amount of sequence away from the starting node")
+                .takes_value(true))
+            .arg(Arg::new("jumps")
+                .long("jumps")
+                .about("Sum of 'id jumps' away from the starting node"))
+
+
+            .help_heading("Window summary options")
+            .about("What should be summarized")
+            .arg(Arg::new("number of nodes")
+                .long("node-number"))
+            .arg(Arg::new("sequence length")
+                .long("sequence-length"))
+            .arg(Arg::new("sum-of-jumps")
+                .long("jumps-summary"))
+
+            .help_heading("Output option")
+            .arg(Arg::new("output")
+                .short('o')
+                .long("output")
+                .about("Output")
+                .takes_value(true)
+                .required(true))
+
+        )
+
+
+
 
         .subcommand(App::new("node-list")
             .arg(Arg::new("gfa")
@@ -383,5 +435,7 @@ fn main() {
         feature_main2(matches);
     } else if let Some(matches) = matches.subcommand_matches("path") {
         path_main(matches);
+    } else if let Some(matches) = matches.subcommand_matches("nwindow") {
+        nwindow_main(matches);
     }
 }

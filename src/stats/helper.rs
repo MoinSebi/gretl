@@ -33,7 +33,7 @@ pub fn std_usize(data: &Vec<usize>) -> f64 {
     for i in data.iter() {
         sum += (*i as f64 - mean).powf(2.0);
     }
-    
+
     (sum / (data.len() as f64)).sqrt()
 }
 
@@ -45,7 +45,7 @@ pub fn stadard_deviation(data: &[u32]) -> f64 {
     for i in data.iter() {
         sum += (*i as f64 - mean).powf(2.0);
     }
-    
+
     (sum / (data.len() as f64)).sqrt()
 }
 
@@ -56,7 +56,7 @@ pub fn stadard_deviation_2(data: &[f64]) -> f64 {
     for i in data.iter() {
         sum += (*i - mean).powf(2.0);
     }
-    
+
     (sum / (data.len() as f64)).sqrt()
 }
 

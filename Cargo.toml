@@ -16,6 +16,7 @@ rand = "=0.6.1"
 nalgebra = "0.29.0"
 num-traits = "0.2.14"
 rayon = "1.8.0"
+log = "0.4.20"
 
 
 
