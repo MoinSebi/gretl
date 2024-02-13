@@ -231,7 +231,6 @@ fn main() {
 
 
         .subcommand(App::new("nwindow")
-            .about("Node-based sliding window")
             .help_heading("Input options")
             .arg(Arg::new("gfa")
                 .short('g')
@@ -245,7 +244,6 @@ fn main() {
                 .takes_value(true))
 
             .help_heading("Window criteria options")
-            .about("Criteria when to stop collecting nodes for the window")
             .arg(Arg::new("steps")
                 .long("step")
                 .about("Number of steps away from the starting node")
@@ -260,7 +258,6 @@ fn main() {
 
 
             .help_heading("Window summary options")
-            .about("What should be summarized")
             .arg(Arg::new("number of nodes")
                 .long("node-number"))
             .arg(Arg::new("sequence length")

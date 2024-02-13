@@ -70,6 +70,39 @@ FLAGS:
 **Output plotted**
 
 
+### Nwindow
+Summarizing the graph by a window of nodes.
+
+
+````
+gfastats-nwindow
+
+USAGE:
+    gfastats nwindow --gfa <gfa> --output <output>
+
+FLAGS:
+    -h, --help       Print help information
+    -V, --version    Print version information
+
+Input options:
+    -g, --gfa <gfa>         Input GFA file
+        --pansn <Pan-SN>    Seperate by first entry in Pan-SN spec
+
+Window criteria options:
+        --jumps                  Sum of 'id jumps' away from the starting node
+        --sequence <sequence>    Amount of sequence away from the starting node
+        --step <steps>           Number of steps away from the starting node
+
+Window summary options:
+        --jumps-summary      
+        --node-number        
+        --sequence-length    
+
+Output option:
+    -o, --output <output>    Output
+
+````
+
 
 
 
