@@ -69,6 +69,15 @@ pub fn stats2(
         if return_type == "all" {
             let o = [get_nodes(**node, &res) as u128, get_sequence(**node, &res, &ss) as u128, get_jumps(**node, &res)];
             result.push(o);
+        } else if return_type == "nodes" {
+            let o = [get_nodes(**node, &res) as u128, 0, 0];
+            result.push(o);
+        } else if return_type == "sequence" {
+            let o = [0, get_sequence(**node, &res, &ss) as u128, 0];
+            result.push(o);
+        } else if return_type == "jumps" {
+            let o = [0, 0, get_jumps(**node, &res)];
+            result.push(o);
         }
     }
 

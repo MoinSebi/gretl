@@ -60,7 +60,7 @@ pub fn nwindow_main(matches: &ArgMatches) {
         window_nodes,
         window_size,
         window_metric as u128,
-        "all",
+        rtype,
     );
 
     info!("Writing to file: {}", output);
