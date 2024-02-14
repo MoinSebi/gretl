@@ -99,7 +99,6 @@ fn stats_graph_tsv_yeast() -> Result<(), Box<dyn std::error::Error>> {
         .arg("/home/svorbrugg/code/gfastats/data/test/yeast/stats/stats.graph.tsv");
 
     cmd.assert().success();
-    fs::remove_file("data/test/yeast/stats/stats.graph.tsv")?;
 
     Ok(())
 }
@@ -117,7 +116,6 @@ fn stats_graph_yaml_yeast() -> Result<(), Box<dyn std::error::Error>> {
         .arg("/home/svorbrugg/code/gfastats/data/test/yeast/stats/stats.graph.yaml");
 
     cmd.assert().success();
-    fs::remove_file("data/test/yeast/stats/stats.graph.yaml")?;
 
     Ok(())
 }
@@ -133,7 +131,6 @@ fn stats_path_tsv_yeast() -> Result<(), Box<dyn std::error::Error>> {
         .arg("/home/svorbrugg/code/gfastats/data/test/yeast/stats/stats.path.tsv");
 
     cmd.assert().success();
-    fs::remove_file("data/test/yeast/stats/stats.path.tsv")?;
 
     Ok(())
 }
