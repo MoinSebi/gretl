@@ -1,0 +1,27 @@
+H       VN:Z:1.0        CL:Z:
+S	1	AAAAAAAAAA
+S	2	CCCCC
+S	3	G
+S	4	NNNNNNNNNN
+S	5	NNNNNNNNNN
+S	6	T
+S	7	C
+S	8	NNNNNNNNNN
+S	9	AAAAAAAAAA
+L	1	+	2	+	0M
+L	1	+	3	+	0M
+L	2	+	4	+	0M
+L	3	+	4	+	0M
+L	3	+	3	+	0M
+L	2	+	5	+	0M
+L	4	+	9	+	0M
+L	5	+	8	+	0M
+L	5	+	7	+	0M
+L	7	+	8	+	0M
+L	8	+	9	+	0M
+P	a#1#Chr1	1+,2+,5+,8+,9+	0M,0M,0M,0M,0M,0M
+P	b#1#Chr1	1+,2+,5+,7+,8+,9+	0M,0M,0M,0M,0M,0M
+P	c#1#Chr1	1+,2+,4+,9+	0M,0M,0M,0M
+P	d#1#Chr1	1+,3+,4+,9+	0M,0M,0M,0M
+P	e#1#Chr1	1+,3+,3+,4+	0M,0M,0M,0M
+P	e#1#Chr2	4+,9+	0M,0M,0M,0M
