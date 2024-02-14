@@ -1,6 +1,6 @@
 use crate::helpers::helper::node_len;
 
-use gfa_reader::{NCGfa};
+use gfa_reader::NCGfa;
 
 use std::cmp::{max, min};
 use std::collections::{HashMap, HashSet};
@@ -45,7 +45,7 @@ pub fn stats2(
     for node in nn.iter() {
         let mut seen = HashSet::new();
         let mut res = Vec::new();
-        let mut next_next = HashSet::new();
+        let mut next_next: HashSet<_>;
         let mut nexts = nns[node].clone();
         res.push(**node);
 
@@ -67,7 +67,11 @@ pub fn stats2(
             steps += 1;
         }
         if return_type == "all" {
-            let o = [get_nodes(**node, &res) as u128, get_sequence(**node, &res, &ss) as u128, get_jumps(**node, &res)];
+            let o = [
+                get_nodes(**node, &res) as u128,
+                get_sequence(**node, &res, &ss) as u128,
+                get_jumps(**node, &res),
+            ];
             result.push(o);
         } else if return_type == "nodes" {
             let o = [get_nodes(**node, &res) as u128, 0, 0];

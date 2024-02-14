@@ -6,115 +6,268 @@ use std::process::Command;
 /// Run core subcommand
 /// -pansv -> path
 /// -stats -> similarity
-fn core_no_pansn_similarity() -> Result<(), Box<dyn std::error::Error>> {
+fn analysis_test_core_no_pansn_similarity() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
     cmd.arg("core")
         .arg("--gfa")
         .arg("./data/example_data/testGraph_complex.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/analysis/core.pansnno.sim.txt")
+        .arg("/home/svorbrugg/code/gfastats/data/test/testGraph/analysis/analysis.test.core.pansnno.sim.txt")
         .arg("--pansn")
         .arg("_");
     cmd.assert().success();
-    fs::remove_file("data/test/analysis/core.pansnno.sim.txt")?;
+    fs::remove_file("data/test/testGraph/analysis/analysis.test.core.pansnno.sim.txt")?;
 
     Ok(())
 }
 
+
 #[test]
-fn core_pansn_similarity() -> Result<(), Box<dyn std::error::Error>> {
+/// Run core subcommand
+/// -pansv -> path
+/// -stats -> similarity
+fn analysis_yeast_core_no_pansn_similarity() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("gfastats")?;
+    cmd.arg("core")
+        .arg("--gfa")
+        .arg("./data/example_data/chr5.yeast.gfa")
+        .arg("--output")
+        .arg("/home/svorbrugg/code/gfastats/data/test/yeast/analysis/analysis.yeast.core.pansnno.sim.txt")
+        .arg("--pansn")
+        .arg("_");
+    cmd.assert().success();
+    fs::remove_file("data/test/yeast/analysis/analysis.yeast.core.pansnno.sim.txt")?;
+
+    Ok(())
+}
+
+
+#[test]
+fn analysis_test_core_pansn_similarity() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
     cmd.arg("core")
         .arg("--gfa")
         .arg("./data/example_data/testGraph_complex.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/analysis/core.pansn.sim.txt")
+        .arg("/home/svorbrugg/code/gfastats/data/test/testGraph/analysis/analysis.test.core.pansn.sim.txt")
         .arg("--pansn")
         .arg("#");
     cmd.assert().success();
-    fs::remove_file("data/test/analysis/core.pansn.sim.txt")?;
+    fs::remove_file("data/test/testGraph/analysis/analysis.test.core.pansn.sim.txt")?;
 
     Ok(())
 }
 
 #[test]
-fn core_pansn_depth() -> Result<(), Box<dyn std::error::Error>> {
+fn analysis_yeast_core_pansn_similarity() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("gfastats")?;
+    cmd.arg("core")
+        .arg("--gfa")
+        .arg("./data/example_data/chr5.yeast.gfa")
+        .arg("--output")
+        .arg("/home/svorbrugg/code/gfastats/data/test/yeast/analysis/analysis.yeast.core.pansn.sim.txt")
+        .arg("--pansn")
+        .arg("#");
+    cmd.assert().success();
+    fs::remove_file("data/test/yeast/analysis/analysis.yeast.core.pansn.sim.txt")?;
+
+    Ok(())
+}
+
+#[test]
+fn analysis_test_core_pansn_depth() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
     cmd.arg("core")
         .arg("--gfa")
         .arg("./data/example_data/testGraph_complex.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/analysis/core.pansn.depth.txt")
+        .arg("/home/svorbrugg/code/gfastats/data/test/testGraph/analysis/core.pansn.depth.txt")
         .arg("--pansn")
         .arg("#")
         .arg("--stats")
         .arg("depth");
     cmd.assert().success();
-    fs::remove_file("data/test/analysis/core.pansn.depth.txt")?;
+    fs::remove_file("data/test/testGraph/analysis/core.pansn.depth.txt")?;
+
+    Ok(())
+}
+
+
+#[test]
+fn analysis_yeast_core_pansn_depth() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("gfastats")?;
+    cmd.arg("core")
+        .arg("--gfa")
+        .arg("./data/example_data/testGraph_complex.gfa")
+        .arg("--output")
+        .arg("/home/svorbrugg/code/gfastats/data/test/yeast/analysis/core.pansn.depth.txt")
+        .arg("--pansn")
+        .arg("#")
+        .arg("--stats")
+        .arg("depth");
+    cmd.assert().success();
+    fs::remove_file("data/test/yeast/analysis/core.pansn.depth.txt")?;
 
     Ok(())
 }
 
 #[test]
-fn id2int() -> Result<(), Box<dyn std::error::Error>> {
+fn id2int_test_graph() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
     cmd.arg("id2int")
         .arg("--gfa")
-        .arg("./data/example_data/testGraph.gfa")
+        .arg("./data/example_data/testGraph_complex.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/analysis/id2int.txt");
+        .arg("/home/svorbrugg/code/gfastats/data/test/testGraph/analysis/id2int.txt");
 
     cmd.assert().success();
-    fs::remove_file("data/test/analysis/id2int.txt")?;
+    fs::remove_file("data/test/testGraph/analysis/id2int.txt")?;
 
     Ok(())
 }
 
 #[test]
-fn ps() -> Result<(), Box<dyn std::error::Error>> {
+fn id2int_yeast() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("gfastats")?;
+    cmd.arg("id2int")
+        .arg("--gfa")
+        .arg("./data/example_data/chr5.yeast.gfa")
+        .arg("--output")
+        .arg("/home/svorbrugg/code/gfastats/data/test/yeast/analysis/id2int.txt");
+
+    cmd.assert().success();
+    fs::remove_file("data/test/yeast/analysis/id2int.txt")?;
+
+    Ok(())
+}
+
+#[test]
+fn analysis_ps_tg() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
     cmd.arg("ps")
         .arg("--gfa")
-        .arg("./data/example_data/testGraph.gfa")
+        .arg("./data/example_data/testGraph_complex.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/analysis/ps.txt")
+        .arg("/home/svorbrugg/code/gfastats/data/test/testGraph/analysis/ps.txt")
         .arg("--pansn")
         .arg("_");
 
     cmd.assert().success();
-    fs::remove_file("data/test/analysis/ps.txt")?;
+    fs::remove_file("data/test/testGraph/analysis/ps.txt")?;
 
     Ok(())
 }
 
 #[test]
-fn node_list_path() -> Result<(), Box<dyn std::error::Error>> {
+fn analysis_ps_yeast() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("gfastats")?;
+    cmd.arg("ps")
+        .arg("--gfa")
+        .arg("./data/example_data/chr5.yeast.gfa")
+        .arg("--output")
+        .arg("/home/svorbrugg/code/gfastats/data/test/yeast/analysis/ps.txt")
+        .arg("--pansn")
+        .arg("_");
+
+    cmd.assert().success();
+    fs::remove_file("data/test/yeast/analysis/ps.txt")?;
+
+    Ok(())
+}
+
+
+#[test]
+fn analysis_node_list_path_tg() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
     cmd.arg("node-list")
         .arg("--gfa")
-        .arg("./data/example_data/testGraph.gfa")
+        .arg("./data/example_data/testGraph_complex.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/analysis/nodelist.txt");
+        .arg("/home/svorbrugg/code/gfastats/data/test/testGraph/analysis/nodelist2.txt");
 
     cmd.assert().success();
-    fs::remove_file("data/test/analysis/nodelist.txt")?;
+    fs::remove_file("data/test/testGraph/analysis/nodelist2.txt")?;
+
+    Ok(())
+}
+
+
+#[test]
+fn analysis_node_list_path_yeast() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("gfastats")?;
+    cmd.arg("node-list")
+        .arg("--gfa")
+        .arg("./data/example_data/chr5.yeast.gfa")
+        .arg("--output")
+        .arg("/home/svorbrugg/code/gfastats/data/test/yeast/analysis/nodelist.txt");
+
+    cmd.assert().success();
+    fs::remove_file("data/test/yeast/analysis/nodelist.txt")?;
 
     Ok(())
 }
 
 #[test]
-fn sliding_window_2s() -> Result<(), Box<dyn std::error::Error>> {
+fn analysis_test_sliding_window_2s() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
     cmd.arg("window")
         .arg("--gfa")
-        .arg("./data/example_data/testGraph.gfa")
+        .arg("./data/example_data/testGraph_complex.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/analysis/slidingwindow.txt")
+        .arg("/home/svorbrugg/code/gfastats/data/test/testGraph/analysis/analysis.window.txt")
         .arg("-s")
         .arg("2");
 
     cmd.assert().success();
-    fs::remove_file("data/test/analysis/slidingwindow.txt")?;
+    fs::remove_file("data/test/testGraph/analysis/analysis.window.txt")?;
+
+    Ok(())
+}
+
+
+#[test]
+fn analysis_yeast_sliding_window_2s() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("gfastats")?;
+    cmd.arg("window")
+        .arg("--gfa")
+        .arg("./data/example_data/chr5.yeast.gfa")
+        .arg("--output")
+        .arg("/home/svorbrugg/code/gfastats/data/test/yeast/analysis/analysis.window.txt")
+        .arg("-s")
+        .arg("2");
+
+    cmd.assert().success();
+    fs::remove_file("data/test/yeast/analysis/analysis.window.txt")?;
+
+    Ok(())
+}
+
+
+
+#[test]
+fn analysis_sliding_nwindow_2s_tg() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("gfastats")?;
+    cmd.arg("nwindow")
+        .arg("--gfa")
+        .arg("./data/example_data/testGraph_complex.gfa")
+        .arg("--output")
+        .arg("/home/svorbrugg/code/gfastats/data/test/testGraph/analysis/analysis.nwindow.txt");
+
+    cmd.assert().success();
+
+    Ok(())
+}
+
+#[test]
+fn analysis_sliding_nwindow_2s_yeast() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("gfastats")?;
+    cmd.arg("nwindow")
+        .arg("--gfa")
+        .arg("./data/example_data/chr5.yeast.gfa")
+        .arg("--output")
+        .arg("/home/svorbrugg/code/gfastats/data/test/yeast/analysis/analysis.nwindow.txt");
+
+    cmd.assert().success();
 
     Ok(())
 }

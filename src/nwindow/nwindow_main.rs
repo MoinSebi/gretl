@@ -1,5 +1,3 @@
-
-
 use crate::nwindow::n_windows::stats2;
 use crate::nwindow::writer_nwindow::{make_buffer, write_list};
 use clap::ArgMatches;
@@ -25,17 +23,12 @@ pub fn nwindow_main(matches: &ArgMatches) {
         window_nodes = 10;
     }
 
-    let mut sum_nodes = matches.is_present("number of nodes");
-    let mut sum_length = matches.is_present("sequence length");
-    let mut sum_jumps = matches.is_present("sum-of-jumps");
+    let sum_nodes = matches.is_present("number of nodes");
+    let sum_length = matches.is_present("sequence length");
+    let sum_jumps = matches.is_present("sum-of-jumps");
     let mut rtype = "all";
 
-    if !sum_nodes && !sum_length && !sum_jumps {
-        sum_nodes = true;
-        sum_length = true;
-        sum_jumps = true;
-
-    } else {
+    if sum_nodes || sum_length || sum_jumps {
         if sum_nodes {
             rtype = "nodes";
         }
@@ -46,8 +39,6 @@ pub fn nwindow_main(matches: &ArgMatches) {
             rtype = "jumps";
         }
     }
-
-
 
     let mut graph: NCGfa<()> = NCGfa::new();
     graph.parse_gfa_file_and_convert(matches.value_of("gfa").unwrap(), true);
