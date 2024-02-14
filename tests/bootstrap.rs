@@ -10,7 +10,7 @@ fn node_bootstrap() -> Result<(), Box<dyn std::error::Error>> {
         .arg("--output")
         .arg("/home/svorbrugg/code/gfastats/data/test/testGraph/bootstrap/test.stats.bootstrap.txt")
         .arg("--meta")
-        .arg("testmeta.txt");
+        .arg("data/testmeta.txt");
     cmd.assert().success();
     fs::remove_file("data/test/testGraph/bootstrap/test.stats.bootstrap.txt")?;
 
