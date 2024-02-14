@@ -56,7 +56,7 @@ fn node_bootstrap_yeast() -> Result<(), Box<dyn std::error::Error>> {
         .arg("--output")
         .arg("/home/svorbrugg/code/gfastats/data/test/yeast/bootstrap/test.stats.bootstrap.txt")
         .arg("--meta")
-        .arg("testmeta.txt");
+        .arg("data/testmeta.txt");
     cmd.assert().success();
     fs::remove_file("data/test/yeast/bootstrap/test.stats.bootstrap.txt")?;
 
@@ -72,7 +72,7 @@ fn node_bootstrap3_yeast() -> Result<(), Box<dyn std::error::Error>> {
         .arg("--output")
         .arg("/home/svorbrugg/code/gfastats/data/test/yeast/bootstrap/test.stats.bootstrap3.txt");
     cmd.assert().success();
-    fs::remove_file("data/test/yeast/bootstrap/test.stats.bootstrap3.txt")?;
+    //fs::remove_file("data/test/yeast/bootstrap/test.stats.bootstrap3.txt")?;
 
     Ok(())
 }

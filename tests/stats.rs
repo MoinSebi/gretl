@@ -151,7 +151,6 @@ fn stats_path_tsv_yaml_yeast() -> Result<(), Box<dyn std::error::Error>> {
         .arg("/home/svorbrugg/code/gfastats/data/test/yeast/stats/stats.path2.tsv");
 
     cmd.assert().success();
-    fs::remove_file("data/test/yeast/stats/stats.path2.tsv")?;
 
     Ok(())
 }
@@ -168,6 +167,5 @@ fn stats_path_yaml_yeast() -> Result<(), Box<dyn std::error::Error>> {
         .arg("/home/svorbrugg/code/gfastats/data/test/yeast/stats/stats.path.yaml");
 
     cmd.assert().success();
-    fs::remove_file("data/test/yeast/stats/stats.path.yaml")?;
     Ok(())
 }

@@ -36,7 +36,6 @@ fn analysis_yeast_core_no_pansn_similarity() -> Result<(), Box<dyn std::error::E
         .arg("--pansn")
         .arg("_");
     cmd.assert().success();
-    fs::remove_file("data/test/yeast/analysis/analysis.yeast.core.pansnno.sim.txt")?;
 
     Ok(())
 }
@@ -69,7 +68,6 @@ fn analysis_yeast_core_pansn_similarity() -> Result<(), Box<dyn std::error::Erro
         .arg("--pansn")
         .arg("#");
     cmd.assert().success();
-    fs::remove_file("data/test/yeast/analysis/analysis.yeast.core.pansn.sim.txt")?;
 
     Ok(())
 }
@@ -106,7 +104,6 @@ fn analysis_yeast_core_pansn_depth() -> Result<(), Box<dyn std::error::Error>> {
         .arg("--stats")
         .arg("depth");
     cmd.assert().success();
-    fs::remove_file("data/test/yeast/analysis/core.pansn.depth.txt")?;
 
     Ok(())
 }
@@ -136,7 +133,6 @@ fn id2int_yeast() -> Result<(), Box<dyn std::error::Error>> {
         .arg("/home/svorbrugg/code/gfastats/data/test/yeast/analysis/id2int.txt");
 
     cmd.assert().success();
-    fs::remove_file("data/test/yeast/analysis/id2int.txt")?;
 
     Ok(())
 }
@@ -170,7 +166,6 @@ fn analysis_ps_yeast() -> Result<(), Box<dyn std::error::Error>> {
         .arg("_");
 
     cmd.assert().success();
-    fs::remove_file("data/test/yeast/analysis/ps.txt")?;
 
     Ok(())
 }
@@ -202,7 +197,6 @@ fn analysis_node_list_path_yeast() -> Result<(), Box<dyn std::error::Error>> {
         .arg("/home/svorbrugg/code/gfastats/data/test/yeast/analysis/nodelist.txt");
 
     cmd.assert().success();
-    fs::remove_file("data/test/yeast/analysis/nodelist.txt")?;
 
     Ok(())
 }
@@ -226,7 +220,7 @@ fn analysis_test_sliding_window_2s() -> Result<(), Box<dyn std::error::Error>> {
 
 
 #[test]
-fn analysis_yeast_sliding_window_2s() -> Result<(), Box<dyn std::error::Error>> {
+fn analysis_sliding_window_2s_yeast() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gfastats")?;
     cmd.arg("window")
         .arg("--gfa")
@@ -254,6 +248,7 @@ fn analysis_sliding_nwindow_2s_tg() -> Result<(), Box<dyn std::error::Error>> {
         .arg("/home/svorbrugg/code/gfastats/data/test/testGraph/analysis/analysis.nwindow.txt");
 
     cmd.assert().success();
+    fs::remove_file("data/test/testGraph/analysis/analysis.nwindow.txt")?;
 
     Ok(())
 }
@@ -265,7 +260,7 @@ fn analysis_sliding_nwindow_2s_yeast() -> Result<(), Box<dyn std::error::Error>>
         .arg("--gfa")
         .arg("./data/example_data/chr5.yeast.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/yeast/analysis/analysis.nwindow.txt");
+        .arg("/home/svorbrugg/code/gfastats/data/test/yeast/analysis/analysis.nwindow.yeast.txt");
 
     cmd.assert().success();
 
