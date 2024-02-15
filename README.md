@@ -103,7 +103,47 @@ Output option:
 
 ````
 
+### Bootstrap 
 
+We recommend bootstrapping a graphs in PanSN-spec. Use ```--nodes``` if the bootstrap should only run on a subset of nodes (e.g. gene vs intergenic).
+ ```
+ gfastats-bootstrap 
 
+Bootstrap approach
 
+USAGE:
+    gfastats bootstrap --gfa <gfa>
+
+FLAGS:
+    -h, --help       Print help information
+    -V, --version    Print version information
+
+Input options:
+    -g, --gfa <gfa>                  Input GFA file
+        --meta-input <meta input>    Take a specific meta file as input
+        --nodes <nodes>              Run bootstrap only on these nodes
+        --pansn <Pan-SN>             Separate by first entry in Pan-SN spec
+    -t, --threads <Threads>          Number of threads [default: 1]
+
+Modifications:
+        --level <level>            Calculate a specific level
+        --meta-line <meta line>    Take a specific line of the meta file (only works when meta file
+                                   is provided)
+        --number <number>          How many bootstraps do you want to run
+
+Output options:
+        --meta <meta>        Report an additional meta file with all combinations
+    -o, --output <output>    Output
+
+```
+
+## Scripts 
+We provide multiple jupyter notebooks to visualize the output of the tool. 
+
+**Requirements**
+- Jupyter
+- Matplotlib
+- Pandas
+- Numpy
+- Seaborn
 
