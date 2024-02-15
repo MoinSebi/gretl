@@ -29,7 +29,7 @@ pub fn write_meta(data: Vec<(usize, usize, HashSet<usize>)>, filename: &str) {
 /// Write output file
 pub fn write_output(data: Vec<(usize, usize, (Vec<usize>, Vec<usize>))>, filename: &str) {
     eprintln!("Writing meta");
-    println!("Writing meta {:?}", data);
+    //println!("Writing meta {:?}", data);
     let max_len = data.iter().map(|n| n.2 .1.len()).max().unwrap();
 
     let f = File::create(filename).expect("Unable to create file");

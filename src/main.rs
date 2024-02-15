@@ -88,6 +88,11 @@ fn main() {
                 .takes_value(true)
                 .about("Number of threads")
                 .default_value("1"))
+            .arg(Arg::new("nodes")
+                .long("nodes")
+                .about("Run bootstrap only on these nodes")
+                .takes_value(true))
+
 
             .help_heading("Modifications")
             .arg(Arg::new("meta line")
@@ -96,7 +101,7 @@ fn main() {
                 .takes_value(true))
             .arg(Arg::new("level")
                 .long("level")
-                .about("Only calculate a specific level")
+                .about("Calculate a specific level")
                 .takes_value(true))
             .arg(Arg::new("number")
                 .long("number")

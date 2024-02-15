@@ -67,6 +67,7 @@ pub fn one_iteration(
     combination: &[usize],
     _metric: &str,
     information: &Vec<u32>,
+    nodes: &HashSet<u32>,
 ) -> (Vec<usize>, Vec<usize>) {
     let paths = gw.get_path_genome();
     let info2 = test1(&paths, graph, information, combination);
@@ -76,9 +77,18 @@ pub fn one_iteration(
     let mut result2 = vec![0; max_value as usize + 1]; // Sequence
 
     // Add amount and sequence
-    for (i, x) in info2.iter().enumerate() {
-        result[*x as usize] += 1;
-        result2[*x as usize] += graph.nodes[i].seq.len();
+    if nodes.len() == graph.nodes.len(){
+        for (i, x) in info2.iter().enumerate() {
+            result[*x as usize] += 1;
+            result2[*x as usize] += graph.nodes[i].seq.len();
+        }
+    } else {
+        for (i, x) in info2.iter().enumerate() {
+            if nodes.contains(&(i as u32 + 1)) {
+                result[*x as usize] += 1;
+                result2[*x as usize] += graph.nodes[i].seq.len();
+            }
+        }
     }
     result2.remove(0);
     result.remove(0);
@@ -107,6 +117,8 @@ pub fn test1(
 }
 
 /// For the subset of path get all vectors covered
+///
+/// Create a vector of node_length with only contains 1 if the node is in one of the paths
 pub fn make_vec(t: &Vec<&NCPath>, length: usize) -> Vec<u32> {
     let mut vec1 = vec![0; length];
     for a in t.iter() {
@@ -116,8 +128,9 @@ pub fn make_vec(t: &Vec<&NCPath>, length: usize) -> Vec<u32> {
 }
 
 /// Remove one vector from the other
-/// Vectors must be of same size
-/// Inplace operation
+/// Req:
+///     - Vectors must be of same size
+///     - Inplace operation
 pub fn remove_from_vec(origin: &mut Vec<u32>, sub: &Vec<u32>) {
     if origin.len() != sub.len() {
         panic!("Vectors must be of same size")

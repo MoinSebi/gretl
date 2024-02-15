@@ -7,6 +7,7 @@ use gfa_reader::{NCGfa, NCPath, Pansn};
 use rayon::prelude::*;
 use std::cmp::min;
 use std::collections::HashSet;
+use crate::bootstrap::helper::read_positive_integers_from_file;
 
 /// Main function for bootstrapping
 pub fn bootstrap_main(matches: &ArgMatches) {
@@ -21,12 +22,19 @@ pub fn bootstrap_main(matches: &ArgMatches) {
         .parse::<usize>()
         .unwrap();
 
+
     // Read the graph
     let mut graph: NCGfa<()> = NCGfa::new();
     graph.parse_gfa_file_and_convert(matches.value_of("gfa").unwrap(), false);
     let wrapper: Pansn<NCPath> = Pansn::from_graph(&graph.paths, sep);
-
     let output = matches.value_of("output").unwrap();
+
+    let mut nodes: HashSet<_> = graph.nodes.iter().map(|n| n.id).collect();
+    if matches.is_present("nodes"){
+        let a = read_positive_integers_from_file(matches.value_of("nodes").unwrap());
+        nodes = a.iter().cloned().collect();
+    }
+
 
     // Get the amount of iterations
     let mut amount = 10;
@@ -80,14 +88,14 @@ pub fn bootstrap_main(matches: &ArgMatches) {
 
     let results: Vec<_> = thread_pool.install(|| {
         combinations
-            .par_chunks(5) // Process in chunks of 3 elements (you can adjust the chunk size).
+            .par_chunks(5) // Process in chunks of 5 elements (you can adjust the chunk size).
             .flat_map(|chunk| {
                 chunk
                     .iter()
                     .map(|(number_genomes, iterations, combination)| {
                         let combi: Vec<usize> = combination.iter().cloned().collect();
                         let result_one_iteration =
-                            one_iteration(&wrapper, &graph, &combi, "similarity", &similarity);
+                            one_iteration(&wrapper, &graph, &combi, "similarity", &similarity, &nodes);
 
                         // Return results without a semicolon
                         (

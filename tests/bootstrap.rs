@@ -26,7 +26,7 @@ fn node_bootstrap3() -> Result<(), Box<dyn std::error::Error>> {
         .arg("--output")
         .arg("/home/svorbrugg/code/gfastats/data/test/testGraph/bootstrap/test.stats.bootstrap3.txt");
     cmd.assert().success();
-    fs::remove_file("data/test/testGraph/bootstrap/test.stats.bootstrap3.txt")?;
+    //fs::remove_file("data/test/testGraph/bootstrap/test.stats.bootstrap3.txt")?;
 
     Ok(())
 }
@@ -43,6 +43,22 @@ fn node_bootstrap2() -> Result<(), Box<dyn std::error::Error>> {
         .arg("2");
     cmd.assert().success();
     fs::remove_file("data/test/testGraph/bootstrap/test.stats.bootstrap2.txt")?;
+
+    Ok(())
+}
+
+#[test]
+fn node_bootstrap4() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("gfastats")?;
+    cmd.arg("bootstrap")
+        .arg("--gfa")
+        .arg("./data/example_data/testGraph_complex.gfa")
+        .arg("--output")
+        .arg("/home/svorbrugg/code/gfastats/data/test/testGraph/bootstrap/test.stats.bootstrap4.txt")
+        .arg("--nodes")
+        .arg("data/nodes.txt");
+    cmd.assert().success();
+    //fs::remove_file("data/test/testGraph/bootstrap/test.stats.bootstrap4.txt")?;
 
     Ok(())
 }
@@ -92,4 +108,18 @@ fn node_bootstrap2_yeast() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+#[test]
+fn node_bootstrap4_yeast() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("gfastats")?;
+    cmd.arg("bootstrap")
+        .arg("--gfa")
+        .arg("./data/example_data/chr5.yeast.gfa")
+        .arg("--output")
+        .arg("/home/svorbrugg/code/gfastats/data/test/yeast/bootstrap/test.yeast.bootstrap4.txt")
+        .arg("--nodes")
+        .arg("data/nodes2.txt");
+    cmd.assert().success();
+    //fs::remove_file("data/test/testGraph/bootstrap/test.stats.bootstrap4.txt")?;
 
+    Ok(())
+}
