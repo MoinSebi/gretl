@@ -117,7 +117,7 @@ fn node_bootstrap4_yeast() -> Result<(), Box<dyn std::error::Error>> {
         .arg("--output")
         .arg("/home/svorbrugg/code/gfastats/data/test/yeast/bootstrap/test.yeast.bootstrap4.txt")
         .arg("--nodes")
-        .arg("data/nodes2.txt");
+        .arg("data/nodes.txt");
     cmd.assert().success();
     //fs::remove_file("data/test/testGraph/bootstrap/test.stats.bootstrap4.txt")?;
 
