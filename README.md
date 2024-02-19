@@ -1,4 +1,4 @@
-# gfastats
+# gretl - Graph evaluation toolkit
 #### Description 
 Small tool for basic graph statistics using GFA format.   
   
@@ -8,15 +8,15 @@ Small tool for basic graph statistics using GFA format.
 
 **Git**  
 ```
-git clone https://github.com/MoinSebi/gfastats  
-cd gfastats   
+git clone https://github.com/MoinSebi/gretl  
+cd gretl   
 cargo build --release  
-./target/release/gfastats  
+./target/release/gretl  
 ```
 
 **Cargo** 
 ```
-cargo install gfastats
+cargo install gretl
 ```
 
 ## Usage
@@ -26,10 +26,10 @@ Convert any string-based node identifier to numeric values.
 
 **Comment**: Do not use when graph is already digits only. The order of identifier does not reflect a sorted graph structure. I highly advise to use ```odgi sort``` on the graph. If not, some statistics are not very meaningful. 
 ```text
-gfastats-id2int 
+gretl-id2int 
 
 USAGE:
-    gfastats --gfa <gfa> --output <output> id2int [OPTIONS]
+    gretl --gfa <gfa> --output <output> id2int [OPTIONS]
 
 FLAGS:
     -h, --help       Print help information
@@ -41,7 +41,7 @@ OPTIONS:
 ```
 **Example usage**
 ```text
-./gfastats -g /path/to/graph.gfa -o /path/to/output.gfa id2int -d /path/to/dict.txt
+./gretl -g /path/to/graph.gfa -o /path/to/output.gfa id2int -d /path/to/dict.txt
 ```
 
 
@@ -51,12 +51,12 @@ OPTIONS:
 Compute core statistics of the graph. 
 
 ```text
-gfastats-core 
+gretl-core 
 
 Graph similarity statistics
 
 USAGE:
-    gfastats --gfa <gfa> --output <output> core
+    gretl --gfa <gfa> --output <output> core
 
 FLAGS:
     -h, --help       Print help information
@@ -65,7 +65,7 @@ FLAGS:
 
 **Example usage**
 ```text
-./gfastats -g /path/to/graph.gfa -o /path/to/core.stats.txt core
+./gretl -g /path/to/graph.gfa -o /path/to/core.stats.txt core
 ```
 **Output plotted**
 
@@ -75,10 +75,10 @@ Summarizing the graph by a window of nodes.
 
 
 ````
-gfastats-nwindow
+gretl-nwindow
 
 USAGE:
-    gfastats nwindow --gfa <gfa> --output <output>
+    gretl nwindow --gfa <gfa> --output <output>
 
 FLAGS:
     -h, --help       Print help information
@@ -107,12 +107,12 @@ Output option:
 
 We recommend bootstrapping a graphs in PanSN-spec. Use ```--nodes``` if the bootstrap should only run on a subset of nodes (e.g. gene vs intergenic).
  ```
- gfastats-bootstrap 
+ gretl-bootstrap 
 
 Bootstrap approach
 
 USAGE:
-    gfastats bootstrap --gfa <gfa>
+    gretl bootstrap --gfa <gfa>
 
 FLAGS:
     -h, --help       Print help information
