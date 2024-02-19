@@ -7,12 +7,12 @@ use std::process::Command;
 /// -pansv -> path
 /// -stats -> similarity
 fn analysis_test_core_no_pansn_similarity() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gfastats")?;
+    let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("core")
         .arg("--gfa")
         .arg("./data/example_data/testGraph_complex.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/testGraph/analysis/analysis.test.core.pansnno.sim.txt")
+        .arg("./data//test/testGraph/analysis/analysis.test.core.pansnno.sim.txt")
         .arg("--pansn")
         .arg("_");
     cmd.assert().success();
@@ -27,12 +27,12 @@ fn analysis_test_core_no_pansn_similarity() -> Result<(), Box<dyn std::error::Er
 /// -pansv -> path
 /// -stats -> similarity
 fn analysis_yeast_core_no_pansn_similarity() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gfastats")?;
+    let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("core")
         .arg("--gfa")
         .arg("./data/example_data/chr5.yeast.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/yeast/analysis/analysis.yeast.core.pansnno.sim.txt")
+        .arg("./data//test/yeast/analysis/analysis.yeast.core.pansnno.sim.txt")
         .arg("--pansn")
         .arg("_");
     cmd.assert().success();
@@ -43,12 +43,12 @@ fn analysis_yeast_core_no_pansn_similarity() -> Result<(), Box<dyn std::error::E
 
 #[test]
 fn analysis_test_core_pansn_similarity() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gfastats")?;
+    let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("core")
         .arg("--gfa")
         .arg("./data/example_data/testGraph_complex.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/testGraph/analysis/analysis.test.core.pansn.sim.txt")
+        .arg("./data//test/testGraph/analysis/analysis.test.core.pansn.sim.txt")
         .arg("--pansn")
         .arg("#");
     cmd.assert().success();
@@ -59,12 +59,12 @@ fn analysis_test_core_pansn_similarity() -> Result<(), Box<dyn std::error::Error
 
 #[test]
 fn analysis_yeast_core_pansn_similarity() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gfastats")?;
+    let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("core")
         .arg("--gfa")
         .arg("./data/example_data/chr5.yeast.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/yeast/analysis/analysis.yeast.core.pansn.sim.txt")
+        .arg("./data//test/yeast/analysis/analysis.yeast.core.pansn.sim.txt")
         .arg("--pansn")
         .arg("#");
     cmd.assert().success();
@@ -74,12 +74,12 @@ fn analysis_yeast_core_pansn_similarity() -> Result<(), Box<dyn std::error::Erro
 
 #[test]
 fn analysis_test_core_pansn_depth() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gfastats")?;
+    let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("core")
         .arg("--gfa")
         .arg("./data/example_data/testGraph_complex.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/testGraph/analysis/core.pansn.depth.txt")
+        .arg("./data//test/testGraph/analysis/core.pansn.depth.txt")
         .arg("--pansn")
         .arg("#")
         .arg("--stats")
@@ -93,12 +93,12 @@ fn analysis_test_core_pansn_depth() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn analysis_yeast_core_pansn_depth() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gfastats")?;
+    let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("core")
         .arg("--gfa")
         .arg("./data/example_data/testGraph_complex.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/yeast/analysis/core.pansn.depth.txt")
+        .arg("./data//test/yeast/analysis/core.pansn.depth.txt")
         .arg("--pansn")
         .arg("#")
         .arg("--stats")
@@ -110,12 +110,12 @@ fn analysis_yeast_core_pansn_depth() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn id2int_test_graph() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gfastats")?;
+    let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("id2int")
         .arg("--gfa")
         .arg("./data/example_data/testGraph_complex.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/testGraph/analysis/id2int.txt");
+        .arg("./data//test/testGraph/analysis/id2int.txt");
 
     cmd.assert().success();
     fs::remove_file("data/test/testGraph/analysis/id2int.txt")?;
@@ -125,12 +125,12 @@ fn id2int_test_graph() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn id2int_yeast() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gfastats")?;
+    let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("id2int")
         .arg("--gfa")
         .arg("./data/example_data/chr5.yeast.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/yeast/analysis/id2int.txt");
+        .arg("./data//test/yeast/analysis/id2int.txt");
 
     cmd.assert().success();
 
@@ -139,12 +139,12 @@ fn id2int_yeast() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn analysis_ps_tg() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gfastats")?;
+    let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("ps")
         .arg("--gfa")
         .arg("./data/example_data/testGraph_complex.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/testGraph/analysis/ps.txt")
+        .arg("./data//test/testGraph/analysis/ps.txt")
         .arg("--pansn")
         .arg("_");
 
@@ -156,12 +156,12 @@ fn analysis_ps_tg() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn analysis_ps_yeast() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gfastats")?;
+    let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("ps")
         .arg("--gfa")
         .arg("./data/example_data/chr5.yeast.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/yeast/analysis/ps.txt")
+        .arg("./data//test/yeast/analysis/ps.txt")
         .arg("--pansn")
         .arg("_");
 
@@ -173,12 +173,12 @@ fn analysis_ps_yeast() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn analysis_node_list_path_tg() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gfastats")?;
+    let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("node-list")
         .arg("--gfa")
         .arg("./data/example_data/testGraph_complex.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/testGraph/analysis/nodelist2.txt");
+        .arg("./data//test/testGraph/analysis/nodelist2.txt");
 
     cmd.assert().success();
     fs::remove_file("data/test/testGraph/analysis/nodelist2.txt")?;
@@ -189,12 +189,12 @@ fn analysis_node_list_path_tg() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn analysis_node_list_path_yeast() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gfastats")?;
+    let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("node-list")
         .arg("--gfa")
         .arg("./data/example_data/chr5.yeast.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/yeast/analysis/nodelist.txt");
+        .arg("./data//test/yeast/analysis/nodelist.txt");
 
     cmd.assert().success();
 
@@ -203,12 +203,12 @@ fn analysis_node_list_path_yeast() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn analysis_test_sliding_window_2s() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gfastats")?;
+    let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("window")
         .arg("--gfa")
         .arg("./data/example_data/testGraph_complex.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/testGraph/analysis/analysis.window.txt")
+        .arg("./data//test/testGraph/analysis/analysis.window.txt")
         .arg("-s")
         .arg("2");
 
@@ -221,12 +221,12 @@ fn analysis_test_sliding_window_2s() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn analysis_sliding_window_2s_yeast() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gfastats")?;
+    let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("window")
         .arg("--gfa")
         .arg("./data/example_data/chr5.yeast.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/yeast/analysis/analysis.window.txt")
+        .arg("./data//test/yeast/analysis/analysis.window.txt")
         .arg("-s")
         .arg("2");
 
@@ -240,12 +240,12 @@ fn analysis_sliding_window_2s_yeast() -> Result<(), Box<dyn std::error::Error>> 
 
 #[test]
 fn analysis_sliding_nwindow_2s_tg() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gfastats")?;
+    let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("nwindow")
         .arg("--gfa")
         .arg("./data/example_data/testGraph_complex.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/testGraph/analysis/analysis.nwindow.txt");
+        .arg("./data//test/testGraph/analysis/analysis.nwindow.txt");
 
     cmd.assert().success();
     fs::remove_file("data/test/testGraph/analysis/analysis.nwindow.txt")?;
@@ -255,12 +255,12 @@ fn analysis_sliding_nwindow_2s_tg() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn analysis_sliding_nwindow_2s_yeast() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gfastats")?;
+    let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("nwindow")
         .arg("--gfa")
         .arg("./data/example_data/chr5.yeast.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/yeast/analysis/analysis.nwindow.yeast.txt");
+        .arg("./data//test/yeast/analysis/analysis.nwindow.yeast.txt");
 
     cmd.assert().success();
 

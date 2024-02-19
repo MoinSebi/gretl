@@ -23,11 +23,11 @@ use crate::stats::stats_main::stats_main;
 use clap::{App, AppSettings, Arg};
 
 fn main() {
-    let matches = App::new("gfastats")
+    let matches = App::new("gretl")
         .setting(AppSettings::ArgRequiredElseHelp)
         .version("0.1.0")
         .author("Sebastian V")
-        .about("GFa stats")
+        .about("GFA stats")
         .setting(AppSettings::SubcommandRequiredElseHelp)
 
         // Subcommand for normal stats for one graph

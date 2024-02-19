@@ -4,12 +4,12 @@ use std::process::Command;
 
 #[test]
 fn stats_graph_tsv() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gfastats")?;
+    let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("stats")
         .arg("--gfa")
         .arg("./data/example_data/testGraph_complex.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/testGraph/stats/stats.graph.tsv");
+        .arg("./data/test/testGraph/stats/stats.graph.tsv");
 
     cmd.assert().success();
     fs::remove_file("data/test/testGraph/stats/stats.graph.tsv")?;
@@ -19,7 +19,7 @@ fn stats_graph_tsv() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn stats_graph_yaml() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gfastats")?;
+    let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("stats")
         .arg("--gfa")
         .arg("./data/example_data/testGraph_complex.gfa")
@@ -27,7 +27,7 @@ fn stats_graph_yaml() -> Result<(), Box<dyn std::error::Error>> {
         .arg("--pansn")
         .arg("#")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/testGraph/stats/stats.graph.yaml");
+        .arg("./data/test/testGraph/stats/stats.graph.yaml");
 
     cmd.assert().success();
     fs::remove_file("data/test/testGraph/stats/stats.graph.yaml")?;
@@ -37,13 +37,13 @@ fn stats_graph_yaml() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn stats_path_tsv() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gfastats")?;
+    let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("stats")
         .arg("--gfa")
         .arg("./data/example_data/testGraph_complex.gfa")
         .arg("--path")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/testGraph/stats/stats.path.tsv");
+        .arg("./data/test/testGraph/stats/stats.path.tsv");
 
     cmd.assert().success();
     fs::remove_file("data/test/testGraph/stats/stats.path.tsv")?;
@@ -53,7 +53,7 @@ fn stats_path_tsv() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn stats_path_tsv_yaml() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gfastats")?;
+    let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("stats")
         .arg("--gfa")
         .arg("./data/example_data/testGraph_complex.gfa")
@@ -61,7 +61,7 @@ fn stats_path_tsv_yaml() -> Result<(), Box<dyn std::error::Error>> {
         .arg("--pansn")
         .arg("test")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/testGraph/stats/stats.path2.tsv");
+        .arg("./data/test/testGraph/stats/stats.path2.tsv");
 
     cmd.assert().success();
     fs::remove_file("data/test/testGraph/stats/stats.path2.tsv")?;
@@ -71,14 +71,14 @@ fn stats_path_tsv_yaml() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn stats_path_yaml() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gfastats")?;
+    let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("stats")
         .arg("--gfa")
         .arg("./data/example_data/testGraph_complex.gfa")
         .arg("--path")
         .arg("-y")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/testGraph/stats/stats.path.yaml");
+        .arg("./data/test/testGraph/stats/stats.path.yaml");
 
     cmd.assert().success();
     fs::remove_file("data/test/testGraph/stats/stats.path.yaml")?;
@@ -91,12 +91,12 @@ fn stats_path_yaml() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn stats_graph_tsv_yeast() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gfastats")?;
+    let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("stats")
         .arg("--gfa")
         .arg("./data/example_data/chr5.yeast.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/yeast/stats/stats.graph.tsv");
+        .arg("./data/test/yeast/stats/stats.graph.tsv");
 
     cmd.assert().success();
 
@@ -105,7 +105,7 @@ fn stats_graph_tsv_yeast() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn stats_graph_yaml_yeast() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gfastats")?;
+    let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("stats")
         .arg("--gfa")
         .arg("./data/example_data/chr5.yeast.gfa")
@@ -113,7 +113,7 @@ fn stats_graph_yaml_yeast() -> Result<(), Box<dyn std::error::Error>> {
         .arg("--pansn")
         .arg("#")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/yeast/stats/stats.graph.yaml");
+        .arg("./data/test/yeast/stats/stats.graph.yaml");
 
     cmd.assert().success();
 
@@ -122,13 +122,13 @@ fn stats_graph_yaml_yeast() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn stats_path_tsv_yeast() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gfastats")?;
+    let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("stats")
         .arg("--gfa")
         .arg("./data/example_data/chr5.yeast.gfa")
         .arg("--path")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/yeast/stats/stats.path.tsv");
+        .arg("./data/test/yeast/stats/stats.path.tsv");
 
     cmd.assert().success();
 
@@ -137,7 +137,7 @@ fn stats_path_tsv_yeast() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn stats_path_tsv_yaml_yeast() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gfastats")?;
+    let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("stats")
         .arg("--gfa")
         .arg("./data/example_data/chr5.yeast.gfa")
@@ -145,7 +145,7 @@ fn stats_path_tsv_yaml_yeast() -> Result<(), Box<dyn std::error::Error>> {
         .arg("--pansn")
         .arg("test")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/yeast/stats/stats.path2.tsv");
+        .arg("./data/test/yeast/stats/stats.path2.tsv");
 
     cmd.assert().success();
 
@@ -154,14 +154,14 @@ fn stats_path_tsv_yaml_yeast() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn stats_path_yaml_yeast() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gfastats")?;
+    let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("stats")
         .arg("--gfa")
         .arg("./data/example_data/chr5.yeast.gfa")
         .arg("--path")
         .arg("-y")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/yeast/stats/stats.path.yaml");
+        .arg("./data/test/yeast/stats/stats.path.yaml");
 
     cmd.assert().success();
     Ok(())

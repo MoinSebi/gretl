@@ -4,12 +4,12 @@ use std::process::Command;
 
 #[test]
 fn stats_graph_feature() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gfastats")?;
+    let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("feature")
         .arg("--gfa")
         .arg("./data/example_data/testGraph_complex.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/testGraph/feature_paths/stats.node.s10.txt")
+        .arg("./data//test/testGraph/feature_paths/stats.node.s10.txt")
         .arg("-l")
         .arg("5");
 
@@ -21,12 +21,12 @@ fn stats_graph_feature() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn stats_graph_path() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gfastats")?;
+    let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("path")
         .arg("--gfa")
         .arg("./data/example_data/testGraph_complex.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/testGraph/feature_paths/stats.path.m10M40.txt")
+        .arg("./data//test/testGraph/feature_paths/stats.path.m10M40.txt")
         .arg("-s")
         .arg("Sequence [bp]")
         .arg("-m")
@@ -43,12 +43,12 @@ fn stats_graph_path() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn stats_graph_feature_yeast() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gfastats")?;
+    let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("feature")
         .arg("--gfa")
         .arg("./data/example_data/chr5.yeast.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/yeast/feature_paths/stats.node.s10.txt")
+        .arg("./data//test/yeast/feature_paths/stats.node.s10.txt")
         .arg("-l")
         .arg("5");
 
@@ -60,12 +60,12 @@ fn stats_graph_feature_yeast() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn stats_graph_path_yeast() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gfastats")?;
+    let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("path")
         .arg("--gfa")
         .arg("./data/example_data/chr5.yeast.gfa")
         .arg("--output")
-        .arg("/home/svorbrugg/code/gfastats/data/test/yeast/feature_paths/stats.path.m10M40.txt")
+        .arg("./data//test/yeast/feature_paths/stats.path.m10M40.txt")
         .arg("-s")
         .arg("Sequence [bp]")
         .arg("-m")
