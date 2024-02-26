@@ -35,6 +35,7 @@ pub fn feature_main2(matches: &ArgMatches) {
 
     let mut graph: NCGfa<()> = NCGfa::new();
     graph.parse_gfa_file_and_convert(graph_file, true);
+    graph.convert_walks("#");
     let wrapper: Pansn<NCPath> = Pansn::from_graph(&graph.paths, " ");
     println!("{}", minlen);
 

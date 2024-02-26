@@ -7,6 +7,7 @@ use gfa_reader::{NCGfa, NCPath, Pansn};
 pub fn window_main(matches: &ArgMatches) {
     let mut graph: NCGfa<()> = NCGfa::new();
     graph.parse_gfa_file_and_convert(matches.value_of("gfa").unwrap(), true);
+    graph.convert_walks("#");
     let wrapper: Pansn<NCPath> = Pansn::from_graph(&graph.paths, " ");
     let output = matches.value_of("output").unwrap();
 

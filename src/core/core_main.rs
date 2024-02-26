@@ -20,6 +20,11 @@ pub fn core_main(matches: &ArgMatches) {
     let mut graph: NCGfa<()> = NCGfa::new();
     println!("{}", matches.value_of("gfa").unwrap());
     graph.parse_gfa_file_and_convert(matches.value_of("gfa").unwrap(), true);
+    if sep == " " {
+        graph.convert_walks("#");
+    } else {
+        graph.convert_walks(sep);
+    }
     let wrapper: Pansn<NCPath> = Pansn::from_graph(&graph.paths, sep);
 
     // Get output file name

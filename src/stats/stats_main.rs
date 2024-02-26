@@ -21,6 +21,9 @@ pub fn stats_main(matches: &ArgMatches) {
     let mut graph: NCGfa<()> = NCGfa::new();
     println!("{}", matches.value_of("gfa").unwrap());
     graph.parse_gfa_file_and_convert(matches.value_of("gfa").unwrap(), true);
+    graph.convert_walks("#");
+    graph.walk = Vec::new();
+
     let wrapper: Pansn<NCPath> = Pansn::from_graph(&graph.paths, sep);
     let output = matches.value_of("output").unwrap();
 

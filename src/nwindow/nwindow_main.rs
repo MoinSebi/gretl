@@ -42,7 +42,6 @@ pub fn nwindow_main(matches: &ArgMatches) {
 
     let mut graph: NCGfa<()> = NCGfa::new();
     graph.parse_gfa_file_and_convert(matches.value_of("gfa").unwrap(), true);
-    let _wrapper: Pansn<NCPath> = Pansn::from_graph(&graph.paths, " ");
 
     let output = matches.value_of("output").unwrap();
 

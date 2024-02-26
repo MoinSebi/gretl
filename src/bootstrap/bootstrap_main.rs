@@ -26,6 +26,11 @@ pub fn bootstrap_main(matches: &ArgMatches) {
     // Read the graph
     let mut graph: NCGfa<()> = NCGfa::new();
     graph.parse_gfa_file_and_convert(matches.value_of("gfa").unwrap(), false);
+    if sep == " " {
+        graph.convert_walks("#");
+    } else {
+        graph.convert_walks(sep);
+    }
     let wrapper: Pansn<NCPath> = Pansn::from_graph(&graph.paths, sep);
     let output = matches.value_of("output").unwrap();
 

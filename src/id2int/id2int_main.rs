@@ -12,5 +12,5 @@ pub fn id2int_main(matches: &ArgMatches) {
     eprintln!("ID2INT");
     eprintln!("Convert non digit node identifiers to numeric and compress ID space (not smart)");
 
-    graph.to_file(output);
+    graph.to_file(output, true);
 }
