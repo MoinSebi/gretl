@@ -1,10 +1,8 @@
 # gretl - Graph evaluation toolkit
-#### Description 
-Small tool for basic graph statistics using GFA format. 
-  
+## Description 
+Small tool for basic graph statistics using GFA format. Our statistics are based on nodes, edges and paths. Walks can also be used, 
 
-
-#### Installation: 
+## Installation: 
 
 **Git**  
 ```
@@ -13,274 +11,122 @@ cd gretl
 cargo build --release  
 ./target/release/gretl  
 ```
+## Testing
+We provide a small test suite to test the basic functionality of the tool. If you are interested in output format, check the data/test/yeast/ directory after running this command.
 
+```
+cargo test
+```
 
 ## Usage
 ### Stats
-Graph or path statistics. Graph statistics also include "hybrid" statistics, which are average and standard deviation of path statistics. All hybrid stats have the prefix "Path". 
-```text
-gretl-stats 
 
-Create statists about the graph or its path
+Calculate graph or path (-p) statistics. Please consider using the ```--pansn``` option to separate by sample and not path. You are able to adjust the bins if you want using the ```--bins``` option.  
 
-USAGE:
-    gretl stats [FLAGS] [OPTIONS] --gfa <gfa> --output <output>
-
-FLAGS:
-    -h, --help       Print help information
-        --haplo      Make stats for each haplotype (not sample, not path). Only in combination with
-                     Pan-SN
-    -p, --path       Report path statistics (default:off -> report graph stats)
-    -V, --version    Print version information
-    -y               Report output in YAML format (default:off -> report in tsv)
-
-OPTIONS:
-        --bins <bins>        Size of bins. Example: Format 10,20,30 -> (0-10, 11-20, 30+)[default:
-                             1,50,100,1000]
-    -g, --gfa <gfa>          Input GFA file
-    -o, --output <output>    Output
-        --pansn <Pan-SN>     Separate by first entry in Pan-SN spec
+Graph statistics also include "hybrid" statistics, which are average and standard deviation of path statistics. All hybrid stats have the prefix "Path". A full list of all statistics be found in paper directory in this repository. 
 
 ```
+./gretl stats -g /path/to/graph.gfa -o /path/to/output.txt
+```
+
+### ID2INT
+Convert any string-based node identifier to numeric values. Use ```odgi sort``` to sort the graph in pan-genomic order. This will create more meaningful statistics.
+
+```
+./gretl id2int -g /path/to/graph.gfa -o /path/to/output.gfa -d /path/to/dict.txt
+```
+
+
+### Node-list
+Caculate statistics for each node in the graph. Return a list of nodes with their statistics. 
+Possible statistics are: 
+- Length
+- Degree
+- Depth
+- Core
+
+```text
+./gretl node-list -g /path/to/graph.gfa -o /path/to/output.txt
+```
+
+### Core
+Compute similarity statistics of the graph. 
+
+```
+./gretl core -g /path/to/graph.gfa -o /path/to/output.txt
+```
+Plot
+
+
+### Path similarity (PS)
+
+Calculate the similarity of paths in the graph
+
+```
+./gretl ps -g /path/to/graph.gfa -o /path/to/output.txt
+```
+
+Plot
+
+
+
+
 
 
 ### Feature
-Extract feature which do not fall into a specific setting. The output can be used in gfa2bin. 
+Filter nodes, edges or directed nodes (dirnode) based on input settings. The output can be used as input for gfa2bin. 
+
+```text
+./gretl feature -g /path/to/graph.gfa -o /path/to/nodes.txt -D 10 
+```
+Example output
+### Path
+Filter paths based on input settings. The output can be used as input for gfa2bin.
+
+```text
+./gretl feature -g /path/to/graph.gfa -o /path/to/nodes.txt -s "N/D ration" -m 10
+```
+
+Example output
+
+
+### Bootstrap
+
+We recommend bootstrapping a graphs in PanSN-spec. Use ```--nodes``` if the bootstrap should only run on a subset of nodes (e.g. gene vs intergenic).  
+You are able to adjust the number of bootstrap, only calculate one "level" or input a meta file as input. Examples are shown in the data/example_data/ directory.  
+Meta files can be used to use the same "combinations" for multiple graphs. This only works of the paths/samples of the graphs are in the same order. 
+```
+./gretl bootstrap -g /path/to/graph.gfa -o /path/to/output.txt -n 20 
+```
+Plot
+
+### (Sliding, path) window
+Summarizing the graph by a window of sequence in the path. Similar to approaches on reference genomes, but the statistics are based on the graph structure.
+
 
 ````
-gretl-feature 
-
-Get list of nodes which do not fall into settings
-
-USAGE:
-    gretl feature [OPTIONS] --gfa <gfa> --output <output>
-
-FLAGS:
-    -h, --help       Print help information
-    -V, --version    Print version information
-
-OPTIONS:
-    -d, --min-depth <min-depth>      Minimum depth
-    -D, --max-depth <max-depth>      Maximum node depth
-    -g, --gfa <gfa>                  Input GFA file
-    -l, --min-len <min-len>          Minimum length
-    -L, --max-len <max-len>          Maximum node length 
-    -n, --min-degree <min-degree>    Minimum degree
-    -N, --max-degree <max-degree>    Maximum node degree 
-    -o, --output <output>            Output file name
-
+./gretl window -g /path/to/graph.gfa -o /path/to/output.txt -s 1000 --step 100
 ````
 
-### Paths
-Extract paths which do not fall into a specific setting. The output can be used in gfa2bin.
-
-````
-gretl-path
-
-Remove paths
-
-USAGE:
-gretl path [FLAGS] --gfa <gfa> --output <output> --stats <stats> --mins <mins> --maxs <maxs>
-
-FLAGS:
--h, --help       Print help information
---haplo      Haplo mode
--V, --version    Print version information
-
-OPTIONS:
--g, --gfa <gfa>          Input GFA file
--m, --mins <mins>...
--M, --maxs <maxs>...
--o, --output <output>    Output file
--s, --stats <stats>...      Which stats to filter?
-````
-
-### ID2INT
-Convert any string-based node identifier to numeric values.
-
-**Comment**: Do not use when graph is already digits only. The order of identifier does not reflect a sorted graph structure. I highly advise to use ```odgi sort``` on the graph. If not, some statistics are not very meaningful. 
-```text
-gretl-id2int 
-
-USAGE:
-    gretl --gfa <gfa> --output <output> id2int [OPTIONS]
-
-FLAGS:
-    -h, --help       Print help information
-    -V, --version    Print version information
-
-OPTIONS:
-    -d, --dict <dict>    Write a dictionary for Old->New identifiers in this file.
-
-```
-**Example usage**
-```text
-./gretl -g /path/to/graph.gfa -o /path/to/output.gfa id2int -d /path/to/dict.txt
-```
-
-### Node-list
-Get several statistics for each node in the graph. 
-
-```text
-gretl-node-list 
-
-Some information about each node
-
-USAGE:
-    gretl node-list [OPTIONS] --gfa <gfa> --output <output>
-
-FLAGS:
-    -h, --help       Print help information
-    -V, --version    Print version information
-
-OPTIONS:
-    -f, --feature <Features>    Name the features you need. If nothing is used, report everything.
-                                Example -f Length, Core
-    -g, --gfa <gfa>             Input GFA file
-    -o, --output <output>       Output
-    -s, --pansn <Pan-SN>        Separate by first entry in Pan-SN spec
-
-```
-
-
-### Core
-Compute core statistics of the graph. 
-
-```text
-gretl-core 
-
-Graph similarity statistics
-
-USAGE:
-    gretl --gfa <gfa> --output <output> core
-
-FLAGS:
-    -h, --help       Print help information
-    -V, --version    Print version information
-```
-
-**Example usage**
-```text
-./gretl -g /path/to/graph.gfa -o /path/to/core.stats.txt core
-```
-**Output plotted**
 
 
 ### Nwindow
-Summarizing the graph by a window of nodes.
+Summarizing the graph by a window of nodes. We iterate numerically over the nodes and calculate the statistics for each window. We start at the current node and move away from it based on provided edges, collecting the new nodes. We repeat this process starting at the "new" nodes until one of the following conditions is met:
+
+- Jumps: A jumps is defined as difference between the current and the next node. Your input referees to the sum of all jumps in the window.
+- Steps: A step it the number of moves we make in the graph. Your input is the maximum steps from the starting node. 
+- Sequence: Limit the window by a sequence threshold. We stop if the sequence length is larger than the provided threshold. 
+
+**Output**: You are able to return the number of collected nodes, the total number of jumps or the total sequence. Some combinations of input limitation and output do not gain any additional information. 
 
 
-````
-gretl-nwindow
-
-USAGE:
-    gretl nwindow --gfa <gfa> --output <output>
-
-FLAGS:
-    -h, --help       Print help information
-    -V, --version    Print version information
-
-Input options:
-    -g, --gfa <gfa>         Input GFA file
-        --pansn <Pan-SN>    Seperate by first entry in Pan-SN spec
-
-Window criteria options:
-        --jumps                  Sum of 'id jumps' away from the starting node
-        --sequence <sequence>    Amount of sequence away from the starting node
-        --step <steps>           Number of steps away from the starting node
-
-Window summary options:
-        --jumps-summary      
-        --node-number        
-        --sequence-length    
-
-Output option:
-    -o, --output <output>    Output
-
-````
-
-
-### (Sliding, path) window
-Summarizing the graph by a window of sequence in the path
-
-
-````
-gretl-window 
-
-Sliding window along the samples
-
-USAGE:
-    gretl window [FLAGS] [OPTIONS] --gfa <gfa> --output <output>
-
-FLAGS:
-    -h, --help       Print help information
-    -n, --node       Window on nodes nodes ([default: off] -> on sequence)
-    -V, --version    Print version information
-
-OPTIONS:
-    -g, --gfa <gfa>          Input GFA file
-    -m, --metric <metric>    Which metric
-    -o, --output <output>    Output
-        --pansn <Pan-SN>     Seperate by first entry in Pan-SN spec
-    -s, --window <size>      Window on sequence
-        --step <step>        Step size (If nothing is set, step size -> bin size
-
-````
-
-### Bootstrap 
-
-We recommend bootstrapping a graphs in PanSN-spec. Use ```--nodes``` if the bootstrap should only run on a subset of nodes (e.g. gene vs intergenic).
- ```
- gretl-bootstrap 
-
-Bootstrap approach
-
-USAGE:
-    gretl bootstrap --gfa <gfa>
-
-FLAGS:
-    -h, --help       Print help information
-    -V, --version    Print version information
-
-Input options:
-    -g, --gfa <gfa>                  Input GFA file
-        --meta-input <meta input>    Take a specific meta file as input
-        --nodes <nodes>              Run bootstrap only on these nodes
-        --pansn <Pan-SN>             Separate by first entry in Pan-SN spec
-    -t, --threads <Threads>          Number of threads [default: 1]
-
-Modifications:
-        --level <level>            Calculate a specific level
-        --meta-line <meta line>    Take a specific line of the meta file (only works when meta file
-                                   is provided)
-        --number <number>          How many bootstraps do you want to run
-
-Output options:
-        --meta <meta>        Report an additional meta file with all combinations
-    -o, --output <output>    Output
-
+**How many nodes do I need to collect 1000 bp?**
+```text
+./gretl nwindow -g /path/to/graph.gfa -o /path/to/output.txt --sequence 1000 --node-number
 ```
-### Path similarity (PS)
-
-```
-gretl-ps 
-
-Detailed similarity information for each path
-
-USAGE:
-    gretl ps [OPTIONS] --gfa <gfa> --output <output>
-
-FLAGS:
-    -h, --help       Print help information
-    -V, --version    Print version information
-
-OPTIONS:
-    -g, --gfa <gfa>          Input GFA file
-    -o, --output <output>    Output
-        --pansn <Pan-SN>     Seperate by first entry in Pan-SN spec
 
 
-```
+
 
 
 ## Scripts 

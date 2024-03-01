@@ -136,7 +136,7 @@ fn main() {
             .arg(Arg::new("statistics")
                 .short('s')
                 .long("stats")
-                .about("similarity, depth, nd [default: similarity]")
+                .about("similarity, depth, node degree")
                 .default_value("similarity")
                 .takes_value(true))
             .arg(Arg::new("output")
