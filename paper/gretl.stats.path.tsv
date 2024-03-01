@@ -1,0 +1,38 @@
+1	Path
+2	Sequence [bp]
+3	Nodes
+4	Unique edges
+5	Directed nodes
+6	Edges
+7	Unique Edges
+8	Unique nodes
+9	Unique nodes [bp]
+10	Unique nodes (normalized)
+11	Unique nodes [bp] (normalized)
+12	Unique edges (normalized)
+13	Inverted nodes
+14	Inverted nodes [bp]
+15	Inverted nodes (normalized)
+16	Inverted nodes [bp] (normalized)
+17	Jumps total
+18	Jumps_total (normalized)
+19	Jumps bigger than X
+20	Jumps bigger than X (normalized)
+21	Node size average [bp]
+22	Node size median [bp]
+23	Node size std [bp]
+24	Depth average
+25	Depth median
+26	Depth std
+27	Depth average (normalized)
+28	Depth median (normalized)
+29	Depth std (normalized)
+30	Similarity average
+31	Similarity median
+32	Similarity std
+33	Similarity average (normalized)
+34	Similarity median (normalized)
+35	Similarity std (normalized)
+36	Degree average
+37	Degree median
+38	Degree std

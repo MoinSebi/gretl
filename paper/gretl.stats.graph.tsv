@@ -1,0 +1,113 @@
+1	Paths
+2	Samples
+3	Nodes
+4	Edges
+5	N/E ration
+6	Graph size [bp]
+7	Input genomes size [bp]
+8	Compression
+9	Node length (average) [bp]
+10	Node length (median) [bp]
+11	Node length top 5% (median) [bp]
+12	Node length top 5% (average [bp]
+13	Bin[0-1]
+14	Bin[2-50]
+15	Bin[51-100]
+16	Bin[101-1000]
+17	Bin[1001-inf]
+18	Similarity mean
+19	Similarity median
+20	Similarity std
+21	Similarity mean (normalized)
+22	Similarity median (normalized)
+23	Similarity std (normalized)
+24	Depth mean
+25	Depth median
+26	Depth std
+27	Depth mean (normalized)
+28	Depth median (normalized)
+29	Depth std (normalized)
+30	Node degree (in)
+31	Node degree (out)
+32	Node degree (total)
+33	Inverted edges
+34	Inverted edges (normalized)
+35	Negative edges
+36	Negative edges (normalized)
+37	Self edges
+38	Self edges (normalized)
+39	Graph density
+40	Path Sequence [bp] (average)
+41	Path Sequence [bp] (std)
+42	Path Nodes (average)
+43	Path Nodes (std)
+44	Path Unique edges (average)
+45	Path Unique edges (std)
+46	Path Directed nodes (average)
+47	Path Directed nodes (std)
+48	Path Edges (average)
+49	Path Edges (std)
+50	Path Unique Edges (average)
+51	Path Unique Edges (std)
+52	Path Unique nodes (average)
+53	Path Unique nodes (std)
+54	Path Unique nodes [bp] (average)
+55	Path Unique nodes [bp] (std)
+56	Path Unique nodes (normalized) (average)
+57	Path Unique nodes (normalized) (std)
+58	Path Unique nodes [bp] (normalized) (average)
+59	Path Unique nodes [bp] (normalized) (std)
+60	Path Unique edges (normalized) (average)
+61	Path Unique edges (normalized) (std)
+62	Path Inverted nodes (average)
+63	Path Inverted nodes (std)
+64	Path Inverted nodes [bp] (average)
+65	Path Inverted nodes [bp] (std)
+66	Path Inverted nodes (normalized) (average)
+67	Path Inverted nodes (normalized) (std)
+68	Path Inverted nodes [bp] (normalized) (average)
+69	Path Inverted nodes [bp] (normalized) (std)
+70	Path Jumps total (average)
+71	Path Jumps total (std)
+72	Path Jumps_total (normalized) (average)
+73	Path Jumps_total (normalized) (std)
+74	Path Jumps bigger than X (average)
+75	Path Jumps bigger than X (std)
+76	Path Jumps bigger than X (normalized) (average)
+77	Path Jumps bigger than X (normalized) (std)
+78	Path Node size average [bp] (average)
+79	Path Node size average [bp] (std)
+80	Path Node size median [bp] (average)
+81	Path Node size median [bp] (std)
+82	Path Node size std [bp] (average)
+83	Path Node size std [bp] (std)
+84	Path Depth average (average)
+85	Path Depth average (std)
+86	Path Depth median (average)
+87	Path Depth median (std)
+88	Path Depth std (average)
+89	Path Depth std (std)
+90	Path Depth average (normalized) (average)
+91	Path Depth average (normalized) (std)
+92	Path Depth median (normalized) (average)
+93	Path Depth median (normalized) (std)
+94	Path Depth std (normalized) (average)
+95	Path Depth std (normalized) (std)
+96	Path Similarity average (average)
+97	Path Similarity average (std)
+98	Path Similarity median (average)
+99	Path Similarity median (std)
+100	Path Similarity std (average)
+101	Path Similarity std (std)
+102	Path Similarity average (normalized) (average)
+103	Path Similarity average (normalized) (std)
+104	Path Similarity median (normalized) (average)
+105	Path Similarity median (normalized) (std)
+106	Path Similarity std (normalized) (average)
+107	Path Similarity std (normalized) (std)
+108	Path Degree average (average)
+109	Path Degree average (std)
+110	Path Degree median (average)
+111	Path Degree median (std)
+112	Path Degree std (average)
+113	Path Degree std (std)
