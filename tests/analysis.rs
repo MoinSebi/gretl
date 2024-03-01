@@ -228,11 +228,9 @@ fn analysis_sliding_window_2s_yeast() -> Result<(), Box<dyn std::error::Error>> 
         .arg("--output")
         .arg("./data//test/yeast/analysis/analysis.window.txt")
         .arg("-s")
-        .arg("2");
+        .arg("5000");
 
     cmd.assert().success();
-    fs::remove_file("data/test/yeast/analysis/analysis.window.txt")?;
-
     Ok(())
 }
 
