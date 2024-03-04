@@ -28,6 +28,8 @@ Graph statistics also include "hybrid" statistics, which are average and standar
 ```
 ./gretl stats -g /path/to/graph.gfa -o /path/to/output.txt
 ```
+[stats path plot](scripts/plots/stats.path.pdf)
+
 
 ### ID2INT
 Convert any string-based node identifier to numeric values. Use ```odgi sort``` to sort the graph in pan-genomic order. This will create more meaningful statistics.
@@ -55,7 +57,7 @@ Compute similarity statistics of the graph.
 ```
 ./gretl core -g /path/to/graph.gfa -o /path/to/output.txt
 ```
-Plot
+[core plot](scripts/plots/pancore.pdf)
 
 
 ### Path similarity (PS)
@@ -66,7 +68,7 @@ Calculate the similarity of paths in the graph
 ./gretl ps -g /path/to/graph.gfa -o /path/to/output.txt
 ```
 
-Plot
+[ps plot](scripts/plots/ps.similarity_path.seq.pdf)
 
 
 
@@ -79,16 +81,12 @@ Filter nodes, edges or directed nodes (dirnode) based on input settings. The out
 ```text
 ./gretl feature -g /path/to/graph.gfa -o /path/to/nodes.txt -D 10 
 ```
-Example output
 ### Path
 Filter paths based on input settings. The output can be used as input for gfa2bin.
 
 ```text
 ./gretl feature -g /path/to/graph.gfa -o /path/to/nodes.txt -s "N/D ration" -m 10
 ```
-
-Example output
-
 
 ### Bootstrap
 
@@ -98,7 +96,7 @@ Meta files can be used to use the same "combinations" for multiple graphs. This 
 ```
 ./gretl bootstrap -g /path/to/graph.gfa -o /path/to/output.txt -n 20 
 ```
-Plot
+[bootstrap plot](scripts/plots/bootstrap.pdf)
 
 ### (Sliding, path) window
 Summarizing the graph by a window of sequence in the path. Similar to approaches on reference genomes, but the statistics are based on the graph structure.
@@ -107,6 +105,7 @@ Summarizing the graph by a window of sequence in the path. Similar to approaches
 ````
 ./gretl window -g /path/to/graph.gfa -o /path/to/output.txt -s 1000 --step 100
 ````
+[window plot](scripts/plots/analysis.window.pdf)
 
 
 
@@ -124,6 +123,7 @@ Summarizing the graph by a window of nodes. We iterate numerically over the node
 ```text
 ./gretl nwindow -g /path/to/graph.gfa -o /path/to/output.txt --sequence 1000 --node-number
 ```
+[nwindow plot](scripts/plots/nwindow.node.pdf)
 
 
 
