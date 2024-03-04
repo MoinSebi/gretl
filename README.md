@@ -28,7 +28,7 @@ Graph statistics also include "hybrid" statistics, which are average and standar
 ```
 ./gretl stats -g /path/to/graph.gfa -o /path/to/output.txt
 ```
-[stats path plot](scripts/plots/stats.path.pdf)
+[stats path plot](scripts/plots/stats.path.scatter.pdf)
 
 
 ### ID2INT
