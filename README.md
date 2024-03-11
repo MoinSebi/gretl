@@ -25,6 +25,9 @@ Calculate graph or path (-p) statistics. Please consider using the ```--pansn```
 
 Graph statistics also include "hybrid" statistics, which are average and standard deviation of path statistics. All hybrid stats have the prefix "Path". A full list of all statistics be found in paper directory in this repository. 
 
+Description of all statistics can be found here: [stats](paper/stats_explained.md)
+
+```text
 ```
 ./gretl stats -g /path/to/graph.gfa -o /path/to/output.txt
 ```
