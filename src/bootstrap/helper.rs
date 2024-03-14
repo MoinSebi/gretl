@@ -3,7 +3,6 @@ use std::fs::File;
 use std::io::{self, BufRead};
 use std::vec::Vec;
 
-
 /// Create a a vector of n (number) random numbers
 /// size = Random number between 0 and size
 /// number = amount of numbers you want to draw

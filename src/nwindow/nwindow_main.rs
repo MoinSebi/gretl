@@ -1,7 +1,7 @@
 use crate::nwindow::n_windows::stats2;
 use crate::nwindow::writer_nwindow::{make_buffer, write_list};
 use clap::ArgMatches;
-use gfa_reader::{NCGfa};
+use gfa_reader::NCGfa;
 use log::info;
 
 pub fn nwindow_main(matches: &ArgMatches) {

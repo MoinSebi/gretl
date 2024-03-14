@@ -1,6 +1,7 @@
 mod bootstrap;
 mod core;
 mod feature;
+mod find;
 mod helpers;
 mod id2int;
 mod node_list;
@@ -13,6 +14,7 @@ mod stats;
 use crate::bootstrap::bootstrap_main::bootstrap_main;
 use crate::core::core_main::core_main;
 use crate::feature::feature_main::feature_main2;
+use crate::find::find_main::find_main;
 use crate::id2int::id2int_main::id2int_main;
 use crate::node_list::node_list_main::nodelist_main;
 use crate::nwindow::nwindow_main::nwindow_main;
@@ -236,6 +238,7 @@ fn main() {
 
 
         .subcommand(App::new("nwindow")
+            .about("Sliding window along the nodes")
             .help_heading("Input options")
             .arg(Arg::new("gfa")
                 .short('g')
@@ -414,6 +417,37 @@ fn main() {
             )
 
         )
+        .subcommand(App::new("find")
+            .about("Find features in the graph and return a BED file for further analysis")
+            .arg(Arg::new("gfa")
+                .short('g')
+                .long("gfa")
+                .about("Input GFA file")
+                .takes_value(true)
+                .required(true)
+            )
+            .arg(Arg::new("features")
+                .short('f')
+                .long("features")
+                .about("Input feature file (one feature per line). Example: 1 (node), 1+ (dirnode), 1+2+ (edge)")
+                .takes_value(true)
+                .required(true)
+            )
+            .arg(Arg::new("output")
+                .short('o')
+                .long("output")
+                .about("Output file")
+                .takes_value(true)
+                .required(true)
+            )
+            .arg(Arg::new("length")
+                .short('l')
+                .long("length")
+                .about("Length")
+                .takes_value(true)
+                .required(true)
+            )
+        )
 
         .get_matches();
 
@@ -439,5 +473,7 @@ fn main() {
         path_main(matches);
     } else if let Some(matches) = matches.subcommand_matches("nwindow") {
         nwindow_main(matches);
+    } else if let Some(matches) = matches.subcommand_matches("find") {
+        find_main(matches);
     }
 }

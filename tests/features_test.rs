@@ -40,7 +40,6 @@ fn stats_graph_path() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-
 #[test]
 fn stats_graph_feature_yeast() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gretl")?;
@@ -78,4 +77,3 @@ fn stats_graph_path_yeast() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
-

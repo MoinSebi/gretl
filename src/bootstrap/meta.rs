@@ -77,7 +77,7 @@ pub fn one_iteration(
     let mut result2 = vec![0; max_value as usize + 1]; // Sequence
 
     // Add amount and sequence
-    if nodes.len() == graph.nodes.len(){
+    if nodes.len() == graph.nodes.len() {
         for (i, x) in info2.iter().enumerate() {
             result[*x as usize] += 1;
             result2[*x as usize] += graph.nodes[i].seq.len();

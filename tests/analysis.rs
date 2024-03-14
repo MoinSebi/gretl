@@ -21,7 +21,6 @@ fn analysis_test_core_no_pansn_similarity() -> Result<(), Box<dyn std::error::Er
     Ok(())
 }
 
-
 #[test]
 /// Run core subcommand
 /// -pansv -> path
@@ -39,7 +38,6 @@ fn analysis_yeast_core_no_pansn_similarity() -> Result<(), Box<dyn std::error::E
 
     Ok(())
 }
-
 
 #[test]
 fn analysis_test_core_pansn_similarity() -> Result<(), Box<dyn std::error::Error>> {
@@ -89,7 +87,6 @@ fn analysis_test_core_pansn_depth() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
-
 
 #[test]
 fn analysis_yeast_core_pansn_depth() -> Result<(), Box<dyn std::error::Error>> {
@@ -170,7 +167,6 @@ fn analysis_ps_yeast() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-
 #[test]
 fn analysis_node_list_path_tg() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gretl")?;
@@ -185,7 +181,6 @@ fn analysis_node_list_path_tg() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
-
 
 #[test]
 fn analysis_node_list_path_yeast() -> Result<(), Box<dyn std::error::Error>> {
@@ -218,7 +213,6 @@ fn analysis_test_sliding_window_2s() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-
 #[test]
 fn analysis_sliding_window_2s_yeast() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gretl")?;
@@ -233,8 +227,6 @@ fn analysis_sliding_window_2s_yeast() -> Result<(), Box<dyn std::error::Error>> 
     cmd.assert().success();
     Ok(())
 }
-
-
 
 #[test]
 fn analysis_sliding_nwindow_2s_tg() -> Result<(), Box<dyn std::error::Error>> {

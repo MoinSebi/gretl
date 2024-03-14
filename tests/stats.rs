@@ -85,10 +85,6 @@ fn stats_path_yaml() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-
-
-
-
 #[test]
 fn stats_graph_tsv_yeast() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gretl")?;

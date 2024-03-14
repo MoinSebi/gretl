@@ -1,3 +1,4 @@
+use crate::bootstrap::helper::read_positive_integers_from_file;
 use crate::bootstrap::meta::{combinations_maker_wrapper, one_iteration, reduce_meta};
 use crate::bootstrap::reader::read_meta;
 use crate::bootstrap::writer::{write_meta, write_output};
@@ -7,7 +8,6 @@ use gfa_reader::{NCGfa, NCPath, Pansn};
 use rayon::prelude::*;
 use std::cmp::min;
 use std::collections::HashSet;
-use crate::bootstrap::helper::read_positive_integers_from_file;
 
 /// Main function for bootstrapping
 pub fn bootstrap_main(matches: &ArgMatches) {
@@ -22,7 +22,6 @@ pub fn bootstrap_main(matches: &ArgMatches) {
         .parse::<usize>()
         .unwrap();
 
-
     // Read the graph
     let mut graph: NCGfa<()> = NCGfa::new();
     graph.parse_gfa_file_and_convert(matches.value_of("gfa").unwrap(), false);
@@ -35,11 +34,10 @@ pub fn bootstrap_main(matches: &ArgMatches) {
     let output = matches.value_of("output").unwrap();
 
     let mut nodes: HashSet<_> = graph.nodes.iter().map(|n| n.id).collect();
-    if matches.is_present("nodes"){
+    if matches.is_present("nodes") {
         let a = read_positive_integers_from_file(matches.value_of("nodes").unwrap());
         nodes = a.iter().cloned().collect();
     }
-
 
     // Get the amount of iterations
     let mut amount = 10;
@@ -99,8 +97,14 @@ pub fn bootstrap_main(matches: &ArgMatches) {
                     .iter()
                     .map(|(number_genomes, iterations, combination)| {
                         let combi: Vec<usize> = combination.iter().cloned().collect();
-                        let result_one_iteration =
-                            one_iteration(&wrapper, &graph, &combi, "similarity", &similarity, &nodes);
+                        let result_one_iteration = one_iteration(
+                            &wrapper,
+                            &graph,
+                            &combi,
+                            "similarity",
+                            &similarity,
+                            &nodes,
+                        );
 
                         // Return results without a semicolon
                         (
