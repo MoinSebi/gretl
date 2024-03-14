@@ -28,7 +28,7 @@ Graph statistics also include "hybrid" statistics, which are average and standar
 Description of all statistics can be found here: [stats](paper/stats_explained.md)
 
 ```text
-```
+
 ./gretl stats -g /path/to/graph.gfa -o /path/to/output.txt
 ```
 [stats path plot](scripts/plots/stats.path.scatter.pdf)
