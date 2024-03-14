@@ -129,7 +129,12 @@ Summarizing the graph by a window of nodes. We iterate numerically over the node
 [nwindow plot](scripts/plots/nwindow.node.pdf)
 
 
-
+### Find
+Find a specific node, dirnode, or edge in the graph and get the exact (sequence) position in the paths. Output is a BED file with the positions. You are able to add additional sequence ```-l``` on both sites, which can help if you want to realign to a database and the node is very small. 
+```text
+./gretl find -g /path/to/graph.gfa -o /path/to/output.txt --length 1000 -f feature.txt 
+```
+Example of feature file is data/example_data/dirnodes.txt
 
 
 ## Scripts 
