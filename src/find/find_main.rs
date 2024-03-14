@@ -237,7 +237,11 @@ pub fn get_type(file_path: &str) -> Feature {
 
     // Read the first line of the file
     let first_line = reader.lines().next().unwrap().unwrap();
-    let parts: Vec<&str> = first_line.split(|c| c == '+' || c == '-').collect();
+    let parts: Vec<&str> = first_line
+        .split(|c| c == '+' || c == '-')
+        .filter(|s| !s.is_empty()) // Filter out empty strings
+        .collect();
+    println!("parts: {:?}", parts);
     let last_letter = first_line.chars().last().unwrap();
     if last_letter == '+' || last_letter == '-' {
         if parts.len() == 1 {

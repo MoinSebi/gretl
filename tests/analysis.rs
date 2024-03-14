@@ -256,3 +256,43 @@ fn analysis_sliding_nwindow_2s_yeast() -> Result<(), Box<dyn std::error::Error>>
 
     Ok(())
 }
+
+
+#[test]
+fn analysis_find_tg() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("gretl")?;
+    cmd.arg("find")
+        .arg("--gfa")
+        .arg("./data/example_data/testGraph_complex.gfa")
+        .arg("--output")
+        .arg("./data/test/testGraph/analysis/analysis.find.tg.txt")
+        .arg("--length")
+        .arg("200")
+        .arg("--features")
+        .arg("./data/example_data/dirnodes.txt");
+    cmd.assert().success();
+    fs::remove_file("./data/test/testGraph/analysis/analysis.find.tg.txt")?;
+
+
+    Ok(())
+}
+
+
+#[test]
+fn analysis_find_yeast() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("gretl")?;
+    cmd.arg("find")
+        .arg("--gfa")
+        .arg("./data/example_data/chr5.yeast.gfa")
+        .arg("--output")
+        .arg("./data/test/yeast/analysis/analysis.find.yeast.txt")
+        .arg("--length")
+        .arg("200")
+        .arg("--features")
+        .arg("./data/example_data/dirnodes.txt");
+
+
+    cmd.assert().success();
+
+    Ok(())
+}
