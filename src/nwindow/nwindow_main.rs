@@ -9,16 +9,16 @@ pub fn nwindow_main(matches: &ArgMatches) {
     let mut window_size = u32::MAX;
     let mut window_metric = u32::MAX;
 
-    if matches.is_present("nodes") {
-        window_nodes = matches.value_of("nodes").unwrap().parse().unwrap();
+    if matches.is_present("step") {
+        window_nodes = matches.value_of("step").unwrap().parse().unwrap();
     }
-    if matches.is_present("size") {
-        window_size = matches.value_of("size").unwrap().parse().unwrap();
+    if matches.is_present("sequence") {
+        window_size = matches.value_of("sequence").unwrap().parse().unwrap();
     }
-    if matches.is_present("metric") {
-        window_metric = matches.value_of("metric").unwrap().parse().unwrap();
+    if matches.is_present("jump") {
+        window_metric = matches.value_of("jump").unwrap().parse().unwrap();
     }
-    if window_nodes == u32::MAX || window_size == u32::MAX || window_metric == u32::MAX {
+    if window_nodes == u32::MAX && window_size == u32::MAX && window_metric == u32::MAX {
         eprintln!("No window criteria provided. Default node: 10");
         window_nodes = 10;
     }
@@ -55,5 +55,5 @@ pub fn nwindow_main(matches: &ArgMatches) {
 
     info!("Writing to file: {}", output);
     let mut ff = make_buffer(output);
-    write_list(&a, &mut ff);
+    write_list(&a, &mut ff, &graph.nodes);
 }

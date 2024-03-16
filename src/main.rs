@@ -252,7 +252,7 @@ fn main() {
                 .takes_value(true))
 
             .help_heading("Window criteria options")
-            .arg(Arg::new("steps")
+            .arg(Arg::new("step")
                 .long("step")
                 .about("Number of steps away from the starting node")
                 .takes_value(true))
@@ -260,7 +260,7 @@ fn main() {
                 .long("sequence")
                 .about("Amount of sequence away from the starting node")
                 .takes_value(true))
-            .arg(Arg::new("jumps")
+            .arg(Arg::new("jump")
                 .long("jumps")
                 .about("Sum of 'id jumps' away from the starting node"))
 
