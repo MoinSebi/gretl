@@ -35,11 +35,14 @@ Description of all statistics can be found here: [stats](paper/stats_explained.m
 
 
 ### ID2INT
-Convert any string-based node identifier to numeric values. Use ```odgi sort``` to sort the graph in pan-genomic order. This will create more meaningful statistics.
+Convert any string-based node identifier to numeric values. Use ```odgi sort``` to sort the graph in pan-genomic order afterwards. This will create more meaningful statistics. Numerical ID are offer better performance and are easier to handle and understand.  
 
 ```
 ./gretl id2int -g /path/to/graph.gfa -o /path/to/output.gfa -d /path/to/dict.txt
 ```
+
+Comment: 
+This function will convert all IDs in the graph. Additional data in (segment-specific) tags will not be converted. 
 
 
 ### Node-list
