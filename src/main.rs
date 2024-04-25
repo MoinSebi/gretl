@@ -10,6 +10,7 @@ mod path;
 mod path_similarity;
 mod sliding_window;
 mod stats;
+mod logging;
 
 use crate::bootstrap::bootstrap_main::bootstrap_main;
 use crate::core::core_main::core_main;
@@ -23,6 +24,7 @@ use crate::path_similarity::ps_main::ps_main;
 use crate::sliding_window::sliding_window_main::window_main;
 use crate::stats::stats_main::stats_main;
 use clap::{App, AppSettings, Arg};
+use crate::logging::newbuilder;
 
 fn main() {
     let matches = App::new("gretl")
@@ -452,6 +454,8 @@ fn main() {
         .get_matches();
 
     // Read the graph
+    newbuilder(&matches);
+
 
     if let Some(matches) = matches.subcommand_matches("core") {
         core_main(matches);
