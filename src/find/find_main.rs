@@ -1,11 +1,11 @@
 use clap::ArgMatches;
-use gfa_reader::NCGfa;
 
 use std::cmp::max;
 use std::collections::HashSet;
 use std::fmt::Display;
 use std::fs::File;
 use std::io::{BufRead, BufReader, Write};
+use gfa_reader::Gfa;
 
 pub fn find_main(matches: &ArgMatches) {
     println!("Starting find_main");
@@ -16,8 +16,7 @@ pub fn find_main(matches: &ArgMatches) {
     let data = FileData::from_file(feature_file);
     let feature = data.feature;
     // Read the graph
-    let mut graph: NCGfa<()> = NCGfa::new();
-    graph.parse_gfa_file(graph_file, false);
+    let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(graph_file);
     let paths = &graph.paths;
 
     // Get the node size
@@ -79,11 +78,11 @@ pub fn find_main(matches: &ArgMatches) {
 }
 
 // Size of each node
-pub fn node_size(graph: &NCGfa<()>) -> Vec<usize> {
+pub fn node_size(graph: &Gfa<u32, (), ()>) -> Vec<usize> {
     let res = graph
-        .nodes
+        .segments
         .iter()
-        .map(|x| x.seq.len())
+        .map(|x| x.sequence.get_len())
         .collect::<Vec<usize>>();
     res
 }

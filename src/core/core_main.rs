@@ -2,7 +2,7 @@ use crate::core::core_calc::pan_genome;
 use crate::core::writer::writer_core;
 use crate::helpers::graphs::get_stats;
 use clap::ArgMatches;
-use gfa_reader::{NCGfa, NCPath, Pansn};
+use gfa_reader::{Gfa, Pansn};
 
 /// Core main function
 ///
@@ -17,15 +17,10 @@ pub fn core_main(matches: &ArgMatches) {
     if matches.is_present("Pan-SN") {
         sep = matches.value_of("Pan-SN").unwrap();
     }
-    let mut graph: NCGfa<()> = NCGfa::new();
-    println!("{}", matches.value_of("gfa").unwrap());
-    graph.parse_gfa_file_and_convert(matches.value_of("gfa").unwrap(), true);
-    if sep == " " {
-        graph.convert_walks("#");
-    } else {
-        graph.convert_walks(sep);
-    }
-    let wrapper: Pansn<NCPath> = Pansn::from_graph(&graph.paths, sep);
+    let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(matches.value_of("gfa").unwrap());
+    println!("Walking to path {}", graph.paths.len());
+    graph.walk_to_path();
+    let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, sep);
 
     // Get output file name
     let output = matches.value_of("output").unwrap();

@@ -1,14 +1,13 @@
 use crate::sliding_window::window::sliding_window_wrapper;
 use crate::sliding_window::writer::write_window;
 use clap::ArgMatches;
-use gfa_reader::{NCGfa, NCPath, Pansn};
+use gfa_reader::{Gfa, Pansn};
 
 /// Main function for node id to integer function
 pub fn window_main(matches: &ArgMatches) {
-    let mut graph: NCGfa<()> = NCGfa::new();
-    graph.parse_gfa_file_and_convert(matches.value_of("gfa").unwrap(), true);
-    graph.convert_walks("#");
-    let wrapper: Pansn<NCPath> = Pansn::from_graph(&graph.paths, " ");
+    let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(matches.value_of("gfa").unwrap());
+    graph.walk_to_path();
+    let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, " ");
     let output = matches.value_of("output").unwrap();
 
     let mut size: u32 = 100000;

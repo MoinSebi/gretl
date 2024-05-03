@@ -1,11 +1,11 @@
 use crate::stats::helper::{mean321, stadard_deviation_2};
 use crate::stats::path_stats::path_stats_wrapper;
-use gfa_reader::{NCGfa, NCPath, Pansn};
+use gfa_reader::{Gfa, Pansn};
 
 /// Wrapper for path statistics
 pub fn path_stats_wrapper2(
-    graph: &NCGfa<()>,
-    gw: &Pansn<NCPath>,
+    graph: &Gfa<u32, (), ()>,
+    gw: &Pansn<u32, (), ()>,
     haplo: bool,
 ) -> Vec<(String, f64)> {
     let path_stats = path_stats_wrapper(graph, gw, haplo);

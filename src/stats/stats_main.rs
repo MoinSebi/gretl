@@ -5,7 +5,7 @@ use crate::stats::stats_writer::{
     write_tsv_graph, write_tsv_path, write_yaml_graph, write_yaml_path,
 };
 use clap::ArgMatches;
-use gfa_reader::{NCGfa, NCPath, Pansn};
+use gfa_reader::{Gfa, Pansn};
 
 /// Main function for stats subcommand
 ///
@@ -18,13 +18,10 @@ pub fn stats_main(matches: &ArgMatches) {
     }
     let _haplo = matches.is_present("haplo");
 
-    let mut graph: NCGfa<()> = NCGfa::new();
-    println!("{}", matches.value_of("gfa").unwrap());
-    graph.parse_gfa_file_and_convert(matches.value_of("gfa").unwrap(), true);
-    graph.convert_walks("#");
-    graph.walk = Vec::new();
+    let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(matches.value_of("gfa").unwrap());
+    graph.walk_to_path();
 
-    let wrapper: Pansn<NCPath> = Pansn::from_graph(&graph.paths, sep);
+    let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, sep);
     let output = matches.value_of("output").unwrap();
 
     let mut bins: Vec<u32> = vec![1, 50, 100, 1000];

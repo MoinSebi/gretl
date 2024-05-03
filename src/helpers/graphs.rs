@@ -1,7 +1,7 @@
 use crate::helpers::helper::{calculate_depth, calculate_similarity, node_degree_total};
-use gfa_reader::{NCGfa, NCPath, Pansn};
+use gfa_reader::{Gfa, Pansn};
 
-pub fn get_stats(wrapper: &Pansn<NCPath>, graph: &NCGfa<()>, kind: &str) -> Vec<u32> {
+pub fn get_stats(wrapper: &Pansn<u32, (), ()>, graph: &Gfa<u32, (), ()>, kind: &str) -> Vec<u32> {
     let paths = wrapper.get_path_genome();
 
     if kind == "depth" {

@@ -1,7 +1,7 @@
 use crate::path::writer::write_paths;
 use crate::stats::path_stats::path_stats_wrapper;
 use clap::ArgMatches;
-use gfa_reader::{NCGfa, NCPath, Pansn};
+use gfa_reader::{Gfa, Pansn};
 
 pub fn path_main(matches: &ArgMatches) {
     let graph_file = matches.value_of("gfa").unwrap();
@@ -14,9 +14,8 @@ pub fn path_main(matches: &ArgMatches) {
     let maxs: Vec<&str> = matches.values_of("maxs").unwrap().collect();
     let mins_u32 = parse_max_min(mins, false);
     let maxs_u32 = parse_max_min(maxs, true);
-    let mut graph: NCGfa<()> = NCGfa::new();
-    graph.parse_gfa_file_and_convert(graph_file, true);
-    let wrapper: Pansn<NCPath> = Pansn::from_graph(&graph.paths, " ");
+    let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(graph_file);
+    let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, " ");
 
     let result = path_runner(&stats, &mins_u32, &maxs_u32, &graph, &wrapper, haplo);
     write_paths(&result, output);
@@ -27,8 +26,8 @@ pub fn path_runner(
     stats: &Vec<&str>,
     mins_u32: &Vec<usize>,
     maxs_u32: &Vec<usize>,
-    graph: &NCGfa<()>,
-    wrapper: &Pansn<NCPath>,
+    graph: &Gfa<u32, (), ()>,
+    wrapper: &Pansn<u32, (), ()>,
     haplo: bool,
 ) -> Vec<String> {
     let f = path_stats_wrapper(graph, wrapper, haplo);

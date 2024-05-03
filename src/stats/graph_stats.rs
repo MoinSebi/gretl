@@ -1,13 +1,13 @@
 use crate::helpers::helper::{calculate_depth, calculate_similarity, node_degree, node_len};
 use crate::stats::helper::{average_median_std, mean, mean321, median};
 use crate::stats::hybrid_stats::path_stats_wrapper2;
-use gfa_reader::{NCGfa, NCPath, Pansn};
+use gfa_reader::{Gfa, Pansn};
 use std::cmp::max;
 
 /// Wrapper for graph statistics
 pub fn graph_stats_wrapper(
-    graph: &NCGfa<()>,
-    wrapper: &Pansn<NCPath>,
+    graph: &Gfa<u32, (), ()>,
+    wrapper: &Pansn<u32, (), ()>,
     bins: Vec<u32>,
     haplo: bool,
 ) -> Vec<(String, String)> {
@@ -164,29 +164,29 @@ pub fn graph_stats_wrapper(
 }
 
 /// Number of paths
-fn graph_path_number(graph: &NCGfa<()>) -> usize {
+fn graph_path_number(graph: &Gfa<u32, (), ()>) -> usize {
     graph.paths.len()
 }
 
 /// Number of nodes
-fn graph_node_number(graph: &NCGfa<()>) -> usize {
-    graph.nodes.len()
+fn graph_node_number(graph: &Gfa<u32, (), ()>) -> usize {
+    graph.segments.len()
 }
 
 /// Number of edges
-fn graph_edge_number(graph: &NCGfa<()>) -> usize {
-    return graph.edges.as_ref().unwrap().len();
+fn graph_edge_number(graph: &Gfa<u32, (), ()>) -> usize {
+    return graph.links.len();
 }
 
 /// Calculate total size of all input genomes
-pub fn graph_path_seq_total(graph: &NCGfa<()>) -> usize {
+pub fn graph_path_seq_total(graph: &Gfa<u32, (), ()>) -> usize {
     let a = graph
         .paths
         .iter()
         .map(|n| {
             n.nodes
                 .iter()
-                .map(|r| graph.nodes[*r as usize - 1].seq.len())
+                .map(|r| graph.segments[*r as usize - 1].sequence.get_len())
                 .sum::<usize>()
         })
         .sum::<usize>();
@@ -196,7 +196,7 @@ pub fn graph_path_seq_total(graph: &NCGfa<()>) -> usize {
 /// Compute mean+median node size and total graph size
 ///
 /// Sum all nodes in the graph and divide it by the number of nodes
-pub fn graph_node_stats(graph: &NCGfa<()>) -> (f64, f64, u32) {
+pub fn graph_node_stats(graph: &Gfa<u32, (), ()>) -> (f64, f64, u32) {
     let mut vec_size: Vec<u32> = calculate_node_size(graph);
 
     vec_size.sort();
@@ -206,26 +206,23 @@ pub fn graph_node_stats(graph: &NCGfa<()>) -> (f64, f64, u32) {
     (average, med, sums)
 }
 
-pub fn calculate_node_size(graph: &NCGfa<()>) -> Vec<u32> {
-    let vec_size: Vec<u32> = graph.nodes.iter().map(|n| n.seq.len() as u32).collect();
+pub fn calculate_node_size(graph: &Gfa<u32, (), ()>) -> Vec<u32> {
+    let vec_size: Vec<u32> = graph.segments.iter().map(|n| n.sequence.get_len() as u32).collect();
     vec_size
 }
 
 /// Calculate graph density
-pub fn graph_density(graph: &NCGfa<()>) -> f64 {
-    let n = graph.nodes.len();
-    let e = graph.edges.as_ref().unwrap().len();
+pub fn graph_density(graph: &Gfa<u32, (), ()>) -> f64 {
+    let n = graph.segments.len();
+    let e = graph.links.len();
 
     e as f64 / (n * (n - 1)) as f64
 }
 
 /// Calculate number of inverted edges
 /// Edges which change direction
-pub fn inverted_edges(graph: &NCGfa<()>) -> usize {
-    let inverted: usize = graph
-        .edges
-        .as_ref()
-        .unwrap()
+pub fn inverted_edges(graph: &Gfa<u32, (), ()>) -> usize {
+    let inverted: usize = graph.links
         .iter()
         .filter(|n| n.to_dir != n.from_dir)
         .count();
@@ -233,11 +230,9 @@ pub fn inverted_edges(graph: &NCGfa<()>) -> usize {
 }
 
 /// Number of negative (neg-neg) edges
-pub fn neg_edges(graph: &NCGfa<()>) -> usize {
+pub fn neg_edges(graph: &Gfa<u32, (), ()>) -> usize {
     let inverted: usize = graph
-        .edges
-        .as_ref()
-        .unwrap()
+        .links
         .iter()
         .filter(|n| (n.to_dir == n.from_dir) && !n.to_dir)
         .count();
@@ -245,11 +240,9 @@ pub fn neg_edges(graph: &NCGfa<()>) -> usize {
 }
 
 /// Number edges of self stuff
-pub fn self_edge(graph: &NCGfa<()>) -> usize {
+pub fn self_edge(graph: &Gfa<u32, (), ()>) -> usize {
     let inverted: usize = graph
-        .edges
-        .as_ref()
-        .unwrap()
+        .links
         .iter()
         .filter(|n| (n.from, n.from_dir) == (n.to, n.to_dir))
         .count();

@@ -1,16 +1,15 @@
 use crate::node_list::wrapper::wrapper_node;
 use clap::ArgMatches;
-use gfa_reader::{NCGfa, NCPath, Pansn};
+use gfa_reader::{Gfa, Pansn};
 
 /// Main function for node list
 pub fn nodelist_main(matches: &ArgMatches) {
     eprintln!("Running node-list analysis.");
 
     // Parse GFA file + Wrapper
-    let mut graph: NCGfa<()> = NCGfa::new();
-    graph.parse_gfa_file_and_convert(matches.value_of("gfa").unwrap(), true);
-    graph.convert_walks("#");
-    let wrapper: Pansn<NCPath> = Pansn::from_graph(&graph.paths, " ");
+    let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(matches.value_of("gfa").unwrap());
+    graph.walk_to_path();
+    let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, " ");
 
     let output = matches.value_of("output").unwrap();
     let splits = vec!["Core", "Length", "Depth", "Core", "ND"];

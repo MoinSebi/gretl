@@ -4,7 +4,7 @@ use crate::bootstrap::reader::read_meta;
 use crate::bootstrap::writer::{write_meta, write_output};
 use crate::helpers::helper::calculate_similarity;
 use clap::ArgMatches;
-use gfa_reader::{NCGfa, NCPath, Pansn};
+use gfa_reader::{Gfa, Pansn};
 use rayon::prelude::*;
 use std::cmp::min;
 use std::collections::HashSet;
@@ -23,17 +23,12 @@ pub fn bootstrap_main(matches: &ArgMatches) {
         .unwrap();
 
     // Read the graph
-    let mut graph: NCGfa<()> = NCGfa::new();
-    graph.parse_gfa_file_and_convert(matches.value_of("gfa").unwrap(), false);
-    if sep == " " {
-        graph.convert_walks("#");
-    } else {
-        graph.convert_walks(sep);
-    }
-    let wrapper: Pansn<NCPath> = Pansn::from_graph(&graph.paths, sep);
+    let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(matches.value_of("gfa").unwrap());
+    graph.walk_to_path();
+    let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, sep);
     let output = matches.value_of("output").unwrap();
 
-    let mut nodes: HashSet<_> = graph.nodes.iter().map(|n| n.id).collect();
+    let mut nodes: HashSet<_> = graph.segments.iter().map(|n| n.id).collect();
     if matches.is_present("nodes") {
         let a = read_positive_integers_from_file(matches.value_of("nodes").unwrap());
         nodes = a.iter().cloned().collect();

@@ -1,14 +1,14 @@
 use crate::helpers::helper::{calculate_depth, calculate_similarity, node_degree, node_len};
 use crate::stats::helper::{mean_usize, median2, std_usize};
-use gfa_reader::{NCGfa, NCNode, NCPath, Pansn};
+use gfa_reader::{Gfa, Pansn, Path, Segment};
 use std::collections::HashSet;
 
 /// Wrapper for path statistics
 ///
 /// Output is a vector of [pathname, vec<(stat_name, value)>]
 pub fn path_stats_wrapper(
-    graph: &NCGfa<()>,
-    wrapper: &Pansn<NCPath>,
+    graph: &Gfa<u32, (), ()>,
+    wrapper: &Pansn<u32, (), ()>,
     haplo: bool,
 ) -> Vec<(String, Vec<(String, f64)>)> {
     // Total results
@@ -35,7 +35,7 @@ pub fn path_stats_wrapper(
     for path in paths.iter() {
         // We normalize everything by node number and node length
         let mut result_temp: Vec<(String, f64)> = Vec::new();
-        let path_seq = path_seq_len(&path.1, &graph.nodes) as f64;
+        let path_seq = path_seq_len(&path.1, &graph.segments) as f64;
         let path_nodes = path_node_len(&path.1) as f64;
         let dir_nodes = dir_node(&path.1) as f64;
         let edges = edges_num(&path.1);
@@ -51,7 +51,7 @@ pub fn path_stats_wrapper(
         result_temp.push(("Edges".to_string(), edges.0));
         result_temp.push(("Unique Edges".to_string(), edges.1));
 
-        let path_unique_val = path_unique2(&path.1, &graph.nodes);
+        let path_unique_val = path_unique2(&path.1, &graph.segments, &graph.sequence);
         result_temp.push(("Unique nodes".to_string(), path_unique_val.0 as f64));
         result_temp.push(("Unique nodes [bp]".to_string(), path_unique_val.1 as f64));
 
@@ -69,7 +69,7 @@ pub fn path_stats_wrapper(
             dir_nodes / edges_total_numb,
         ));
 
-        let inverted = path_seq_inverted(&path.1, &graph.nodes);
+        let inverted = path_seq_inverted(&path.1, &graph.segments);
 
         result_temp.push(("Inverted nodes".to_string(), inverted.0 as f64));
         result_temp.push(("Inverted nodes [bp]".to_string(), inverted.1 as f64));
@@ -162,8 +162,8 @@ pub fn path_stats_wrapper(
     res
 }
 
-pub fn remove_unsorted(input: &mut Vec<(String, Vec<(String, String)>)>, graph: &NCGfa<()>) {
-    if !graph.check_numeric() {
+pub fn remove_unsorted(input: &mut Vec<(String, Vec<(String, String)>)>, graph: &Gfa<u32, (), ()>) {
+    if !graph.is_compact() {
         for x in 0..input.len() {
             input[x].1.retain(|m| !m.0.starts_with("Jump"))
         }
@@ -179,7 +179,7 @@ pub fn get_all_stats(input: &Vec<usize>) -> (f64, f64, f64) {
 }
 
 /// Calculate the noed size
-pub fn node_size_cal(path: &Vec<&NCPath>, node_sizes: &Vec<u32>) -> (f64, f64, f64) {
+pub fn node_size_cal(path: &Vec<&Path<u32, (), ()>>, node_sizes: &Vec<u32>) -> (f64, f64, f64) {
     let mut result = Vec::new();
     for p in path.iter() {
         for x in p.nodes.iter() {
@@ -192,21 +192,21 @@ pub fn node_size_cal(path: &Vec<&NCPath>, node_sizes: &Vec<u32>) -> (f64, f64, f
 }
 
 /// Count the number of nodes for each path
-pub fn path_node_len(path: &Vec<&NCPath>) -> usize {
+pub fn path_node_len(path: &Vec<&Path<u32, (), ()>>) -> usize {
     let pp = path.iter().map(|n| n.nodes.len()).sum();
     pp
 }
 
 /// Calculate the length of path
-pub fn path_seq_len(path: &Vec<&NCPath>, nodes: &Vec<NCNode<()>>) -> usize {
+pub fn path_seq_len(path: &Vec<&Path<u32, (), ()>>, nodes: &Vec<Segment<u32, ()>>) -> usize {
     let size: usize = path
         .iter()
-        .map(|_n| nodes.iter().map(|nn| nn.seq.len()).sum::<usize>())
+        .map(|_n| nodes.iter().map(|nn| nn.sequence.get_len()).sum::<usize>())
         .sum::<usize>();
     size
 }
 
-pub fn dir_node(path: &Vec<&NCPath>) -> usize {
+pub fn dir_node(path: &Vec<&Path<u32, (), ()>>) -> usize {
     let edges2: HashSet<(&u32, &bool)> = path
         .iter()
         .flat_map(|l| l.nodes.iter().zip(l.dir.iter()))
@@ -214,7 +214,7 @@ pub fn dir_node(path: &Vec<&NCPath>) -> usize {
     edges2.len()
 }
 
-pub fn edges_num(path: &Vec<&NCPath>) -> (f64, f64) {
+pub fn edges_num(path: &Vec<&Path<u32, (), ()>>) -> (f64, f64) {
     let edges2: Vec<_> = path
         .iter()
         .flat_map(|l| {
@@ -231,13 +231,13 @@ pub fn edges_num(path: &Vec<&NCPath>) -> (f64, f64) {
 
 #[allow(dead_code)]
 /// Count the number of inverted nodes for each path
-pub fn path_node_inverted(path: &NCPath) -> usize {
+pub fn path_node_inverted(path: &Path<u32, (), ()>) -> usize {
     path.dir.iter().filter(|&n| !(*n)).count()
 }
 
 #[allow(dead_code)]
 /// Count the number of inverted nodes for each path
-pub fn path_seq_inverted(path: &Vec<&NCPath>, nodes: &Vec<NCNode<()>>) -> (usize, usize) {
+pub fn path_seq_inverted(path: &Vec<&Path<u32, (), ()>>, nodes: &Vec<Segment<u32, ()>>) -> (usize, usize) {
     let inverted = path
         .iter()
         .map(|n| n.dir.iter().filter(|&n| !(*n)).count())
@@ -249,7 +249,7 @@ pub fn path_seq_inverted(path: &Vec<&NCPath>, nodes: &Vec<NCNode<()>>) -> (usize
                 .iter()
                 .zip(&n.nodes)
                 .filter(|&n| !(*n.0))
-                .map(|s| nodes.get(*s.1 as usize - 1).unwrap().seq.len())
+                .map(|s| nodes.get(*s.1 as usize - 1).unwrap().sequence.get_len())
                 .sum::<usize>()
         })
         .sum();
@@ -264,20 +264,20 @@ pub fn path_seq_inverted(path: &Vec<&NCPath>, nodes: &Vec<NCNode<()>>) -> (usize
 ///
 /// TODO
 /// - running average (no overflow)
-pub fn path_jumps(path: &Vec<&NCPath>) -> usize {
+pub fn path_jumps(path: &Vec<&Path<u32, (), ()>>) -> usize {
     let mut c: usize = 0;
     for p in path.iter() {
-        let mut last = p.nodes[0];
+        let mut last: i64 = p.nodes[0] as i64;
         for node_id in p.nodes.iter().skip(1) {
             c += (*node_id as i64 - last as i64).unsigned_abs() as usize;
-            last = *node_id
+            last = *node_id as i64
         }
     }
     c
 }
 
 /// Count the number of jumps bigger than X
-pub fn path_jumps_bigger(path: &Vec<&NCPath>, val: Option<i32>) -> u32 {
+pub fn path_jumps_bigger(path: &Vec<&Path<u32, (), ()>>, val: Option<i32>) -> u32 {
     let distance = val.unwrap_or(20);
     let mut c: u32 = 0;
     for p in path.iter() {
@@ -294,16 +294,16 @@ pub fn path_jumps_bigger(path: &Vec<&NCPath>, val: Option<i32>) -> u32 {
     c
 }
 
-pub fn path_unique2(path: &Vec<&NCPath>, nodes: &Vec<NCNode<()>>) -> (usize, usize) {
+pub fn path_unique2(path: &Vec<&Path<u32, (), ()>>, nodes: &Vec<Segment<u32, ()>>, sequence: & String) -> (usize, usize) {
     let hp: HashSet<_> = path.iter().flat_map(|n| n.nodes.iter()).collect();
 
-    let unique_seq = hp.iter().map(|x| nodes[**x as usize - 1].seq.len()).sum();
+    let unique_seq = hp.iter().map(|x| nodes[**x as usize - 1].sequence.get_string(sequence).len()).sum();
     (hp.len(), unique_seq)
 }
 
 #[allow(dead_code)]
 /// Calculate the number of repeated nodes
-pub fn path_cycle(path: &NCPath) -> usize {
+pub fn path_cycle(path: &Path<u32, (), ()>) -> usize {
     let mut _c = 0;
     let mut hs: HashSet<&u32> = HashSet::new();
     for x in path.nodes.iter() {

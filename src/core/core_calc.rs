@@ -1,9 +1,9 @@
-use gfa_reader::{NCGfa, NCPath, Pansn};
+use gfa_reader::{Gfa, Pansn};
 
 ///
 pub fn pan_genome(
-    gwrapper: &Pansn<NCPath>,
-    graph: &NCGfa<()>,
+    gwrapper: &Pansn<u32, (), ()>,
+    graph: &Gfa<u32, (), ()>,
     stats: &Vec<u32>,
 ) -> (Vec<(usize, usize)>, Vec<(String, usize, usize)>) {
     eprintln!("Running core analysis");
@@ -22,7 +22,7 @@ pub fn pan_genome(
                 let level = stats[*node as usize - 1] as usize;
                 if level == 1 {
                     nodes += 1;
-                    seq += graph.nodes[*node as usize - 1].seq.len();
+                    seq += graph.segments[*node as usize - 1].sequence.get_len();
                 }
             }
         }
@@ -34,7 +34,7 @@ pub fn pan_genome(
     let mut similarity_level: Vec<(usize, usize)> = vec![(0, 0); *max_value as usize + 1];
     for (i, x) in stats.iter().enumerate() {
         similarity_level[*x as usize].0 += 1;
-        similarity_level[*x as usize].1 += graph.nodes[i].seq.len();
+        similarity_level[*x as usize].1 += graph.segments[i].sequence.get_len();
     }
 
     // Check if both values are the same (should be)

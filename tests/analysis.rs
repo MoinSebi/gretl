@@ -257,7 +257,6 @@ fn analysis_sliding_nwindow_2s_yeast() -> Result<(), Box<dyn std::error::Error>>
     Ok(())
 }
 
-
 #[test]
 fn analysis_find_tg() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gretl")?;
@@ -273,10 +272,8 @@ fn analysis_find_tg() -> Result<(), Box<dyn std::error::Error>> {
     cmd.assert().success();
     fs::remove_file("./data/test/testGraph/analysis/analysis.find.tg.txt")?;
 
-
     Ok(())
 }
-
 
 #[test]
 fn analysis_find_yeast() -> Result<(), Box<dyn std::error::Error>> {
@@ -290,7 +287,6 @@ fn analysis_find_yeast() -> Result<(), Box<dyn std::error::Error>> {
         .arg("200")
         .arg("--features")
         .arg("./data/example_data/dirnodes.txt");
-
 
     cmd.assert().success();
 

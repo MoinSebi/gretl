@@ -1,5 +1,5 @@
 use crate::bootstrap::helper::random_numbers;
-use gfa_reader::{NCGfa, NCPath, Pansn};
+use gfa_reader::{Gfa, Pansn, Path};
 use std::collections::HashSet;
 
 /// Wrapper for combinations
@@ -62,8 +62,8 @@ pub fn reduce_meta(meta: &mut Vec<(usize, usize, HashSet<usize>)>, line: i32, co
 ///
 /// Take core and then remove stuff from it
 pub fn one_iteration(
-    gw: &Pansn<NCPath>,
-    graph: &NCGfa<()>,
+    gw: &Pansn<u32, (), ()>,
+    graph: &Gfa<u32, (), ()>,
     combination: &[usize],
     _metric: &str,
     information: &Vec<u32>,
@@ -77,16 +77,16 @@ pub fn one_iteration(
     let mut result2 = vec![0; max_value as usize + 1]; // Sequence
 
     // Add amount and sequence
-    if nodes.len() == graph.nodes.len() {
+    if nodes.len() == graph.segments.len() {
         for (i, x) in info2.iter().enumerate() {
             result[*x as usize] += 1;
-            result2[*x as usize] += graph.nodes[i].seq.len();
+            result2[*x as usize] += graph.segments[i].sequence.get_len();
         }
     } else {
         for (i, x) in info2.iter().enumerate() {
             if nodes.contains(&(i as u32 + 1)) {
                 result[*x as usize] += 1;
-                result2[*x as usize] += graph.nodes[i].seq.len();
+                result2[*x as usize] += graph.segments[i].sequence.get_len();
             }
         }
     }
@@ -101,15 +101,15 @@ pub fn one_iteration(
 /// - Check if the genome is in the combination
 /// - If not, remove it from the vector
 pub fn test1(
-    wrapper: &Vec<(String, Vec<&NCPath>)>,
-    graph: &NCGfa<()>,
+    wrapper: &Vec<(String, Vec<&Path<u32, (), ()>>)>,
+    graph: &Gfa<u32, (), ()>,
     info: &Vec<u32>,
     comb: &[usize],
 ) -> Vec<u32> {
     let mut info2 = info.clone();
     for (i, x) in wrapper.iter().enumerate() {
         if !comb.contains(&i) {
-            let a = make_vec(&x.1, graph.nodes.len());
+            let a = make_vec(&x.1, graph.segments.len());
             remove_from_vec(&mut info2, &a);
         }
     }
@@ -119,7 +119,7 @@ pub fn test1(
 /// For the subset of path get all vectors covered
 ///
 /// Create a vector of node_length with only contains 1 if the node is in one of the paths
-pub fn make_vec(t: &Vec<&NCPath>, length: usize) -> Vec<u32> {
+pub fn make_vec(t: &Vec<&Path<u32, (), ()>>, length: usize) -> Vec<u32> {
     let mut vec1 = vec![0; length];
     for a in t.iter() {
         a.nodes.iter().for_each(|x| vec1[*x as usize - 1] = 1);

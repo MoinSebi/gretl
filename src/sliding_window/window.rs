@@ -1,6 +1,6 @@
 use crate::helpers::helper::{calculate_similarity, node_len};
 use crate::sliding_window::sliding_window_main::Metric;
-use gfa_reader::{NCGfa, NCPath, Pansn};
+use gfa_reader::{Gfa, Pansn, Path};
 use std::fmt::Debug;
 
 /// Wrapper for sliding window
@@ -8,8 +8,8 @@ use std::fmt::Debug;
 /// TODO
 /// - add different metrics
 pub fn sliding_window_wrapper(
-    graph: &NCGfa<()>,
-    wrapper: &Pansn<NCPath>,
+    graph: &Gfa<u32, (), ()>,
+    wrapper: &Pansn<u32, (), ()>,
     binsize: u32,
     steosize: u32,
     metric: Metric,
@@ -34,7 +34,7 @@ pub fn sliding_window_wrapper(
 }
 
 /// Create the vector for sliding window
-pub fn make_vector(path: &NCPath, node_len: &Vec<u32>, core: &Vec<u32>, node: &bool) -> Vec<u32> {
+pub fn make_vector(path: &Path<u32, (), ()>, node_len: &Vec<u32>, core: &Vec<u32>, node: &bool) -> Vec<u32> {
     let mut vv = Vec::new();
     if *node {
         for n in path.nodes.iter() {

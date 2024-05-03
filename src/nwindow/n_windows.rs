@@ -1,18 +1,18 @@
 use crate::helpers::helper::node_len;
 
-use gfa_reader::NCGfa;
 
 use std::cmp::{max, min};
 use std::collections::{HashMap, HashSet};
+use gfa_reader::Gfa;
 
-pub fn node2node_init(graph: &NCGfa<()>) -> HashMap<u32, HashSet<u32>> {
+pub fn node2node_init(graph: &Gfa<u32, (), ()>) -> HashMap<u32, HashSet<u32>> {
     let mut map: HashMap<u32, HashSet<u32>> = HashMap::new();
 
-    for element in graph.nodes.iter() {
+    for element in graph.segments.iter() {
         map.insert(element.id, HashSet::new());
     }
 
-    let ee = &graph.edges.as_ref().unwrap();
+    let ee = &graph.links;
 
     for x in ee.iter() {
         map.get_mut(&x.from).unwrap().insert(x.to);
@@ -22,7 +22,7 @@ pub fn node2node_init(graph: &NCGfa<()>) -> HashMap<u32, HashSet<u32>> {
 }
 
 pub fn stats2(
-    graph: &NCGfa<()>,
+    graph: &Gfa<u32, (), ()>,
     max_steps: u32,
     max_seq: u32,
     max_jumps: u128,

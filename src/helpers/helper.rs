@@ -1,6 +1,6 @@
-use gfa_reader::{NCGfa, NCPath};
 use std::collections::HashSet;
 use std::fmt::Debug;
+use gfa_reader::{Gfa, Pansn, Path};
 
 #[allow(dead_code)]
 /// Calculate the average
@@ -24,8 +24,8 @@ where
 }
 
 /// Counting the amount of accessions and depth
-pub fn calculate_depth(wrapper: &Vec<(String, Vec<&NCPath>)>, graph: &NCGfa<()>) -> Vec<u32> {
-    let mut depth: Vec<u32> = vec![0; graph.nodes.len()];
+pub fn calculate_depth(wrapper: &Vec<(String, Vec<&Path<u32, (), ()>>)>, graph: &Gfa<u32, (), ()>) -> Vec<u32> {
+    let mut depth: Vec<u32> = vec![0; graph.segments.len()];
     for paths in wrapper.iter() {
         for path in paths.1.iter() {
             for x in path.nodes.iter() {
@@ -38,8 +38,8 @@ pub fn calculate_depth(wrapper: &Vec<(String, Vec<&NCPath>)>, graph: &NCGfa<()>)
 }
 
 /// Counting the amount of accessions and depth
-pub fn calculate_similarity(wrapper: &Vec<(String, Vec<&NCPath>)>, graph: &NCGfa<()>) -> Vec<u32> {
-    let mut depth: Vec<u32> = vec![0; graph.nodes.len()];
+pub fn calculate_similarity(wrapper: &Vec<(String, Vec<&Path<u32, (), ()>>)>, graph: &Gfa<u32, (), ()>) -> Vec<u32> {
+    let mut depth: Vec<u32> = vec![0; graph.segments.len()];
     for p in wrapper.iter() {
         let mut path_nodes: HashSet<&u32> = HashSet::new();
         for path in p.1.iter() {
@@ -56,11 +56,11 @@ pub fn calculate_similarity(wrapper: &Vec<(String, Vec<&NCPath>)>, graph: &NCGfa
 }
 
 /// Calculate node degree (in, out, total)
-pub fn node_degree(graph: &NCGfa<()>) -> (Vec<u32>, Vec<u32>, Vec<u32>) {
-    let mut degree_in: Vec<u32> = vec![0; graph.nodes.len()];
-    let mut degree_out: Vec<u32> = vec![0; graph.nodes.len()];
-    let mut degree_total: Vec<u32> = vec![0; graph.nodes.len()];
-    for x in graph.edges.as_ref().unwrap().iter() {
+pub fn node_degree(graph: &Gfa<u32, (), ()>) -> (Vec<u32>, Vec<u32>, Vec<u32>) {
+    let mut degree_in: Vec<u32> = vec![0; graph.segments.len()];
+    let mut degree_out: Vec<u32> = vec![0; graph.segments.len()];
+    let mut degree_total: Vec<u32> = vec![0; graph.segments.len()];
+    for x in graph.links.iter() {
         let fromu: usize = x.from as usize;
         let tou: usize = x.to as usize;
 
@@ -73,9 +73,9 @@ pub fn node_degree(graph: &NCGfa<()>) -> (Vec<u32>, Vec<u32>, Vec<u32>) {
 }
 
 /// Calculate node degree (in, out, total)
-pub fn node_degree_total(graph: &NCGfa<()>) -> Vec<u32> {
-    let mut degree_total: Vec<u32> = vec![0; graph.nodes.len()];
-    for x in graph.edges.as_ref().unwrap().iter() {
+pub fn node_degree_total(graph: &Gfa<u32, (), ()>) -> Vec<u32> {
+    let mut degree_total: Vec<u32> = vec![0; graph.segments.len()];
+    for x in graph.links.iter() {
         let fromu: usize = x.from as usize;
         let tou: usize = x.to as usize;
         degree_total[fromu - 1] += 1;
@@ -87,11 +87,11 @@ pub fn node_degree_total(graph: &NCGfa<()>) -> Vec<u32> {
 /// Compute the node len
 ///
 /// Return a vector
-pub fn node_len(graph: &NCGfa<()>) -> Vec<u32> {
+pub fn node_len(graph: &Gfa<u32, (), ()>) -> Vec<u32> {
     let mut result = Vec::new();
 
-    for node in graph.nodes.iter() {
-        result.push(node.seq.len() as u32);
+    for node in graph.segments.iter() {
+        result.push(node.sequence.get_len() as u32);
     }
     result
 }

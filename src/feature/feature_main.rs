@@ -2,7 +2,7 @@ use crate::feature::writer::write_list;
 use crate::helpers::helper::{calculate_depth, node_degree};
 use crate::stats::graph_stats::calculate_node_size;
 use clap::ArgMatches;
-use gfa_reader::{NCGfa, NCPath, Pansn};
+use gfa_reader::{Gfa, Pansn};
 
 pub fn feature_main2(matches: &ArgMatches) {
     // input, output
@@ -33,10 +33,9 @@ pub fn feature_main2(matches: &ArgMatches) {
         .unwrap();
     let _pansn = matches.value_of("pansn").unwrap_or(" ");
 
-    let mut graph: NCGfa<()> = NCGfa::new();
-    graph.parse_gfa_file_and_convert(graph_file, true);
-    graph.convert_walks("#");
-    let wrapper: Pansn<NCPath> = Pansn::from_graph(&graph.paths, " ");
+    let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(graph_file);
+    graph.walk_to_path();
+    let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, "#");
     println!("{}", minlen);
 
     if maxdegree == maxdepth
@@ -70,8 +69,8 @@ pub fn feature_main2(matches: &ArgMatches) {
 }
 
 pub fn runner1(
-    graph: &NCGfa<()>,
-    wrapper: &Pansn<NCPath>,
+    graph: &Gfa<u32, (), ()>,
+    wrapper: &Pansn<u32, (), ()>,
     mindepth: i128,
     mindegree: i128,
     minlen: i128,

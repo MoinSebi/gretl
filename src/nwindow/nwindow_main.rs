@@ -1,7 +1,7 @@
 use crate::nwindow::n_windows::stats2;
 use crate::nwindow::writer_nwindow::{make_buffer, write_list};
 use clap::ArgMatches;
-use gfa_reader::NCGfa;
+use gfa_reader::Gfa;
 use log::info;
 
 pub fn nwindow_main(matches: &ArgMatches) {
@@ -40,8 +40,7 @@ pub fn nwindow_main(matches: &ArgMatches) {
         }
     }
 
-    let mut graph: NCGfa<()> = NCGfa::new();
-    graph.parse_gfa_file_and_convert(matches.value_of("gfa").unwrap(), true);
+    let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(matches.value_of("gfa").unwrap());
 
     let output = matches.value_of("output").unwrap();
 
@@ -55,5 +54,5 @@ pub fn nwindow_main(matches: &ArgMatches) {
 
     info!("Writing to file: {}", output);
     let mut ff = make_buffer(output);
-    write_list(&a, &mut ff, &graph.nodes);
+    write_list(&a, &mut ff, &graph.segments);
 }

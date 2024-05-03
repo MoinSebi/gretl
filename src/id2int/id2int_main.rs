@@ -1,5 +1,5 @@
 use clap::ArgMatches;
-use gfa_reader::{NCGfa, NCPath, Pansn};
+use gfa_reader::{Gfa, Pansn};
 use std::collections::HashMap;
 use std::fs::File;
 use std::io;
