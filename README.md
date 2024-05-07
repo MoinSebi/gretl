@@ -1,6 +1,6 @@
 # gretl - Graph evaluation toolkit
 ## Description 
-Small tool for basic graph statistics using GFA format. Our statistics are based on nodes, edges and paths. Walks can also be used, 
+Small tool for basic graph statistics using GFA format. Our statistics are based on nodes, edges and paths. Walks can also be used, but will be represented as paths internally. 
 
 ## Installation: 
 

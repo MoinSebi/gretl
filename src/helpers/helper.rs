@@ -1,6 +1,7 @@
 use std::collections::HashSet;
 use std::fmt::Debug;
 use gfa_reader::{Gfa, Pansn, Path};
+use log::info;
 
 #[allow(dead_code)]
 /// Calculate the average
@@ -41,14 +42,11 @@ pub fn calculate_depth(wrapper: &Vec<(String, Vec<&Path<u32, (), ()>>)>, graph: 
 pub fn calculate_similarity(wrapper: &Vec<(String, Vec<&Path<u32, (), ()>>)>, graph: &Gfa<u32, (), ()>) -> Vec<u32> {
     let mut depth: Vec<u32> = vec![0; graph.segments.len()];
     for p in wrapper.iter() {
-        let mut path_nodes: HashSet<&u32> = HashSet::new();
-        for path in p.1.iter() {
-            for node in path.nodes.iter() {
-                path_nodes.insert(node);
-            }
-        }
+        let mut path_nodes: Vec<u32> = p.1.iter().map(|x| x.nodes.iter()).flatten().cloned().collect();
+        path_nodes.sort();
+        path_nodes.dedup();
         for x in path_nodes.iter() {
-            depth[**x as usize - 1] += 1;
+            depth[*x as usize - 1] += 1;
         }
     }
     depth.shrink_to_fit();

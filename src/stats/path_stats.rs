@@ -2,6 +2,7 @@ use crate::helpers::helper::{calculate_depth, calculate_similarity, node_degree,
 use crate::stats::helper::{mean_usize, median2, std_usize};
 use gfa_reader::{Gfa, Pansn, Path, Segment};
 use std::collections::HashSet;
+use log::info;
 
 /// Wrapper for path statistics
 ///
@@ -33,14 +34,15 @@ pub fn path_stats_wrapper(
 
     // Iterate over all paths and calculate statistics
     for path in paths.iter() {
+
         // We normalize everything by node number and node length
         let mut result_temp: Vec<(String, f64)> = Vec::new();
-        let path_seq = path_seq_len(&path.1, &graph.segments) as f64;
+        let path_seq = path_seq_len(&path.1, &graph) as f64;
         let path_nodes = path_node_len(&path.1) as f64;
         let dir_nodes = dir_node(&path.1) as f64;
         let edges = edges_num(&path.1);
         let edges_total_numb = path_nodes - 1.0;
-
+        //
         // Amount of sequence and number of nodes in the path + number of unique nodes
         result_temp.push(("Sequence [bp]".to_string(), path_seq));
         result_temp.push(("Nodes".to_string(), path_nodes));
@@ -51,7 +53,7 @@ pub fn path_stats_wrapper(
         result_temp.push(("Edges".to_string(), edges.0));
         result_temp.push(("Unique Edges".to_string(), edges.1));
 
-        let path_unique_val = path_unique2(&path.1, &graph.segments, &graph.sequence);
+        let path_unique_val = path_unique2(&path.1, &graph);
         result_temp.push(("Unique nodes".to_string(), path_unique_val.0 as f64));
         result_temp.push(("Unique nodes [bp]".to_string(), path_unique_val.1 as f64));
 
@@ -69,7 +71,7 @@ pub fn path_stats_wrapper(
             dir_nodes / edges_total_numb,
         ));
 
-        let inverted = path_seq_inverted(&path.1, &graph.segments);
+        let inverted = path_seq_inverted(&path.1, &graph);
 
         result_temp.push(("Inverted nodes".to_string(), inverted.0 as f64));
         result_temp.push(("Inverted nodes [bp]".to_string(), inverted.1 as f64));
@@ -173,7 +175,7 @@ pub fn remove_unsorted(input: &mut Vec<(String, Vec<(String, String)>)>, graph: 
 pub fn get_all_stats(input: &Vec<usize>) -> (f64, f64, f64) {
     let mean = mean_usize(input);
     let median = median2(input) as f64;
-    let std = std_usize(input);
+    let std = std_usize(input, mean);
 
     (mean, median, std)
 }
@@ -191,31 +193,31 @@ pub fn node_size_cal(path: &Vec<&Path<u32, (), ()>>, node_sizes: &Vec<u32>) -> (
     (mean, median, std)
 }
 
-/// Count the number of nodes for each path
+/// Count the number of nodes for each sample
 pub fn path_node_len(path: &Vec<&Path<u32, (), ()>>) -> usize {
     let pp = path.iter().map(|n| n.nodes.len()).sum();
     pp
 }
 
 /// Calculate the length of path
-pub fn path_seq_len(path: &Vec<&Path<u32, (), ()>>, nodes: &Vec<Segment<u32, ()>>) -> usize {
+pub fn path_seq_len(path: &Vec<&Path<u32, (), ()>>, graph: &Gfa<u32, (), ()>) -> usize {
     let size: usize = path
         .iter()
-        .map(|_n| nodes.iter().map(|nn| nn.sequence.get_len()).sum::<usize>())
+        .map(|n | n.nodes.iter().map(|nn| graph.get_node_by_id(*nn).sequence.get_len()).sum::<usize>())
         .sum::<usize>();
     size
 }
 
+/// Number of directed nodes
 pub fn dir_node(path: &Vec<&Path<u32, (), ()>>) -> usize {
-    let edges2: HashSet<(&u32, &bool)> = path
+    path
         .iter()
         .flat_map(|l| l.nodes.iter().zip(l.dir.iter()))
-        .collect();
-    edges2.len()
+        .count()
 }
 
 pub fn edges_num(path: &Vec<&Path<u32, (), ()>>) -> (f64, f64) {
-    let edges2: Vec<_> = path
+    let mut edges2: Vec<_> = path
         .iter()
         .flat_map(|l| {
             l.nodes
@@ -225,8 +227,10 @@ pub fn edges_num(path: &Vec<&Path<u32, (), ()>>) -> (f64, f64) {
                 .zip(l.nodes.iter().zip(l.dir.iter()))
         })
         .collect();
-    let p: HashSet<_> = edges2.iter().collect();
-    (edges2.len() as f64, p.len() as f64)
+    edges2.sort();
+    let elen = edges2.len();
+    edges2.dedup();
+    (elen as f64, edges2.len() as f64)
 }
 
 #[allow(dead_code)]
@@ -237,7 +241,7 @@ pub fn path_node_inverted(path: &Path<u32, (), ()>) -> usize {
 
 #[allow(dead_code)]
 /// Count the number of inverted nodes for each path
-pub fn path_seq_inverted(path: &Vec<&Path<u32, (), ()>>, nodes: &Vec<Segment<u32, ()>>) -> (usize, usize) {
+pub fn path_seq_inverted(path: &Vec<&Path<u32, (), ()>>, graph: &Gfa<u32, (), ()>) -> (usize, usize) {
     let inverted = path
         .iter()
         .map(|n| n.dir.iter().filter(|&n| !(*n)).count())
@@ -249,7 +253,7 @@ pub fn path_seq_inverted(path: &Vec<&Path<u32, (), ()>>, nodes: &Vec<Segment<u32
                 .iter()
                 .zip(&n.nodes)
                 .filter(|&n| !(*n.0))
-                .map(|s| nodes.get(*s.1 as usize - 1).unwrap().sequence.get_len())
+                .map(|s| graph.get_node_by_id(*s.1).sequence.get_len())
                 .sum::<usize>()
         })
         .sum();
@@ -294,26 +298,20 @@ pub fn path_jumps_bigger(path: &Vec<&Path<u32, (), ()>>, val: Option<i32>) -> u3
     c
 }
 
-pub fn path_unique2(path: &Vec<&Path<u32, (), ()>>, nodes: &Vec<Segment<u32, ()>>, sequence: & String) -> (usize, usize) {
-    let hp: HashSet<_> = path.iter().flat_map(|n| n.nodes.iter()).collect();
+pub fn path_unique2(path: &Vec<&Path<u32, (), ()>>, graph: &Gfa<u32, (), ()>) -> (usize, usize) {
 
-    let unique_seq = hp.iter().map(|x| nodes[**x as usize - 1].sequence.get_string(sequence).len()).sum();
+    let mut hp: Vec<u32> = Vec::new();
+    for x in path.iter(){
+        hp.extend(x.nodes.iter())
+    }
+    hp.sort();
+    hp.dedup();
+
+
+    let unique_seq = hp.iter().map(|x| graph.get_node_by_id(*x).sequence.get_len()).sum();
     (hp.len(), unique_seq)
 }
 
-#[allow(dead_code)]
-/// Calculate the number of repeated nodes
-pub fn path_cycle(path: &Path<u32, (), ()>) -> usize {
-    let mut _c = 0;
-    let mut hs: HashSet<&u32> = HashSet::new();
-    for x in path.nodes.iter() {
-        if hs.contains(x) {
-            _c += 1
-        }
-        hs.insert(x);
-    }
-    _c
-}
 
 pub fn convert_data(
     input: &mut Vec<(String, Vec<(String, f64)>)>,

@@ -6,6 +6,7 @@ use crate::stats::stats_writer::{
 };
 use clap::ArgMatches;
 use gfa_reader::{Gfa, Pansn};
+use log::info;
 
 /// Main function for stats subcommand
 ///
@@ -18,9 +19,11 @@ pub fn stats_main(matches: &ArgMatches) {
     }
     let _haplo = matches.is_present("haplo");
 
+    info!("Reading graph");
     let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(matches.value_of("gfa").unwrap());
     graph.walk_to_path();
 
+    info!("Creating wrapper");
     let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, sep);
     let output = matches.value_of("output").unwrap();
 
@@ -34,6 +37,7 @@ pub fn stats_main(matches: &ArgMatches) {
     }
 
     if matches.is_present("path") {
+        info!("Calculating path stats");
         let mut data = path_stats_wrapper(&graph, &wrapper, matches.is_present("haplo"));
         let mut data = convert_data(&mut data);
         remove_unsorted(&mut data, &graph);
@@ -44,7 +48,10 @@ pub fn stats_main(matches: &ArgMatches) {
             write_tsv_path(&data, output);
         }
     } else {
+        info!("Calculating graph stats");
         let data = graph_stats_wrapper(&graph, &wrapper, bins, matches.is_present("haplo"));
+
+        info!("Writing to file");
         if matches.is_present("YAML") {
             write_tsv_graph(&data, output);
         } else {

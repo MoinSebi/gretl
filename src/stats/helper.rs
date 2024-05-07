@@ -26,8 +26,7 @@ pub fn median2(data: &Vec<usize>) -> usize {
 }
 
 // standard deviation of a usize vector
-pub fn std_usize(data: &Vec<usize>) -> f64 {
-    let mean = mean_usize(data);
+pub fn std_usize(data: &Vec<usize>, mean: f64) -> f64 {
     let mut sum = 0.0;
     // This is a alternative approach
     for i in data.iter() {

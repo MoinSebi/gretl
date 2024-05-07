@@ -3,6 +3,7 @@ use crate::stats::helper::{average_median_std, mean, mean321, median};
 use crate::stats::hybrid_stats::path_stats_wrapper2;
 use gfa_reader::{Gfa, Pansn};
 use std::cmp::max;
+use log::info;
 
 /// Wrapper for graph statistics
 pub fn graph_stats_wrapper(
@@ -11,6 +12,7 @@ pub fn graph_stats_wrapper(
     bins: Vec<u32>,
     haplo: bool,
 ) -> Vec<(String, String)> {
+
     let mut result: Vec<(String, String)> = Vec::new();
 
     let paths;
@@ -21,6 +23,7 @@ pub fn graph_stats_wrapper(
     }
     let number_samples = wrapper.genomes.len();
     let mut depth = calculate_depth(&paths, graph);
+
     let mut core = calculate_similarity(&paths, graph);
 
     // Basic stats
@@ -155,6 +158,7 @@ pub fn graph_stats_wrapper(
         graph_density(graph).to_string(),
     ));
 
+    info!("Calculating hybrid stats");
     let hybrid_stats = path_stats_wrapper2(graph, wrapper, haplo);
     for x in hybrid_stats.iter() {
         result.push((x.0.to_string(), x.1.to_string()));
@@ -186,7 +190,7 @@ pub fn graph_path_seq_total(graph: &Gfa<u32, (), ()>) -> usize {
         .map(|n| {
             n.nodes
                 .iter()
-                .map(|r| graph.segments[*r as usize - 1].sequence.get_len())
+                .map(|r| graph.get_node_by_id(*r).sequence.get_len())
                 .sum::<usize>()
         })
         .sum::<usize>();
