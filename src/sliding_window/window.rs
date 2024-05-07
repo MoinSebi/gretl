@@ -1,4 +1,4 @@
-use crate::helpers::helper::{calculate_similarity, node_len};
+use crate::helpers::helper::{calculate_similarity2, node_len};
 use crate::sliding_window::sliding_window_main::Metric;
 use gfa_reader::{Gfa, Pansn, Path};
 use std::fmt::Debug;
@@ -18,7 +18,7 @@ pub fn sliding_window_wrapper(
     let paths = wrapper.get_path_genome();
 
     let mut result = Vec::new();
-    let mut core = calculate_similarity(&paths, graph);
+    let mut core = calculate_similarity2(&paths, graph);
     match metric {
         Metric::Nodesizem => core = node_len(graph),
         Metric::Similarity => {}

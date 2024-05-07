@@ -1,9 +1,10 @@
-use crate::helpers::helper::{calculate_depth, calculate_similarity, node_degree, node_len};
+use crate::helpers::helper::{calculate_depth2, calculate_similarity2, node_degree, node_len};
 use crate::stats::helper::{average_median_std, mean, mean321, median};
 use crate::stats::hybrid_stats::path_stats_wrapper2;
 use gfa_reader::{Gfa, Pansn};
 use std::cmp::max;
 use log::info;
+use nalgebra::inf;
 
 /// Wrapper for graph statistics
 pub fn graph_stats_wrapper(
@@ -22,9 +23,9 @@ pub fn graph_stats_wrapper(
         paths = wrapper.get_path_genome();
     }
     let number_samples = wrapper.genomes.len();
-    let mut depth = calculate_depth(&paths, graph);
+    let depth = calculate_depth2(&paths, graph);
 
-    let mut core = calculate_similarity(&paths, graph);
+    let mut core = calculate_similarity2(&paths, graph);
 
     // Basic stats
     let path_number = graph_path_number(graph);
@@ -95,7 +96,7 @@ pub fn graph_stats_wrapper(
         (a3 / number_samples as f64).to_string(),
     ));
 
-    let (a1, a2, a3) = average_median_std(&mut depth);
+    let (a1, a2, a3) = average_median_std(&depth);
     result.push(("Depth mean".to_string(), a1.to_string()));
     result.push(("Depth median".to_string(), a2.to_string()));
     result.push(("Depth std".to_string(), a3.to_string()));

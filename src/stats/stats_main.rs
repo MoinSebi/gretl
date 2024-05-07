@@ -14,7 +14,7 @@ use log::info;
 pub fn stats_main(matches: &ArgMatches) {
     let mut sep = " ";
     if matches.is_present("Pan-SN") {
-        sep = matches.value_of("Pan-SN").unwrap();
+        sep = matches.value_of("PanSN").unwrap();
         sep = sep.trim();
     }
     let _haplo = matches.is_present("haplo");

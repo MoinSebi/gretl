@@ -14,7 +14,7 @@ pub fn path_main(matches: &ArgMatches) {
     let maxs: Vec<&str> = matches.values_of("maxs").unwrap().collect();
     let mins_u32 = parse_max_min(mins, false);
     let maxs_u32 = parse_max_min(maxs, true);
-    let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(graph_file);
+    let graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(graph_file);
     let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, " ");
 
     let result = path_runner(&stats, &mins_u32, &maxs_u32, &graph, &wrapper, haplo);

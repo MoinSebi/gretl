@@ -60,11 +60,13 @@ pub fn stadard_deviation_2(data: &[f64]) -> f64 {
 }
 
 /// Combi function for average, median and std
-pub fn average_median_std(vec_size: &mut Vec<u32>) -> (f64, f64, f64) {
+pub fn average_median_std(vec_size: &Vec<u32>) -> (f64, f64, f64) {
+    let mut vec_size = vec_size.clone();
     vec_size.sort();
-    let med = median(vec_size);
-    let average = mean(vec_size);
-    let std = stadard_deviation(vec_size);
+    vec_size.retain(|&x| x != 0);
+    let med = median(&vec_size);
+    let average = mean(&vec_size);
+    let std = stadard_deviation(&vec_size);
 
     (average, med, std)
 }

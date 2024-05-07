@@ -1,4 +1,4 @@
-use crate::helpers::helper::calculate_similarity;
+use crate::helpers::helper::calculate_similarity2;
 use gfa_reader::{Gfa, Pansn};
 use std::collections::HashSet;
 
@@ -8,7 +8,7 @@ pub fn accession2level(
     wrapper: &Pansn<u32, (), ()>,
 ) -> Vec<(String, Vec<(u32, u32)>)> {
     let paths = wrapper.get_path_genome();
-    let cores = calculate_similarity(&paths, graph);
+    let cores = calculate_similarity2(&paths, graph);
     let metric_maxval = cores.iter().max().unwrap();
     let mut res = Vec::new();
 

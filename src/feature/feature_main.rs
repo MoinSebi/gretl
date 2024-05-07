@@ -1,5 +1,5 @@
 use crate::feature::writer::write_list;
-use crate::helpers::helper::{calculate_depth, node_degree};
+use crate::helpers::helper::{calculate_depth2, node_degree};
 use crate::stats::graph_stats::calculate_node_size;
 use clap::ArgMatches;
 use gfa_reader::{Gfa, Pansn};
@@ -83,7 +83,7 @@ pub fn runner1(
     let mut result = Vec::new();
     let size = calculate_node_size(graph);
     let degree = node_degree(graph);
-    let depth = calculate_depth(&paths, graph);
+    let depth = calculate_depth2(&paths, graph);
     for (i, (s, (deg, dep))) in size
         .iter()
         .zip(degree.2.iter().zip(depth.iter()))

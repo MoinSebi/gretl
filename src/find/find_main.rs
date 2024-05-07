@@ -16,7 +16,7 @@ pub fn find_main(matches: &ArgMatches) {
     let data = FileData::from_file(feature_file);
     let feature = data.feature;
     // Read the graph
-    let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(graph_file);
+    let graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(graph_file);
     let paths = &graph.paths;
 
     // Get the node size

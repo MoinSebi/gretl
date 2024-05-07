@@ -2,7 +2,7 @@ use crate::bootstrap::helper::read_positive_integers_from_file;
 use crate::bootstrap::meta::{combinations_maker_wrapper, one_iteration, reduce_meta};
 use crate::bootstrap::reader::read_meta;
 use crate::bootstrap::writer::{write_meta, write_output};
-use crate::helpers::helper::calculate_similarity;
+use crate::helpers::helper::calculate_similarity2;
 use clap::ArgMatches;
 use gfa_reader::{Gfa, Pansn};
 use rayon::prelude::*;
@@ -77,7 +77,7 @@ pub fn bootstrap_main(matches: &ArgMatches) {
     let paths = wrapper.get_path_genome();
 
     // We use the similarity measure
-    let similarity = calculate_similarity(&paths, &graph);
+    let similarity = calculate_similarity2(&paths, &graph);
 
     let thread_pool = rayon::ThreadPoolBuilder::new()
         .num_threads(threads)

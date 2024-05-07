@@ -1,8 +1,6 @@
-use crate::helpers::helper::{calculate_depth, calculate_similarity, node_degree, node_len};
+use crate::helpers::helper::{calculate_depth2, calculate_similarity2, node_degree, node_len};
 use crate::stats::helper::{mean_usize, median2, std_usize};
-use gfa_reader::{Gfa, Pansn, Path, Segment};
-use std::collections::HashSet;
-use log::info;
+use gfa_reader::{Gfa, Pansn, Path};
 
 /// Wrapper for path statistics
 ///
@@ -23,13 +21,13 @@ pub fn path_stats_wrapper(
     let _number_samples = wrapper.genomes.len();
 
     // Calculate similarity
-    let core = calculate_similarity(&paths, graph);
+    let core = calculate_similarity2(&paths, graph);
 
     // Calculate node degree
     let node_degree = node_degree(graph);
 
     // Calculate depth
-    let depth = calculate_depth(&paths, graph);
+    let depth = calculate_depth2(&paths, graph);
     let node_size = node_len(graph);
 
     // Iterate over all paths and calculate statistics
@@ -185,7 +183,7 @@ pub fn node_size_cal(path: &Vec<&Path<u32, (), ()>>, node_sizes: &Vec<u32>) -> (
     let mut result = Vec::new();
     for p in path.iter() {
         for x in p.nodes.iter() {
-            result.push(node_sizes[*x as usize - 1] as usize)
+            result.push(node_sizes[*x as usize] as usize)
         }
     }
     let (mean, median, std) = get_all_stats(&result);

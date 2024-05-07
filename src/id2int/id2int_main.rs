@@ -45,7 +45,7 @@ pub fn node_reader(filename: &str) -> (String, Vec<usize>, usize) {
     let mut c = 0;
     for line in reader.lines() {
         let line = line.unwrap();
-        let mut fields: Vec<_> = line.split_whitespace().collect();
+        let fields: Vec<_> = line.split_whitespace().collect();
         if fields[0] == "S" {
             s += fields[1];
             index.push(fields[1].len());
@@ -152,7 +152,7 @@ pub fn convert_string(k: &str, hm: &HashMap<&str, usize>) -> String {
 /// Comment: Which entries are converted is based on the first character of the line
 pub fn read_write(f1: &str, f2: &str, hm: &HashMap<&str, usize>, count: &usize) {
     let file = File::open(f1).unwrap();
-    let mut reader = BufReader::new(file);
+    let reader = BufReader::new(file);
     let file = File::create(f2).unwrap();
     let mut writer = std::io::BufWriter::new(file);
     let mut c = 0;
@@ -213,7 +213,7 @@ pub fn read_write(f1: &str, f2: &str, hm: &HashMap<&str, usize>, count: &usize) 
                 let a = convert_string(fields[2], hm);
                 fields[2] = &a;
                 let n = convert_string(fields[3], hm);
-                fields[3] = &a;
+                fields[3] = &n;
                 writeln!(writer, "{}", fields.join("\t")).expect("Error writing to file");
             }
             "U" => {
@@ -259,7 +259,7 @@ pub fn get_version(filename: &str) -> f32{
     let mut version = 0.0;
     for line in reader.lines() {
         let line = line.unwrap();
-        let mut fields: Vec<&str> = line.split_whitespace().collect();
+        let fields: Vec<&str> = line.split_whitespace().collect();
         if fields[0] == "H" {
             version = fields[1].split(":").collect::<Vec<&str>>()[2].parse::<f32>().expect("Error parsing version number")
         }

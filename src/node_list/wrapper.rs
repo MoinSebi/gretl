@@ -1,4 +1,4 @@
-use crate::helpers::helper::{calculate_depth, calculate_similarity, node_degree, node_len};
+use crate::helpers::helper::{calculate_depth2, calculate_similarity2, node_degree, node_len};
 use crate::node_list::writer::{make_buffer, write_header, write_list};
 use gfa_reader::{Gfa, Pansn};
 
@@ -15,11 +15,11 @@ pub fn wrapper_node(graph: &Gfa<u32, (), ()>, wrapper: &Pansn<u32, (), ()>, file
         write_list(("Length", &len), &mut ff);
     }
     if what.contains(&"Core") {
-        let core = calculate_similarity(&paths, graph);
+        let core = calculate_similarity2(&paths, graph);
         write_list(("Core", &core), &mut ff);
     }
     if what.contains(&"Depth") {
-        let depth2 = calculate_depth(&paths, graph);
+        let depth2 = calculate_depth2(&paths, graph);
         write_list(("Depth", &depth2), &mut ff);
     }
     if what.contains(&"ND") {

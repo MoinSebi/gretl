@@ -12,6 +12,8 @@ fn stats_graph_tsv() -> Result<(), Box<dyn std::error::Error>> {
         .arg("./data/test/testGraph/stats/stats.graph.tsv");
 
     cmd.assert().success();
+    let content = fs::read_to_string("data/test/testGraph/stats/stats.graph.tsv")?;
+    assert_eq!(content.contains(""))
     fs::remove_file("data/test/testGraph/stats/stats.graph.tsv")?;
 
     Ok(())
