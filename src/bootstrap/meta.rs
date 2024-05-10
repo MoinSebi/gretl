@@ -79,14 +79,16 @@ pub fn one_iteration(
     // Add amount and sequence
     if nodes.len() == graph.segments.len() {
         for (i, x) in info2.iter().enumerate() {
-            result[*x as usize] += 1;
-            result2[*x as usize] += graph.segments[i].sequence.get_len();
+            if *x != 0 {
+                result[*x as usize] += 1;
+                result2[*x as usize] += graph.get_node_by_id(i as u32).sequence.get_len();
+            }
         }
     } else {
         for (i, x) in info2.iter().enumerate() {
-            if nodes.contains(&(i as u32 + 1)) {
+            if nodes.contains(&(i as u32 + 1)) && *x != 0 {
                 result[*x as usize] += 1;
-                result2[*x as usize] += graph.segments[i].sequence.get_len();
+                result2[*x as usize] += graph.get_node_by_id(i as u32).sequence.get_len();
             }
         }
     }
@@ -109,7 +111,8 @@ pub fn test1(
     let mut info2 = info.clone();
     for (i, x) in wrapper.iter().enumerate() {
         if !comb.contains(&i) {
-            let a = make_vec(&x.1, graph.segments.len());
+            let a = make_vec(&x.1, graph.segments.iter().max().unwrap().id as usize);
+            println!("{} {}", a.len(), info2.len());
             remove_from_vec(&mut info2, &a);
         }
     }
@@ -120,9 +123,9 @@ pub fn test1(
 ///
 /// Create a vector of node_length with only contains 1 if the node is in one of the paths
 pub fn make_vec(t: &Vec<&Path<u32, (), ()>>, length: usize) -> Vec<u32> {
-    let mut vec1 = vec![0; length];
+    let mut vec1 = vec![0; length + 1];
     for a in t.iter() {
-        a.nodes.iter().for_each(|x| vec1[*x as usize - 1] = 1);
+        a.nodes.iter().for_each(|x| vec1[*x as usize ] = 1);
     }
     vec1
 }

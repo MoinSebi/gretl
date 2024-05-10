@@ -1,4 +1,4 @@
-use crate::helpers::helper::{calculate_similarity2, node_len};
+use crate::helpers::helper::{calc_depth, calc_similarity, calc_node_len};
 use crate::sliding_window::sliding_window_main::Metric;
 use gfa_reader::{Gfa, Pansn, Path};
 use std::fmt::Debug;
@@ -11,46 +11,52 @@ pub fn sliding_window_wrapper(
     graph: &Gfa<u32, (), ()>,
     wrapper: &Pansn<u32, (), ()>,
     binsize: u32,
-    steosize: u32,
+    stepsize: u32,
     metric: Metric,
     node: bool,
 ) -> Vec<(String, Vec<f64>)> {
     let paths = wrapper.get_path_genome();
 
     let mut result = Vec::new();
-    let mut core = calculate_similarity2(&paths, graph);
+    let mut core = calc_similarity(&paths, graph);
     match metric {
-        Metric::Nodesizem => core = node_len(graph),
+        Metric::Nodesizem => core = calc_node_len(graph),
+        Metric::Depth => core = calc_depth(&paths, graph),
         Metric::Similarity => {}
     }
 
-    let node_len = node_len(graph);
+    let node_len = calc_node_len(graph);
     for path in graph.paths.iter() {
-        let vector = make_vector(path, &node_len, &core, &node);
-        let sww = sliding_window(vector, binsize, steosize);
+        let vector = path2metric_vector(path, &node_len, &core, &node);
+        let sww = sliding_window(vector, binsize, stepsize);
         result.push((path.name.clone(), sww));
     }
     result
 }
 
 /// Create the vector for sliding window
-pub fn make_vector(path: &Path<u32, (), ()>, node_len: &Vec<u32>, core: &Vec<u32>, node: &bool) -> Vec<u32> {
-    let mut vv = Vec::new();
+pub fn path2metric_vector(
+    path: &Path<u32, (), ()>,
+    node_len: &Vec<u32>,
+    core: &Vec<u32>,
+    node: &bool,
+) -> Vec<u32> {
+    let mut metric_vector = Vec::new();
     if *node {
         for n in path.nodes.iter() {
             let level = core[*n as usize];
-            vv.push(level);
+            metric_vector.push(level);
         }
     } else {
         for n in path.nodes.iter() {
-            let size = node_len[*n as usize - 1];
-            let level = core[*n as usize - 1];
+            let size = node_len[*n as usize];
+            let level = core[*n as usize];
             for _x in 0..size {
-                vv.push(level);
+                metric_vector.push(level);
             }
         }
     }
-    vv
+    metric_vector
 }
 
 /// Sliding window

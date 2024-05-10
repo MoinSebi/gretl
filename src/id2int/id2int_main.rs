@@ -1,12 +1,12 @@
+use chrono::Local;
 use clap::ArgMatches;
-use gfa_reader::{Gfa, Pansn};
+
+use log::info;
 use std::collections::HashMap;
 use std::fs::File;
 use std::io;
-use std::io::{BufRead, BufReader};
 use std::io::Write;
-use chrono::Local;
-use log::info;
+use std::io::{BufRead, BufReader};
 
 /// Main function for converting string ID to integer ID
 ///
@@ -19,10 +19,10 @@ pub fn id2int_main(matches: &ArgMatches) {
 
     let version = get_version(matches.value_of("gfa").unwrap());
     info!("Version is {}", version);
-    info!("Make hashmap");
+    info!("Create converting hashmap");
     let hm = create_hashmap(&index2);
     let output = matches.value_of("output").unwrap();
-    info!("Read and write");
+    info!("Read, convert and write");
     read_write(matches.value_of("gfa").unwrap(), output, &hm, &count);
 
     if matches.is_present("dict") {
@@ -52,9 +52,8 @@ pub fn node_reader(filename: &str) -> (String, Vec<usize>, usize) {
         }
         c += 1;
     }
-    return (s, index, c);
+    (s, index, c)
 }
-
 
 /// Get the index of each node
 ///
@@ -66,11 +65,9 @@ pub fn create_strvec(index: Vec<usize>, ss: &String) -> Vec<&str> {
     for i in index.iter() {
         res.push(&ss[pos..pos + i]);
         pos += i;
-
     }
-    return res;
+    res
 }
-
 
 /// Make a hashmap from a vector of strings (&str)
 /// The hashmap is used to convert string ID to integer ID
@@ -80,9 +77,9 @@ pub fn create_strvec(index: Vec<usize>, ss: &String) -> Vec<&str> {
 pub fn create_hashmap<'a>(index: &'a Vec<&str>) -> HashMap<&'a str, usize> {
     let mut hm = std::collections::HashMap::new();
     for (i, x) in index.iter().enumerate() {
-        hm.insert(*x, i+1);
+        hm.insert(*x, i + 1);
     }
-    return hm;
+    hm
 }
 
 /// Get the integer ID from a hashmap
@@ -90,11 +87,10 @@ pub fn create_hashmap<'a>(index: &'a Vec<&str>) -> HashMap<&'a str, usize> {
 ///
 /// Return:
 ///    - String: integer ID
-pub fn get_string_from_hm(hm: &HashMap<&str, usize>, s: &String) -> String{
-    let a: &str = &s;
+pub fn get_string_from_hm(hm: &HashMap<&str, usize>, s: &String) -> String {
+    let a: &str = s;
     hm.get(a).unwrap().to_string()
 }
-
 
 /// Convert a string to a string with integer ID
 /// Split the string at every digit, convert the digit to integer using hashmap
@@ -105,14 +101,14 @@ pub fn get_string_from_hm(hm: &HashMap<&str, usize>, s: &String) -> String{
 pub fn convert_string(k: &str, hm: &HashMap<&str, usize>) -> String {
     let mut res = Vec::new();
     let mut is_digit = false;
-    let char_first = k.chars().nth(0).unwrap();
-    if char_first.is_digit(10) {
+    let char_first = k.chars().next().unwrap();
+    if char_first.is_ascii_digit() {
         is_digit = true;
     }
-    let mut char1 = k.chars().nth(0).unwrap().to_string();
+    let mut char1 = k.chars().next().unwrap().to_string();
 
     for c in k.chars().skip(1) {
-        if c.is_digit(10) {
+        if c.is_ascii_digit() {
             if is_digit {
                 char1 += &c.to_string();
             } else {
@@ -136,9 +132,8 @@ pub fn convert_string(k: &str, hm: &HashMap<&str, usize>) -> String {
         res.push(char1);
     }
 
-    return res.join("");
+    res.join("")
 }
-
 
 /// Read a file and write to another file at the same time
 /// - Read a line
@@ -160,19 +155,19 @@ pub fn read_write(f1: &str, f2: &str, hm: &HashMap<&str, usize>, count: &usize) 
     for line in reader.lines() {
         let line = line.unwrap();
         let mut fields: Vec<&str> = line.split_whitespace().collect();
-        match fields[0]  {
+        match fields[0] {
             "S" => {
                 let a = convert_string(fields[1], hm);
                 fields[1] = &a;
                 writeln!(writer, "{}", fields.join("\t")).expect("Error writing to file");
-            },
+            }
             "L" => {
                 let a = convert_string(fields[1], hm);
                 fields[1] = &a;
                 let b = convert_string(fields[3], hm);
                 fields[3] = &b;
                 writeln!(writer, "{}", fields.join("\t")).expect("Error writing to file");
-            },
+            }
             "P" => {
                 let a = convert_string(fields[2], hm);
                 fields[2] = &a;
@@ -184,12 +179,12 @@ pub fn read_write(f1: &str, f2: &str, hm: &HashMap<&str, usize>, count: &usize) 
                 let b = convert_string(fields[3], hm);
                 fields[3] = &b;
                 writeln!(writer, "{}", fields.join("\t")).expect("Error writing to file");
-            },
+            }
             "W" => {
                 let a = convert_string(fields[6], hm);
                 fields[6] = &a;
                 writeln!(writer, "{}", fields.join("\t")).expect("Error writing to file");
-            },
+            }
             "C" => {
                 let a = convert_string(fields[1], hm);
                 fields[1] = &a;
@@ -206,7 +201,7 @@ pub fn read_write(f1: &str, f2: &str, hm: &HashMap<&str, usize>, count: &usize) 
                 let a = convert_string(fields[2], hm);
                 fields[2] = &a;
                 let n = convert_string(fields[3], hm);
-                fields[3] = &a;
+                fields[3] = &n;
                 writeln!(writer, "{}", fields.join("\t")).expect("Error writing to file");
             }
             "G" => {
@@ -233,27 +228,37 @@ pub fn read_write(f1: &str, f2: &str, hm: &HashMap<&str, usize>, count: &usize) 
                 writeln!(writer, "{}", b.join("\t")).expect("Error writing to file");
             }
 
-
             _ => writeln!(writer, "{}", line).expect("Error writing to file"),
         }
         c += 1;
-        if  (c as f64 / *count as f64) * 100.0 - lastpro > 0.2 {
+        if (c as f64 / *count as f64) * 100.0 - lastpro > 0.2 {
             lastpro = (c as f64 / *count as f64) * 100.0;
-            eprint!("\r{}", format!("{} - Progress {:.2}%", Local::now().format("%d/%m/%Y %H:%M:%S %p"), lastpro));
+            eprint!(
+                "\r{}",
+                format!(
+                    "{} - Progress {:.2}%",
+                    Local::now().format("%d/%m/%Y %H:%M:%S %p"),
+                    lastpro
+                )
+            );
             io::stdout().flush().expect("Failed to flush stdout");
         }
-
     }
-    eprintln!("\r{}", format!("{} - Progress {:.2}%", Local::now().format("%d/%m/%Y %H:%M:%S %p"), 100.0));
-
+    eprintln!(
+        "\r{}",
+        format!(
+            "{} - Progress {:.2}%",
+            Local::now().format("%d/%m/%Y %H:%M:%S %p"),
+            100.0
+        )
+    );
 }
-
 
 /// Get the version of a GFA file
 /// Not sure if the header line must be the first line in the file
 /// Return:
 ///     - f32: version number
-pub fn get_version(filename: &str) -> f32{
+pub fn get_version(filename: &str) -> f32 {
     let file = File::open(filename).unwrap();
     let reader = BufReader::new(file);
     let mut version = 0.0;
@@ -261,7 +266,9 @@ pub fn get_version(filename: &str) -> f32{
         let line = line.unwrap();
         let fields: Vec<&str> = line.split_whitespace().collect();
         if fields[0] == "H" {
-            version = fields[1].split(":").collect::<Vec<&str>>()[2].parse::<f32>().expect("Error parsing version number")
+            version = fields[1].split(':').collect::<Vec<&str>>()[2]
+                .parse::<f32>()
+                .expect("Error parsing version number")
         }
     }
     version
@@ -279,5 +286,3 @@ pub fn write_hm(hm: &HashMap<&str, usize>, f: &str) {
         writeln!(writer, "{}\t{}", k, v).expect("Error writing to file");
     }
 }
-
-

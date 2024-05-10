@@ -12,12 +12,13 @@ use log::info;
 ///
 /// This command should return statistics for total graph or path + write everything to a file
 pub fn stats_main(matches: &ArgMatches) {
+    info!("Running 'gretl stats'");
     let mut sep = " ";
-    if matches.is_present("Pan-SN") {
+    if matches.is_present("PanSN") {
         sep = matches.value_of("PanSN").unwrap();
         sep = sep.trim();
     }
-    let _haplo = matches.is_present("haplo");
+    let haplo = matches.is_present("haplo");
 
     info!("Reading graph");
     let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(matches.value_of("gfa").unwrap());
@@ -38,7 +39,7 @@ pub fn stats_main(matches: &ArgMatches) {
 
     if matches.is_present("path") {
         info!("Calculating path stats");
-        let mut data = path_stats_wrapper(&graph, &wrapper, matches.is_present("haplo"));
+        let mut data = path_stats_wrapper(&graph, &wrapper, haplo);
         let mut data = convert_data(&mut data);
         remove_unsorted(&mut data, &graph);
 
@@ -49,7 +50,7 @@ pub fn stats_main(matches: &ArgMatches) {
         }
     } else {
         info!("Calculating graph stats");
-        let data = graph_stats_wrapper(&graph, &wrapper, bins, matches.is_present("haplo"));
+        let data = graph_stats_wrapper(&graph, &wrapper, bins, haplo);
 
         info!("Writing to file");
         if matches.is_present("YAML") {

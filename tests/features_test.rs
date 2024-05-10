@@ -14,6 +14,9 @@ fn stats_graph_feature() -> Result<(), Box<dyn std::error::Error>> {
         .arg("5");
 
     cmd.assert().success();
+    let content = fs::read_to_string("data/test/testGraph/feature_paths/stats.node.s10.txt")?;
+    assert_eq!(content, "1\n4\n5\n8\n9\n");
+
     fs::remove_file("data/test/testGraph/feature_paths/stats.node.s10.txt")?;
 
     Ok(())

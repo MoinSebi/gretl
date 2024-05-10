@@ -1,5 +1,4 @@
-use crate::helpers::helper::{calculate_depth2, calculate_similarity2, node_degree, node_len};
-use crate::stats::helper::{mean_usize, median2, std_usize};
+use crate::helpers::helper::{calc_depth, calc_similarity, calc_node_degree, calc_node_len, mean, average_median_std};
 use gfa_reader::{Gfa, Pansn, Path};
 
 /// Wrapper for path statistics
@@ -21,21 +20,20 @@ pub fn path_stats_wrapper(
     let _number_samples = wrapper.genomes.len();
 
     // Calculate similarity
-    let core = calculate_similarity2(&paths, graph);
+    let core = calc_similarity(&paths, graph);
 
     // Calculate node degree
-    let node_degree = node_degree(graph);
+    let node_degree = calc_node_degree(graph);
 
     // Calculate depth
-    let depth = calculate_depth2(&paths, graph);
-    let node_size = node_len(graph);
+    let depth = calc_depth(&paths, graph);
+    let node_size = calc_node_len(graph);
 
     // Iterate over all paths and calculate statistics
     for path in paths.iter() {
-
         // We normalize everything by node number and node length
         let mut result_temp: Vec<(String, f64)> = Vec::new();
-        let path_seq = path_seq_len(&path.1, &graph) as f64;
+        let path_seq = path_seq_len(&path.1, graph) as f64;
         let path_nodes = path_node_len(&path.1) as f64;
         let dir_nodes = dir_node(&path.1) as f64;
         let edges = edges_num(&path.1);
@@ -51,7 +49,7 @@ pub fn path_stats_wrapper(
         result_temp.push(("Edges".to_string(), edges.0));
         result_temp.push(("Unique Edges".to_string(), edges.1));
 
-        let path_unique_val = path_unique2(&path.1, &graph);
+        let path_unique_val = path_unique2(&path.1, graph);
         result_temp.push(("Unique nodes".to_string(), path_unique_val.0 as f64));
         result_temp.push(("Unique nodes [bp]".to_string(), path_unique_val.1 as f64));
 
@@ -69,7 +67,7 @@ pub fn path_stats_wrapper(
             dir_nodes / edges_total_numb,
         ));
 
-        let inverted = path_seq_inverted(&path.1, &graph);
+        let inverted = path_seq_inverted(&path.1, graph);
 
         result_temp.push(("Inverted nodes".to_string(), inverted.0 as f64));
         result_temp.push(("Inverted nodes [bp]".to_string(), inverted.1 as f64));
@@ -170,23 +168,15 @@ pub fn remove_unsorted(input: &mut Vec<(String, Vec<(String, String)>)>, graph: 
     }
 }
 
-pub fn get_all_stats(input: &Vec<usize>) -> (f64, f64, f64) {
-    let mean = mean_usize(input);
-    let median = median2(input) as f64;
-    let std = std_usize(input, mean);
-
-    (mean, median, std)
-}
-
 /// Calculate the noed size
 pub fn node_size_cal(path: &Vec<&Path<u32, (), ()>>, node_sizes: &Vec<u32>) -> (f64, f64, f64) {
     let mut result = Vec::new();
     for p in path.iter() {
         for x in p.nodes.iter() {
-            result.push(node_sizes[*x as usize] as usize)
+            result.push(node_sizes[*x as usize])
         }
     }
-    let (mean, median, std) = get_all_stats(&result);
+    let (mean, median, std) = average_median_std(&result);
 
     (mean, median, std)
 }
@@ -201,15 +191,19 @@ pub fn path_node_len(path: &Vec<&Path<u32, (), ()>>) -> usize {
 pub fn path_seq_len(path: &Vec<&Path<u32, (), ()>>, graph: &Gfa<u32, (), ()>) -> usize {
     let size: usize = path
         .iter()
-        .map(|n | n.nodes.iter().map(|nn| graph.get_node_by_id(*nn).sequence.get_len()).sum::<usize>())
+        .map(|n| {
+            n.nodes
+                .iter()
+                .map(|nn| graph.get_node_by_id(*nn).sequence.get_len())
+                .sum::<usize>()
+        })
         .sum::<usize>();
     size
 }
 
 /// Number of directed nodes
 pub fn dir_node(path: &Vec<&Path<u32, (), ()>>) -> usize {
-    path
-        .iter()
+    path.iter()
         .flat_map(|l| l.nodes.iter().zip(l.dir.iter()))
         .count()
 }
@@ -239,7 +233,10 @@ pub fn path_node_inverted(path: &Path<u32, (), ()>) -> usize {
 
 #[allow(dead_code)]
 /// Count the number of inverted nodes for each path
-pub fn path_seq_inverted(path: &Vec<&Path<u32, (), ()>>, graph: &Gfa<u32, (), ()>) -> (usize, usize) {
+pub fn path_seq_inverted(
+    path: &Vec<&Path<u32, (), ()>>,
+    graph: &Gfa<u32, (), ()>,
+) -> (usize, usize) {
     let inverted = path
         .iter()
         .map(|n| n.dir.iter().filter(|&n| !(*n)).count())
@@ -271,7 +268,7 @@ pub fn path_jumps(path: &Vec<&Path<u32, (), ()>>) -> usize {
     for p in path.iter() {
         let mut last: i64 = p.nodes[0] as i64;
         for node_id in p.nodes.iter().skip(1) {
-            c += (*node_id as i64 - last as i64).unsigned_abs() as usize;
+            c += (*node_id as i64 - last).unsigned_abs() as usize;
             last = *node_id as i64
         }
     }
@@ -297,19 +294,19 @@ pub fn path_jumps_bigger(path: &Vec<&Path<u32, (), ()>>, val: Option<i32>) -> u3
 }
 
 pub fn path_unique2(path: &Vec<&Path<u32, (), ()>>, graph: &Gfa<u32, (), ()>) -> (usize, usize) {
-
     let mut hp: Vec<u32> = Vec::new();
-    for x in path.iter(){
+    for x in path.iter() {
         hp.extend(x.nodes.iter())
     }
     hp.sort();
     hp.dedup();
 
-
-    let unique_seq = hp.iter().map(|x| graph.get_node_by_id(*x).sequence.get_len()).sum();
+    let unique_seq = hp
+        .iter()
+        .map(|x| graph.get_node_by_id(*x).sequence.get_len())
+        .sum();
     (hp.len(), unique_seq)
 }
-
 
 pub fn convert_data(
     input: &mut Vec<(String, Vec<(String, f64)>)>,

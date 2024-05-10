@@ -1,16 +1,18 @@
 use crate::node_list::wrapper::wrapper_node;
 use clap::ArgMatches;
 use gfa_reader::{Gfa, Pansn};
+use log::info;
 
 /// Main function for node list
 pub fn nodelist_main(matches: &ArgMatches) {
-    eprintln!("Running node-list analysis.");
+    info!("Running 'gretl node-list'");
 
     // Parse GFA file + Wrapper
     let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(matches.value_of("gfa").unwrap());
     graph.walk_to_path();
     let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, " ");
 
+    // Other inputs
     let output = matches.value_of("output").unwrap();
     let splits = vec!["Core", "Length", "Depth", "Core", "ND"];
     let mut split_vec = Vec::new();
@@ -27,6 +29,13 @@ pub fn nodelist_main(matches: &ArgMatches) {
     if final_features.is_empty() {
         final_features = splits.clone();
     }
+    info!("Graph file: {}", matches.value_of("gfa").unwrap());
+    info!("Output file: {}", output);
+    info!("Features: {:?}", final_features);
+
+    info!("Running wrapper + writing direclty to file");
     // This wrapper also writes data to a file
     wrapper_node(&graph, &wrapper, output, final_features);
+    info!("Finished writing to file")
+
 }

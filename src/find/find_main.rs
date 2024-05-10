@@ -1,29 +1,42 @@
 use clap::ArgMatches;
 
+use gfa_reader::Gfa;
 use std::cmp::max;
 use std::collections::HashSet;
 use std::fmt::Display;
 use std::fs::File;
 use std::io::{BufRead, BufReader, Write};
-use gfa_reader::Gfa;
+use log::info;
+use crate::helpers::helper::calc_node_len;
 
+
+/// Main function of find subcommand
 pub fn find_main(matches: &ArgMatches) {
-    println!("Starting find_main");
+    info!("Running 'gretl find'");
+
+    // Inputs
     let graph_file = matches.value_of("gfa").unwrap();
     let feature_file = matches.value_of("features").unwrap();
     let output = matches.value_of("output").unwrap();
     let length = matches.value_of("length").unwrap().parse::<i128>().unwrap();
+
+    // read the feature file
     let data = FileData::from_file(feature_file);
+    // Hashset of the data
+    let data_hs = data.data.iter().collect::<HashSet<&u64>>();
+
     let feature = data.feature;
     // Read the graph
     let graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(graph_file);
     let paths = &graph.paths;
 
     // Get the node size
-    let node_size = node_size(&graph);
+    let node_size = calc_node_len(&graph);
 
-    //
+    // Start-end position of each index in the file
     let mut position_nodesize = Vec::new();
+
+    // Node, edge or dirnode stored as u64
     let mut vec_res_u64 = Vec::new();
 
     for path in paths.iter() {
@@ -31,8 +44,10 @@ pub fn find_main(matches: &ArgMatches) {
         let mut index = Vec::new();
         let mut pos = 0;
         for i in 0..path.nodes.len() - 1 {
-            index.push([pos, node_size[path.nodes[i] as usize - 1]]);
-            pos += node_size[path.nodes[i] as usize - 1];
+            index.push([pos, node_size[path.nodes[i] as usize]]);
+            pos += node_size[path.nodes[i] as usize];
+
+            // Get information for u64
             let v1 = path.nodes[i];
             let v2 = path.dir[i];
             let v3 = path.nodes[i + 1];
@@ -52,6 +67,7 @@ pub fn find_main(matches: &ArgMatches) {
         position_nodesize.push(index)
     }
 
+    /// Check the path if it contains the data
     let file = File::create(output).unwrap();
     let mut writer = std::io::BufWriter::new(file);
     let data_hs = data.data.iter().collect::<HashSet<&u64>>();
@@ -77,22 +93,13 @@ pub fn find_main(matches: &ArgMatches) {
     }
 }
 
-// Size of each node
-pub fn node_size(graph: &Gfa<u32, (), ()>) -> Vec<usize> {
-    let res = graph
-        .segments
-        .iter()
-        .map(|x| x.sequence.get_len())
-        .collect::<Vec<usize>>();
-    res
-}
+
 
 #[derive(Debug, Clone, Eq, PartialEq, Copy)]
 pub enum Feature {
     Node,
     DirNode,
     Edge,
-    Alignment,
 }
 
 impl Feature {
@@ -110,11 +117,15 @@ impl Feature {
             Feature::Node => "node".to_string(),
             Feature::DirNode => "dirnode".to_string(),
             Feature::Edge => "edge".to_string(),
-            Feature::Alignment => "alignment".to_string(),
         }
     }
 }
 
+
+
+/// Convert a string to an u64
+///
+/// Using the type of the feature
 pub fn from_string(name_input: &str, ftype: Feature) -> u64 {
     if ftype == Feature::Node {
         name_input.parse().unwrap()
@@ -138,6 +149,8 @@ pub fn from_string(name_input: &str, ftype: Feature) -> u64 {
     }
 }
 
+
+/// Convert an u64 to a string
 pub fn to_string1(input: u64, ftype: &Feature) -> String {
     if Feature::Node == *ftype {
         input.to_owned().to_string()
@@ -153,6 +166,8 @@ pub fn to_string1(input: u64, ftype: &Feature) -> String {
     }
 }
 
+
+/// Merge two u32s into a u64
 pub fn merge_u32_to_u64(high: u32, low: u32) -> u64 {
     let high_u64 = u64::from(high);
     let low_u64 = u64::from(low);
@@ -162,6 +177,8 @@ pub fn merge_u32_to_u64(high: u32, low: u32) -> u64 {
     result
 }
 
+
+/// Split a u64 into two u32s
 pub fn split_u64_to_u32s(value: u64) -> (u32, u32) {
     let low = value as u32;
     let high = (value >> 32) as u32;
@@ -169,6 +186,8 @@ pub fn split_u64_to_u32s(value: u64) -> (u32, u32) {
     (high, low)
 }
 
+
+/// Format an unsigned integer as a string
 fn format_unsigned_as_string<T: Display + Into<u64>>(name: T) -> String {
     let name_u64 = name.into();
     format!(
@@ -178,20 +197,21 @@ fn format_unsigned_as_string<T: Display + Into<u64>>(name: T) -> String {
     )
 }
 
+/// Struct to store the data from the file
+///
+/// # Fields
+/// - `data`: Vec<u64> - The data from the file
+/// - `feature`: Feature - The type of the data
+///
 pub struct FileData {
     pub data: Vec<u64>,
     pub feature: Feature,
 }
 
 impl FileData {
-    #[allow(dead_code)]
-    pub fn new() -> Self {
-        Self {
-            data: Vec::new(),
-            feature: Feature::Node,
-        }
-    }
 
+
+    /// Create a new FileData struct from a file
     pub fn from_file(filename: &str) -> Self {
         let feature = get_type(filename);
 
@@ -224,10 +244,14 @@ impl FileData {
     }
 }
 
+
+/// Find position of the first '+' or '-' in a string
 fn find_first_plus_minus(input: &str) -> Option<usize> {
     input.chars().position(|c| c == '+' || c == '-')
 }
 
+
+/// Get the type of the data in the file
 pub fn get_type(file_path: &str) -> Feature {
     let file = File::open(file_path).expect("ERROR: CAN NOT READ FILE\n");
 
@@ -240,7 +264,6 @@ pub fn get_type(file_path: &str) -> Feature {
         .split(|c| c == '+' || c == '-')
         .filter(|s| !s.is_empty()) // Filter out empty strings
         .collect();
-    println!("parts: {:?}", parts);
     let last_letter = first_line.chars().last().unwrap();
     if last_letter == '+' || last_letter == '-' {
         if parts.len() == 1 {

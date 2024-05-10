@@ -1,6 +1,6 @@
+use gfa_reader::Segment;
 use std::fs::File;
 use std::io::{BufWriter, Write};
-use gfa_reader::Segment;
 
 pub fn make_buffer(filename: &str) -> BufWriter<File> {
     let f = File::create(filename).expect("Unable to create file");

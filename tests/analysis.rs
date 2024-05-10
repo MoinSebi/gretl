@@ -204,7 +204,7 @@ fn analysis_test_sliding_window_2s() -> Result<(), Box<dyn std::error::Error>> {
         .arg("./data/example_data/testGraph_complex.gfa")
         .arg("--output")
         .arg("./data//test/testGraph/analysis/analysis.window.txt")
-        .arg("-s")
+        .arg("-w")
         .arg("2");
 
     cmd.assert().success();
@@ -221,7 +221,7 @@ fn analysis_sliding_window_2s_yeast() -> Result<(), Box<dyn std::error::Error>> 
         .arg("./data/example_data/chr5.yeast.gfa")
         .arg("--output")
         .arg("./data//test/yeast/analysis/analysis.window.txt")
-        .arg("-s")
+        .arg("-w")
         .arg("5000");
 
     cmd.assert().success();

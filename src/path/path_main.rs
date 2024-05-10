@@ -6,14 +6,16 @@ use gfa_reader::{Gfa, Pansn};
 pub fn path_main(matches: &ArgMatches) {
     let graph_file = matches.value_of("gfa").unwrap();
     let output = matches.value_of("output").unwrap();
+    let haplo = matches.is_present("pansn");
 
-    let haplo = matches.is_present("haplo");
 
     let stats: Vec<&str> = matches.values_of("stats").unwrap().collect();
     let mins: Vec<&str> = matches.values_of("mins").unwrap().collect();
     let maxs: Vec<&str> = matches.values_of("maxs").unwrap().collect();
     let mins_u32 = parse_max_min(mins, false);
     let maxs_u32 = parse_max_min(maxs, true);
+
+
     let graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(graph_file);
     let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, " ");
 

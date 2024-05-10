@@ -19,10 +19,10 @@ pub fn pan_genome(
         let mut seq = 0;
         for x in path.1.iter() {
             for node in x.nodes.iter() {
-                let level = stats[*node as usize - 1] as usize;
+                let level = stats[*node as usize] as usize;
                 if level == 1 {
                     nodes += 1;
-                    seq += graph.segments[*node as usize - 1].sequence.get_len();
+                    seq += graph.get_node_by_id(*node).sequence.get_len();
                 }
             }
         }
@@ -33,8 +33,10 @@ pub fn pan_genome(
     let max_value = stats.iter().max().unwrap();
     let mut similarity_level: Vec<(usize, usize)> = vec![(0, 0); *max_value as usize + 1];
     for (i, x) in stats.iter().enumerate() {
-        similarity_level[*x as usize].0 += 1;
-        similarity_level[*x as usize].1 += graph.segments[i].sequence.get_len();
+        if *x != 0{
+            similarity_level[*x as usize].0 += 1;
+            similarity_level[*x as usize].1 += graph.get_node_by_id(i as u32).sequence.get_len();
+        }
     }
 
     // Check if both values are the same (should be)

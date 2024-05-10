@@ -4,19 +4,20 @@ mod feature;
 mod find;
 mod helpers;
 mod id2int;
+mod logging;
 mod node_list;
 mod nwindow;
 mod path;
 mod path_similarity;
 mod sliding_window;
 mod stats;
-mod logging;
 
 use crate::bootstrap::bootstrap_main::bootstrap_main;
 use crate::core::core_main::core_main;
-use crate::feature::feature_main::feature_main2;
+use crate::feature::feature_main::feature_main;
 use crate::find::find_main::find_main;
 use crate::id2int::id2int_main::id2int_main;
+use crate::logging::newbuilder;
 use crate::node_list::node_list_main::nodelist_main;
 use crate::nwindow::nwindow_main::nwindow_main;
 use crate::path::path_main::path_main;
@@ -24,7 +25,6 @@ use crate::path_similarity::ps_main::ps_main;
 use crate::sliding_window::sliding_window_main::window_main;
 use crate::stats::stats_main::stats_main;
 use clap::{App, AppSettings, Arg};
-use crate::logging::newbuilder;
 
 fn main() {
     let matches = App::new("gretl")
@@ -202,7 +202,7 @@ fn main() {
                 .short('d')))
 
         .subcommand(App::new("window")
-            .about("Sliding window along the samples")
+            .about("Sliding window analysis (path-centric)")
             .arg(Arg::new("gfa")
                 .short('g')
                 .long("gfa")
@@ -215,27 +215,23 @@ fn main() {
                 .about("Output")
                 .takes_value(true)
                 .required(true))
-            .arg(Arg::new("Pan-SN")
-                .long("pansn")
-                .about("Seperate by first entry in Pan-SN spec")
+            .arg(Arg::new("window-size")
+                .short('w')
+                .long("window-size")
+                .about("Size of a single window [bp]")
                 .takes_value(true))
-            .arg(Arg::new("size")
-                .short('s')
-                .long("window")
-                .about("Window on sequence")
-                .takes_value(true))
-            .arg(Arg::new("step")
-                .long("step")
-                .about("Step size (If nothing is set, step size -> bin size")
+            .arg(Arg::new("moving-size")
+                .short('m')
+                .long("moving-size")
+                .about("Moving (step) size (If nothing is set, step size -> bin size")
                 .takes_value(true))
             .arg(Arg::new("node")
                 .short('n')
                 .long("node")
-                .about("Window on nodes nodes ([default: off] -> on sequence)"))
+                .about("Window on node level ([default: off] -> on sequence)"))
             .arg(Arg::new("metric")
-                .short('m')
                 .long("metric")
-                .about("Which metric")
+                .about("Metrics. Example: 'similarity', 'nodesize', 'depth' [default: similarity]")
                 .takes_value(true)))
 
 
@@ -317,7 +313,7 @@ fn main() {
 
 
         .subcommand(App::new("feature")
-            .about("Get list of nodes which do not fall into settings")
+            .about("Get list of nodes which do not fall into filter")
             .arg(Arg::new("gfa")
                 .short('g')
                 .long("gfa")
@@ -331,6 +327,12 @@ fn main() {
                 .takes_value(true)
                 .required(true)
             )
+            .arg(Arg::new("PanSN")
+                .short('p')
+                .long("pansn")
+                .about("Specify PanSN separator")
+                .takes_value(true))
+
             .arg(Arg::new("min-len")
                 .short('l')
                 .long("min-len")
@@ -376,7 +378,7 @@ fn main() {
 
 
         .subcommand(App::new("path")
-            .about("Remove paths")
+            .about("Chose path/samples based on filtering criteria")
             .arg(Arg::new("gfa")
                 .short('g')
                 .long("gfa")
@@ -457,7 +459,6 @@ fn main() {
     // Read the graph
     newbuilder(&matches);
 
-
     if let Some(matches) = matches.subcommand_matches("core") {
         core_main(matches);
     } else if let Some(matches) = matches.subcommand_matches("bootstrap") {
@@ -473,7 +474,7 @@ fn main() {
     } else if let Some(matches) = matches.subcommand_matches("window") {
         window_main(matches);
     } else if let Some(matches) = matches.subcommand_matches("feature") {
-        feature_main2(matches);
+        feature_main(matches);
     } else if let Some(matches) = matches.subcommand_matches("path") {
         path_main(matches);
     } else if let Some(matches) = matches.subcommand_matches("nwindow") {

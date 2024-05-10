@@ -5,6 +5,8 @@ use gfa_reader::Gfa;
 use log::info;
 
 pub fn nwindow_main(matches: &ArgMatches) {
+    info!("Running 'gretl nwindow'");
+
     let mut window_nodes = u32::MAX;
     let mut window_size = u32::MAX;
     let mut window_metric = u32::MAX;
@@ -40,9 +42,21 @@ pub fn nwindow_main(matches: &ArgMatches) {
         }
     }
 
-    let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(matches.value_of("gfa").unwrap());
+    info!("Gfa file: {}", matches.value_of("gfa").unwrap());
+    info!("Output file: {}", matches.value_of("output").unwrap());
+    info!("Window nodes: {}", window_nodes);
+    info!("Window size: {}", window_size);
+    info!("Window metric: {}", window_metric);
+    info!("Sum nodes: {}", sum_nodes);
+    info!("Sum length: {}", sum_length);
+    info!("Sum jumps: {}", sum_jumps);
+    info!("Return type: {}", rtype);
 
+
+    // Read the graph
+    let graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(matches.value_of("gfa").unwrap());
     let output = matches.value_of("output").unwrap();
+
 
     let a = stats2(
         &graph,
@@ -53,6 +67,6 @@ pub fn nwindow_main(matches: &ArgMatches) {
     );
 
     info!("Writing to file: {}", output);
-    let mut ff = make_buffer(output);
-    write_list(&a, &mut ff, &graph.segments);
+    let mut buffer = make_buffer(output);
+    write_list(&a, &mut buffer, &graph.segments);
 }

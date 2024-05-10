@@ -1,14 +1,14 @@
-use crate::helpers::helper::{calculate_depth2, calculate_similarity2, node_degree_total};
+use crate::helpers::helper::{calc_depth, calc_similarity, calc_node_degree};
 use gfa_reader::{Gfa, Pansn};
 
 pub fn get_stats(wrapper: &Pansn<u32, (), ()>, graph: &Gfa<u32, (), ()>, kind: &str) -> Vec<u32> {
     let paths = wrapper.get_path_genome();
 
     if kind == "depth" {
-        calculate_depth2(&paths, graph)
+        calc_depth(&paths, graph)
     } else if kind == "nd" {
-        return node_degree_total(graph);
+        return calc_node_degree(graph).2;
     } else {
-        return calculate_similarity2(&paths, graph);
+        return calc_similarity(&paths, graph);
     }
 }

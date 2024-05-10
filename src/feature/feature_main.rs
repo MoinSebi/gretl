@@ -1,10 +1,14 @@
-use crate::feature::writer::write_list;
-use crate::helpers::helper::{calculate_depth2, node_degree};
-use crate::stats::graph_stats::calculate_node_size;
+use crate::helpers::helper::{calc_depth, calc_node_degree, calc_node_len};
 use clap::ArgMatches;
 use gfa_reader::{Gfa, Pansn};
+use std::fs::File;
+use std::io::{BufWriter, Write};
+use log::info;
+use nalgebra::inf;
 
-pub fn feature_main2(matches: &ArgMatches) {
+
+/// Feature main function
+pub fn feature_main(matches: &ArgMatches) {
     // input, output
     let graph_file = matches.value_of("gfa").unwrap();
     let file_output = matches.value_of("output").unwrap();
@@ -31,12 +35,15 @@ pub fn feature_main2(matches: &ArgMatches) {
         .unwrap_or("-9")
         .parse()
         .unwrap();
-    let _pansn = matches.value_of("pansn").unwrap_or(" ");
+    let pansn_sep = matches.value_of("PanSN").unwrap_or(" ");
 
+    info!("Running feature filter");
+
+
+    // Read the graph and make wrapper
     let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(graph_file);
     graph.walk_to_path();
-    let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, "#");
-    println!("{}", minlen);
+    let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, pansn_sep);
 
     if maxdegree == maxdepth
         && maxdegree == maxlen
@@ -57,18 +64,30 @@ pub fn feature_main2(matches: &ArgMatches) {
             maxdegree = i128::MAX;
         }
     }
-    println!("{}", maxlen);
 
-    let result = runner1(
+    info!("Graph file: {}", graph_file);
+    info!("Output file: {}", file_output);
+    info!("Max length: {}", maxlen);
+    info!("Min length: {}", minlen);
+    info!("Max degree: {}", maxdegree);
+    info!("Min degree: {}", mindegree);
+    info!("Max depth: {}", maxdepth);
+    info!("Min depth: {}", mindepth);
+    info!("PanSN separator: {}", pansn_sep);
+
+    // Run filter
+    let result = feature_filter(
         &graph, &wrapper, mindepth, mindegree, minlen, maxlen, maxdegree, maxdepth,
     );
-    println!("{:?}", result);
-    println!("{:?}", file_output);
 
+    info!("Write output");
+    // Write output
     write_list(&result, file_output);
 }
 
-pub fn runner1(
+
+/// Filter feature by length, degree and depth
+pub fn feature_filter(
     graph: &Gfa<u32, (), ()>,
     wrapper: &Pansn<u32, (), ()>,
     mindepth: i128,
@@ -81,23 +100,36 @@ pub fn runner1(
     let paths = wrapper.get_path_genome();
 
     let mut result = Vec::new();
-    let size = calculate_node_size(graph);
-    let degree = node_degree(graph);
-    let depth = calculate_depth2(&paths, graph);
+    let size = calc_node_len(graph);
+    let degree = calc_node_degree(graph).2;
+    let depth = calc_depth(&paths, graph);
     for (i, (s, (deg, dep))) in size
         .iter()
-        .zip(degree.2.iter().zip(depth.iter()))
+        .zip(degree.iter().zip(depth.iter()))
         .enumerate()
     {
-        if *s as i128 > minlen
-            && *deg as i128 > mindegree
-            && *dep as i128 > mindepth
-            && (*s as i128) < maxlen
-            && (*deg as i128) < maxdegree
-            && (*dep as i128) < maxdepth
-        {
-            result.push(i)
+        if s != &0 {
+            if *s as i128 > minlen
+                && *deg as i128 > mindegree
+                && *dep as i128 > mindepth
+                && (*s as i128) < maxlen
+                && (*deg as i128) < maxdegree
+                && (*dep as i128) < maxdepth
+            {
+                result.push(i)
+            }
         }
     }
     result
 }
+
+/// Write the nodes to a file
+pub fn write_list(data: &Vec<usize>, filename: &str) {
+    let f = File::create(filename).expect("Unable to create file");
+    let mut f = BufWriter::new(f);
+
+    for x in data.iter() {
+        writeln!(f, "{}", x).expect("Write list error");
+    }
+}
+

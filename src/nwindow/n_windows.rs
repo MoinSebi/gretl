@@ -1,9 +1,8 @@
-use crate::helpers::helper::node_len;
+use crate::helpers::helper::calc_node_len;
 
-
+use gfa_reader::Gfa;
 use std::cmp::{max, min};
 use std::collections::{HashMap, HashSet};
-use gfa_reader::Gfa;
 
 pub fn node2node_init(graph: &Gfa<u32, (), ()>) -> HashMap<u32, HashSet<u32>> {
     let mut map: HashMap<u32, HashSet<u32>> = HashMap::new();
@@ -36,7 +35,7 @@ pub fn stats2(
     nn.sort();
 
     // Get all the nodes
-    let ss = node_len(graph);
+    let ss = calc_node_len(graph);
 
     // Result collector
     let mut result: Vec<[u128; 3]> = Vec::with_capacity(nn.len());
@@ -105,7 +104,7 @@ pub fn iterator(
             seen.insert(*y);
             next_nodes.extend(&nodes2nodes[y]);
             result.push(*y);
-            *total_size += sizes[(*y as usize) - 1];
+            *total_size += sizes[(*y as usize)];
             *total_jumps += (max(last_node, y) - min(last_node, y)) as u128;
         }
     }
@@ -124,7 +123,7 @@ pub fn get_jumps(node1: u32, go_to: &Vec<u32>) -> u128 {
 pub fn get_sequence(_node1: u32, go_to: &Vec<u32>, sizes: &Vec<u32>) -> u32 {
     let mut total_sequence = 0;
     for node in go_to.iter() {
-        total_sequence += sizes[(*node as usize) - 1];
+        total_sequence += sizes[*node as usize];
     }
     total_sequence
 }

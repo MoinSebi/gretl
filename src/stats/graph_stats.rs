@@ -1,10 +1,9 @@
-use crate::helpers::helper::{calculate_depth2, calculate_similarity2, node_degree, node_len};
-use crate::stats::helper::{average_median_std, mean, mean321, median};
+use crate::helpers::helper::{calc_depth, calc_similarity, calc_node_degree, calc_node_len};
+use crate::helpers::helper::{average_median_std, mean, median};
 use crate::stats::hybrid_stats::path_stats_wrapper2;
 use gfa_reader::{Gfa, Pansn};
-use std::cmp::max;
 use log::info;
-use nalgebra::inf;
+use std::cmp::max;
 
 /// Wrapper for graph statistics
 pub fn graph_stats_wrapper(
@@ -13,7 +12,6 @@ pub fn graph_stats_wrapper(
     bins: Vec<u32>,
     haplo: bool,
 ) -> Vec<(String, String)> {
-
     let mut result: Vec<(String, String)> = Vec::new();
 
     let paths;
@@ -23,9 +21,10 @@ pub fn graph_stats_wrapper(
         paths = wrapper.get_path_genome();
     }
     let number_samples = wrapper.genomes.len();
-    let depth = calculate_depth2(&paths, graph);
 
-    let mut core = calculate_similarity2(&paths, graph);
+
+    let depth = calc_depth(&paths, graph);
+    let core = calc_similarity(&paths, graph);
 
     // Basic stats
     let path_number = graph_path_number(graph);
@@ -59,7 +58,7 @@ pub fn graph_stats_wrapper(
         graph_node_median.to_string(),
     ));
 
-    let mut node_size = node_len(graph);
+    let mut node_size = calc_node_len(graph);
 
     let size5 = size5pro(&mut node_size);
     result.push((
@@ -78,7 +77,7 @@ pub fn graph_stats_wrapper(
     }
 
     // Depth
-    let (a1, a2, a3) = average_median_std(&mut core);
+    let (a1, a2, a3) = average_median_std(& core);
     result.push(("Similarity mean".to_string(), a1.to_string()));
     result.push(("Similarity median".to_string(), a2.to_string()));
     result.push(("Similarity std".to_string(), a3.to_string()));
@@ -117,7 +116,7 @@ pub fn graph_stats_wrapper(
 
     // Node degree
     let (graph_degree_in_average, graph_degree_out_average, graph_degree_total_average) =
-        node_degree(graph);
+        calc_node_degree(graph);
     result.push((
         "Node degree (in)".to_string(),
         mean(&graph_degree_in_average).to_string(),
@@ -180,7 +179,7 @@ fn graph_node_number(graph: &Gfa<u32, (), ()>) -> usize {
 
 /// Number of edges
 fn graph_edge_number(graph: &Gfa<u32, (), ()>) -> usize {
-    return graph.links.len();
+    graph.links.len()
 }
 
 /// Calculate total size of all input genomes
@@ -201,20 +200,15 @@ pub fn graph_path_seq_total(graph: &Gfa<u32, (), ()>) -> usize {
 /// Compute mean+median node size and total graph size
 ///
 /// Sum all nodes in the graph and divide it by the number of nodes
-pub fn graph_node_stats(graph: &Gfa<u32, (), ()>) -> (f64, f64, u32) {
-    let mut vec_size: Vec<u32> = calculate_node_size(graph);
-
+pub fn graph_node_stats(graph: &Gfa<u32, (), ()>) -> (f64, f64, f64) {
+    let mut vec_size: Vec<u32> = calc_node_len(graph);
     vec_size.sort();
-    let average = mean(&vec_size);
-    let med = median(&mut vec_size);
-    let sums: u32 = vec_size.iter().sum();
-    (average, med, sums)
+    let (average, median, std) = average_median_std(&vec_size);
+    let sums = vec_size.iter().sum::<u32>() as f64;
+    (average, median, sums)
 }
 
-pub fn calculate_node_size(graph: &Gfa<u32, (), ()>) -> Vec<u32> {
-    let vec_size: Vec<u32> = graph.segments.iter().map(|n| n.sequence.get_len() as u32).collect();
-    vec_size
-}
+
 
 /// Calculate graph density
 pub fn graph_density(graph: &Gfa<u32, (), ()>) -> f64 {
@@ -224,10 +218,11 @@ pub fn graph_density(graph: &Gfa<u32, (), ()>) -> f64 {
     e as f64 / (n * (n - 1)) as f64
 }
 
-/// Calculate number of inverted edges
-/// Edges which change direction
+/// Calculate number of inverted links
+/// Links which change direction
 pub fn inverted_edges(graph: &Gfa<u32, (), ()>) -> usize {
-    let inverted: usize = graph.links
+    let inverted: usize = graph
+        .links
         .iter()
         .filter(|n| n.to_dir != n.from_dir)
         .count();
@@ -267,9 +262,11 @@ pub fn bin_nodes_count_and_size(value: &Vec<u32>, bins: Vec<u32>) -> Vec<(String
     let mut result = vec![0; bins.len()];
     for x in value.iter() {
         for (i, y) in bins.iter().enumerate() {
-            if x <= y {
-                result[i] += 1;
-                break;
+            if x != &0 {
+                if x <= y {
+                    result[i] += 1;
+                    break;
+                }
             }
         }
     }
@@ -304,12 +301,14 @@ pub fn bin_nodes_count_and_size(value: &Vec<u32>, bins: Vec<u32>) -> Vec<(String
 
 /// Top 5 percent of something
 pub fn size5pro(f: &mut Vec<u32>) -> (f64, f64) {
-    let mut a = f.iter().map(|n| *n as usize).collect::<Vec<usize>>();
+
+    let mut a: Vec<_> = f.iter().map(|n| *n).collect();
+    a.retain(|&x| x != 0);
     a.sort_by(|a, b| b.cmp(a));
-    let top5: &[usize] = &a[0..max(1, (a.len() as f64 * 0.05) as usize)];
+    let top5 = &a[0..max(1, (a.len() as f64 * 0.05) as usize)].to_vec();
 
     (
-        median(&top5.iter().map(|n| *n as u32).collect()),
-        mean321(&top5.iter().map(|n| *n as f64).collect::<Vec<f64>>()),
+        median(&top5),
+        mean(&top5),
     )
 }

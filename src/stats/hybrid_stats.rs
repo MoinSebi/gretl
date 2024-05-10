@@ -1,6 +1,6 @@
-use crate::stats::helper::{mean321, stadard_deviation_2};
 use crate::stats::path_stats::path_stats_wrapper;
 use gfa_reader::{Gfa, Pansn};
+use crate::helpers::helper::{mean, standard_deviation};
 
 /// Wrapper for path statistics
 pub fn path_stats_wrapper2(
@@ -28,10 +28,10 @@ pub fn path_stats_wrapper2(
 
     let mut result = Vec::new();
     for (data, name) in tmp_res.iter().zip(tmp_names.iter()) {
-        result.push(("Path ".to_string() + &name + " (average)", mean321(data)));
+        result.push(("Path ".to_string() + &name + " (average)", mean(data)));
         result.push((
             "Path ".to_string() + &name + " (std)",
-            stadard_deviation_2(data),
+            standard_deviation(data, mean(data)),
         ));
     }
 
