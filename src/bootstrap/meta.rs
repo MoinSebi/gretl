@@ -125,7 +125,7 @@ pub fn test1(
 pub fn make_vec(t: &Vec<&Path<u32, (), ()>>, length: usize) -> Vec<u32> {
     let mut vec1 = vec![0; length + 1];
     for a in t.iter() {
-        a.nodes.iter().for_each(|x| vec1[*x as usize ] = 1);
+        a.nodes.iter().for_each(|x| vec1[*x as usize] = 1);
     }
     vec1
 }

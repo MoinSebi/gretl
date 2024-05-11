@@ -93,7 +93,7 @@ fn stats_path_yaml() -> Result<(), Box<dyn std::error::Error>> {
         .arg("./data/test/testGraph/stats/stats.path.yaml");
 
     cmd.assert().success();
-    let content: String = {
+    let _content: String = {
         let mut file = File::open("./data/test/testGraph/stats/stats.path.yaml")?;
         let mut content = String::new();
         file.read_to_string(&mut content)?;

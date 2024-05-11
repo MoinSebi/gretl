@@ -1,4 +1,4 @@
-use crate::helpers::helper::{calc_depth, calc_similarity, calc_node_len};
+use crate::helpers::helper::{calc_depth, calc_node_len, calc_similarity};
 use crate::sliding_window::sliding_window_main::Metric;
 use gfa_reader::{Gfa, Pansn, Path};
 use std::fmt::Debug;

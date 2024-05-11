@@ -8,7 +8,12 @@ pub fn make_buffer(filename: &str) -> BufWriter<File> {
 }
 
 pub fn write_header(data: &Vec<u32>, f: &mut BufWriter<File>) {
-    let f1: Vec<String> = data.iter().enumerate().filter(|x| *x.1 != 0).map(|x| x.0.to_string()).collect();
+    let f1: Vec<String> = data
+        .iter()
+        .enumerate()
+        .filter(|x| *x.1 != 0)
+        .map(|x| x.0.to_string())
+        .collect();
     writeln!(f, "Nodes\t{}", f1.join("\t")).expect("hilfe");
 }
 

@@ -45,11 +45,7 @@ pub fn calc_similarity(
 ) -> Vec<u32> {
     let mut depth: Vec<u32> = vec![0; graph.segments.iter().max().unwrap().id as usize + 1];
     for p in wrapper.iter() {
-        let mut path_nodes: Vec<u32> =
-            p.1.iter()
-                .flat_map(|x| x.nodes.iter())
-                .cloned()
-                .collect();
+        let mut path_nodes: Vec<u32> = p.1.iter().flat_map(|x| x.nodes.iter()).cloned().collect();
         path_nodes.sort();
         path_nodes.dedup();
         for x in path_nodes.iter() {
@@ -77,7 +73,6 @@ pub fn calc_node_degree(graph: &Gfa<u32, (), ()>) -> (Vec<u32>, Vec<u32>, Vec<u3
     (degree_in, degree_out, degree_total)
 }
 
-
 /// Compute the node len
 ///
 /// Return a vector
@@ -91,8 +86,8 @@ pub fn calc_node_len(graph: &Gfa<u32, (), ()>) -> Vec<u32> {
 }
 
 pub fn mean<T>(data: &[T]) -> f64
-    where
-        T: Into<f64> + Copy,
+where
+    T: Into<f64> + Copy,
 {
     if data.is_empty() {
         return f64::NAN;
@@ -103,8 +98,8 @@ pub fn mean<T>(data: &[T]) -> f64
 }
 
 pub fn median<T>(data: &[T]) -> f64
-    where
-        T: PartialOrd + Into<f64> + Copy,
+where
+    T: PartialOrd + Into<f64> + Copy,
 {
     let mut sorted_data: Vec<T> = data.to_vec();
     sorted_data.sort_by(|a, b| a.partial_cmp(b).unwrap());
@@ -126,8 +121,8 @@ pub fn median<T>(data: &[T]) -> f64
 }
 
 pub fn standard_deviation<T>(data: &[T], mean: f64) -> f64
-    where
-        T: Into<f64> + Copy,
+where
+    T: Into<f64> + Copy,
 {
     let n = data.len();
     if n == 0 {
@@ -135,22 +130,24 @@ pub fn standard_deviation<T>(data: &[T], mean: f64) -> f64
     }
 
     // Sum of squared differences from the mean
-    let sum_of_squares: f64 = data.iter().map(|&x| {
-        let val = x.into();
-        let diff = val - mean;
-        diff * diff
-    }).sum();
+    let sum_of_squares: f64 = data
+        .iter()
+        .map(|&x| {
+            let val = x.into();
+            let diff = val - mean;
+            diff * diff
+        })
+        .sum();
 
     // Calculate variance and standard deviation
     let variance = sum_of_squares / (n as f64);
     variance.sqrt()
 }
 
-
 /// Combi function for average, median and std
 pub fn average_median_std<T>(vec_size: &Vec<T>) -> (f64, f64, f64)
-    where
-        T: Into<f64> + Copy + PartialOrd + Ord + Default,
+where
+    T: Into<f64> + Copy + PartialOrd + Ord + Default,
 {
     let mut vec_size = vec_size.clone();
     vec_size.sort();
@@ -162,4 +159,3 @@ pub fn average_median_std<T>(vec_size: &Vec<T>) -> (f64, f64, f64)
 
     (average, med, std)
 }
-

@@ -1,5 +1,5 @@
-use crate::helpers::helper::{calc_depth, calc_similarity, calc_node_degree, calc_node_len};
 use crate::helpers::helper::{average_median_std, mean, median};
+use crate::helpers::helper::{calc_depth, calc_node_degree, calc_node_len, calc_similarity};
 use crate::stats::hybrid_stats::path_stats_wrapper2;
 use gfa_reader::{Gfa, Pansn};
 use log::info;
@@ -21,7 +21,6 @@ pub fn graph_stats_wrapper(
         paths = wrapper.get_path_genome();
     }
     let number_samples = wrapper.genomes.len();
-
 
     let depth = calc_depth(&paths, graph);
     let core = calc_similarity(&paths, graph);
@@ -77,7 +76,7 @@ pub fn graph_stats_wrapper(
     }
 
     // Depth
-    let (a1, a2, a3) = average_median_std(& core);
+    let (a1, a2, a3) = average_median_std(&core);
     result.push(("Similarity mean".to_string(), a1.to_string()));
     result.push(("Similarity median".to_string(), a2.to_string()));
     result.push(("Similarity std".to_string(), a3.to_string()));
@@ -208,8 +207,6 @@ pub fn graph_node_stats(graph: &Gfa<u32, (), ()>) -> (f64, f64, f64) {
     (average, median, sums)
 }
 
-
-
 /// Calculate graph density
 pub fn graph_density(graph: &Gfa<u32, (), ()>) -> f64 {
     let n = graph.segments.len();
@@ -301,14 +298,10 @@ pub fn bin_nodes_count_and_size(value: &Vec<u32>, bins: Vec<u32>) -> Vec<(String
 
 /// Top 5 percent of something
 pub fn size5pro(f: &mut Vec<u32>) -> (f64, f64) {
-
     let mut a: Vec<_> = f.iter().map(|n| *n).collect();
     a.retain(|&x| x != 0);
     a.sort_by(|a, b| b.cmp(a));
     let top5 = &a[0..max(1, (a.len() as f64 * 0.05) as usize)].to_vec();
 
-    (
-        median(&top5),
-        mean(&top5),
-    )
+    (median(&top5), mean(&top5))
 }

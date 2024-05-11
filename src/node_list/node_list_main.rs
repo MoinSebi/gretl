@@ -37,5 +37,4 @@ pub fn nodelist_main(matches: &ArgMatches) {
     // This wrapper also writes data to a file
     wrapper_node(&graph, &wrapper, output, final_features);
     info!("Finished writing to file")
-
 }

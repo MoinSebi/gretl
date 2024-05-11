@@ -1,11 +1,9 @@
 use crate::helpers::helper::{calc_depth, calc_node_degree, calc_node_len};
 use clap::ArgMatches;
 use gfa_reader::{Gfa, Pansn};
+use log::info;
 use std::fs::File;
 use std::io::{BufWriter, Write};
-use log::info;
-use nalgebra::inf;
-
 
 /// Feature main function
 pub fn feature_main(matches: &ArgMatches) {
@@ -38,7 +36,6 @@ pub fn feature_main(matches: &ArgMatches) {
     let pansn_sep = matches.value_of("PanSN").unwrap_or(" ");
 
     info!("Running feature filter");
-
 
     // Read the graph and make wrapper
     let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(graph_file);
@@ -85,7 +82,6 @@ pub fn feature_main(matches: &ArgMatches) {
     write_list(&result, file_output);
 }
 
-
 /// Filter feature by length, degree and depth
 pub fn feature_filter(
     graph: &Gfa<u32, (), ()>,
@@ -103,11 +99,7 @@ pub fn feature_filter(
     let size = calc_node_len(graph);
     let degree = calc_node_degree(graph).2;
     let depth = calc_depth(&paths, graph);
-    for (i, (s, (deg, dep))) in size
-        .iter()
-        .zip(degree.iter().zip(depth.iter()))
-        .enumerate()
-    {
+    for (i, (s, (deg, dep))) in size.iter().zip(degree.iter().zip(depth.iter())).enumerate() {
         if s != &0 {
             if *s as i128 > minlen
                 && *deg as i128 > mindegree
@@ -132,4 +124,3 @@ pub fn write_list(data: &Vec<usize>, filename: &str) {
         writeln!(f, "{}", x).expect("Write list error");
     }
 }
-

@@ -1,7 +1,6 @@
 use crate::helpers::helper::calc_similarity;
 use gfa_reader::{Gfa, Pansn};
 
-
 /// Compute the amount of sequence in each similarity level
 pub fn accession2level(
     graph: &Gfa<u32, (), ()>,
@@ -15,7 +14,7 @@ pub fn accession2level(
     for (name, p) in paths.iter() {
         let mut core_data: Vec<(u32, u32)> = vec![(0, 0); *metric_maxval as usize + 1];
         let mut ll = Vec::new();
-        for k in p.iter(){
+        for k in p.iter() {
             ll.extend(k.nodes.clone());
         }
         ll.sort();
@@ -24,8 +23,7 @@ pub fn accession2level(
             let metric_value = cores[*x as usize] as usize;
 
             core_data[metric_value].0 += 1;
-            core_data[metric_value].1 +=
-                graph.get_node_by_id(*x).sequence.get_len() as u32;
+            core_data[metric_value].1 += graph.get_node_by_id(*x).sequence.get_len() as u32;
         }
         res.push((name.clone(), core_data));
     }

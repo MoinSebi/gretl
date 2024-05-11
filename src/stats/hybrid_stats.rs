@@ -1,6 +1,6 @@
+use crate::helpers::helper::{mean, standard_deviation};
 use crate::stats::path_stats::path_stats_wrapper;
 use gfa_reader::{Gfa, Pansn};
-use crate::helpers::helper::{mean, standard_deviation};
 
 /// Wrapper for path statistics
 pub fn path_stats_wrapper2(

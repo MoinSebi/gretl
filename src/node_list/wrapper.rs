@@ -1,4 +1,4 @@
-use crate::helpers::helper::{calc_depth, calc_similarity, calc_node_degree, calc_node_len};
+use crate::helpers::helper::{calc_depth, calc_node_degree, calc_node_len, calc_similarity};
 use crate::node_list::writer::{make_buffer, write_header, write_list};
 use gfa_reader::{Gfa, Pansn};
 use log::info;

@@ -33,7 +33,7 @@ pub fn pan_genome(
     let max_value = stats.iter().max().unwrap();
     let mut similarity_level: Vec<(usize, usize)> = vec![(0, 0); *max_value as usize + 1];
     for (i, x) in stats.iter().enumerate() {
-        if *x != 0{
+        if *x != 0 {
             similarity_level[*x as usize].0 += 1;
             similarity_level[*x as usize].1 += graph.get_node_by_id(i as u32).sequence.get_len();
         }

@@ -3,7 +3,6 @@ use crate::sliding_window::writer::write_window;
 use clap::ArgMatches;
 use gfa_reader::{Gfa, Pansn};
 use log::info;
-use nalgebra::inf;
 
 /// Main function for node id to integer function
 pub fn window_main(matches: &ArgMatches) {
@@ -12,7 +11,6 @@ pub fn window_main(matches: &ArgMatches) {
     graph.walk_to_path("#");
     let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, " ");
     let output = matches.value_of("output").unwrap();
-    let b = wrapper.get_haplo_path();
     let mut size: u32 = 100000;
     if matches.is_present("window-size") {
         size = matches.value_of("window-size").unwrap().parse().unwrap();
@@ -44,7 +42,6 @@ pub fn window_main(matches: &ArgMatches) {
     info!("Moving size: {}", step);
     info!("Node: {}", node);
     info!("Metric: {:?}", "Similarity");
-
 
     info!("Sliding window analysis");
     let f = sliding_window_wrapper(&graph, &wrapper, size, step, metric, node);

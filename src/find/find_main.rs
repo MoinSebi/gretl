@@ -1,14 +1,13 @@
 use clap::ArgMatches;
 
+use crate::helpers::helper::calc_node_len;
 use gfa_reader::Gfa;
+use log::info;
 use std::cmp::max;
 use std::collections::HashSet;
 use std::fmt::Display;
 use std::fs::File;
 use std::io::{BufRead, BufReader, Write};
-use log::info;
-use crate::helpers::helper::calc_node_len;
-
 
 /// Main function of find subcommand
 pub fn find_main(matches: &ArgMatches) {
@@ -93,8 +92,6 @@ pub fn find_main(matches: &ArgMatches) {
     }
 }
 
-
-
 #[derive(Debug, Clone, Eq, PartialEq, Copy)]
 pub enum Feature {
     Node,
@@ -120,8 +117,6 @@ impl Feature {
         }
     }
 }
-
-
 
 /// Convert a string to an u64
 ///
@@ -149,7 +144,6 @@ pub fn from_string(name_input: &str, ftype: Feature) -> u64 {
     }
 }
 
-
 /// Convert an u64 to a string
 pub fn to_string1(input: u64, ftype: &Feature) -> String {
     if Feature::Node == *ftype {
@@ -166,7 +160,6 @@ pub fn to_string1(input: u64, ftype: &Feature) -> String {
     }
 }
 
-
 /// Merge two u32s into a u64
 pub fn merge_u32_to_u64(high: u32, low: u32) -> u64 {
     let high_u64 = u64::from(high);
@@ -177,7 +170,6 @@ pub fn merge_u32_to_u64(high: u32, low: u32) -> u64 {
     result
 }
 
-
 /// Split a u64 into two u32s
 pub fn split_u64_to_u32s(value: u64) -> (u32, u32) {
     let low = value as u32;
@@ -185,7 +177,6 @@ pub fn split_u64_to_u32s(value: u64) -> (u32, u32) {
 
     (high, low)
 }
-
 
 /// Format an unsigned integer as a string
 fn format_unsigned_as_string<T: Display + Into<u64>>(name: T) -> String {
@@ -209,8 +200,6 @@ pub struct FileData {
 }
 
 impl FileData {
-
-
     /// Create a new FileData struct from a file
     pub fn from_file(filename: &str) -> Self {
         let feature = get_type(filename);
@@ -244,12 +233,10 @@ impl FileData {
     }
 }
 
-
 /// Find position of the first '+' or '-' in a string
 fn find_first_plus_minus(input: &str) -> Option<usize> {
     input.chars().position(|c| c == '+' || c == '-')
 }
-
 
 /// Get the type of the data in the file
 pub fn get_type(file_path: &str) -> Feature {

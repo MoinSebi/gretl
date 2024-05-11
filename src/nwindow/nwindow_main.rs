@@ -52,11 +52,9 @@ pub fn nwindow_main(matches: &ArgMatches) {
     info!("Sum jumps: {}", sum_jumps);
     info!("Return type: {}", rtype);
 
-
     // Read the graph
     let graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(matches.value_of("gfa").unwrap());
     let output = matches.value_of("output").unwrap();
-
 
     let a = stats2(
         &graph,

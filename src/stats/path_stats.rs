@@ -1,4 +1,6 @@
-use crate::helpers::helper::{calc_depth, calc_similarity, calc_node_degree, calc_node_len, mean, average_median_std};
+use crate::helpers::helper::{
+    average_median_std, calc_depth, calc_node_degree, calc_node_len, calc_similarity, mean,
+};
 use gfa_reader::{Gfa, Pansn, Path};
 
 /// Wrapper for path statistics
