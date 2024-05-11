@@ -1,6 +1,6 @@
 # gretl - Graph evaluation toolkit
 ## Description 
-Small tool for basic graph statistics using GFA format. Our statistics are based on nodes, edges and paths. Walks can also be used, but will be represented as paths internally. 
+Tool for basic graph statistics using GFA format input. Our statistics are based on nodes, edges and paths. Walks can also be used, but will be represented as paths internally. Many commands do not work without paths/walk information. 
 
 ## Installation: 
 
@@ -12,7 +12,7 @@ cargo build --release
 ./target/release/gretl  
 ```
 ## Testing
-We provide a small test suite to test the basic functionality of the tool. If you are interested in output format, check the data/test/yeast/ directory after running this command.
+We provide a small test suite to test the basic functionality of the tool. If you are interested in output format, check the data/test/yeast/ directory after running the following command.
 
 ```
 cargo test
@@ -21,33 +21,40 @@ cargo test
 ## Usage
 ### Stats
 
-Calculate graph or path (-p) statistics. Please consider using the ```--pansn``` option to separate by sample and not path. You are able to adjust the bins if you want using the ```--bins``` option.  
+Calculate statistics on GFA file. A list of all stats can be found [here](paper/stats_explained.md). Please consider using the ```--pansn``` option to separate by sample and not path. Read more information about PanSN-spec [here](https://github.com/pangenome/PanSN-spec). 
 
-Graph statistics also include "hybrid" statistics, which are average and standard deviation of path statistics. All hybrid stats have the prefix "Path". A full list of all statistics be found in paper directory in this repository. 
+Available options: 
+- ```-bins``` Adjust number and size of bins. Histogram-like statistics which classify nodes by their length into bins. 
+- ```-path``` Report statistcs for each path in the graph.
+- ```-y``` Report output in YAML format.
 
-Description of all statistics can be found here: [stats](paper/stats_explained.md)
+Graph statistics also include "hybrid" statistics, which are average and standard deviation of all path statistics. All hybrid stats have the prefix "Path". A full list of all statistics be found in paper directory in this repository. 
 
+
+**Example**
 ```text
 
 ./gretl stats -g /path/to/graph.gfa -o /path/to/output.txt
 ```
-[stats path plot](scripts/plots/stats.path.scatter.pdf)
+- [plot](scripts/plots/stats.path.scatter.pdf) using the provided scripts 
+- Example output
+
 
 
 ### ID2INT
-Convert any string-based node identifier to numeric values. Use ```odgi sort``` to sort the graph in pan-genomic order afterwards. This will create more meaningful statistics. Numerical ID are offer better performance and are easier to handle and understand.  
+Convert any string-based node identifier to numeric values. Use ```odgi sort``` to sort the graph in pan-genomic order afterward. This will create more meaningful statistics when using ````gretl stats```. Nevertheless, numerical node IDs a required by any ```gretl``` command. 
 
+**Example**
 ```
 ./gretl id2int -g /path/to/graph.gfa -o /path/to/output.gfa -d /path/to/dict.txt
 ```
 
-Comment: 
+**Comment:** 
 This function will convert all IDs in the graph. Additional data in (segment-specific) tags will not be converted. 
 
 
 ### Node-list
-Caculate statistics for each node in the graph. Return a list of nodes with their statistics. 
-Possible statistics are: 
+Individual node statistics. Statistics provided: 
 - Length
 - Degree
 - Depth
@@ -56,6 +63,8 @@ Possible statistics are:
 ```text
 ./gretl node-list -g /path/to/graph.gfa -o /path/to/output.txt
 ```
+
+- Example output
 
 ### Core
 Compute similarity statistics of the graph. 
@@ -96,7 +105,7 @@ Filter paths based on input settings. The output can be used as input for gfa2bi
 
 ### Bootstrap
 
-We recommend bootstrapping a graphs in PanSN-spec. Use ```--nodes``` if the bootstrap should only run on a subset of nodes (e.g. gene vs intergenic).  
+We recommend bootstrapping a graphs in PanSN-spec. Use ```--nodes``` if the bootstrap should only run on a subset of nodes.  
 You are able to adjust the number of bootstrap, only calculate one "level" or input a meta file as input. Examples are shown in the data/example_data/ directory.  
 Meta files can be used to use the same "combinations" for multiple graphs. This only works of the paths/samples of the graphs are in the same order. 
 ```

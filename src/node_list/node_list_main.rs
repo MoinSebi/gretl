@@ -9,7 +9,7 @@ pub fn nodelist_main(matches: &ArgMatches) {
 
     // Parse GFA file + Wrapper
     let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(matches.value_of("gfa").unwrap());
-    graph.walk_to_path();
+    graph.walk_to_path("#");
     let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, " ");
 
     // Other inputs

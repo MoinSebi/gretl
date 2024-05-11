@@ -9,10 +9,10 @@ use nalgebra::inf;
 pub fn window_main(matches: &ArgMatches) {
     info!("Running 'gretl window'");
     let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(matches.value_of("gfa").unwrap());
-    graph.walk_to_path();
+    graph.walk_to_path("#");
     let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, " ");
     let output = matches.value_of("output").unwrap();
-
+    let b = wrapper.get_haplo_path();
     let mut size: u32 = 100000;
     if matches.is_present("window-size") {
         size = matches.value_of("window-size").unwrap().parse().unwrap();

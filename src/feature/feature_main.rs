@@ -42,7 +42,7 @@ pub fn feature_main(matches: &ArgMatches) {
 
     // Read the graph and make wrapper
     let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(graph_file);
-    graph.walk_to_path();
+    graph.walk_to_path(pansn_sep);
     let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, pansn_sep);
 
     if maxdegree == maxdepth

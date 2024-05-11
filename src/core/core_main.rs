@@ -19,7 +19,7 @@ pub fn core_main(matches: &ArgMatches) {
     }
     let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(matches.value_of("gfa").unwrap());
     println!("Walking to path {}", graph.paths.len());
-    graph.walk_to_path();
+    graph.walk_to_path(sep);
     let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, sep);
 
     // Get output file name
