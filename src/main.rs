@@ -117,11 +117,8 @@ fn main() {
                 .short('o')
                 .long("output")
                 .about("Output")
-                .takes_value(true))
-            .arg(Arg::new("meta")
-                .long("meta")
-                .about("Report an additional meta file with all combinations")
-                .takes_value(true)))
+                .takes_value(true)
+                .required(true)))
 
 
 

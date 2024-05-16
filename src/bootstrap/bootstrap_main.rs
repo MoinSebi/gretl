@@ -143,10 +143,9 @@ pub fn bootstrap_main(matches: &ArgMatches) {
             // }
 
             // Write the meta data if wanted
-            if matches.is_present("meta") {
-                let metas_output = matches.value_of("meta").unwrap();
-                write_meta(metas, metas_output);
-            }
+            let metas_output = matches.value_of("output").unwrap().to_string() + ".meta";
+            write_meta(metas, &metas_output);
+
 
             // Write the main output
             write_output(total, output);

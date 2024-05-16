@@ -8,9 +8,7 @@ fn node_bootstrap() -> Result<(), Box<dyn std::error::Error>> {
         .arg("--gfa")
         .arg("./data/example_data/testGraph_complex.gfa")
         .arg("--output")
-        .arg("./data//test/testGraph/bootstrap/test.stats.bootstrap.txt")
-        .arg("--meta")
-        .arg("data/testmeta.txt");
+        .arg("./data//test/testGraph/bootstrap/test.stats.bootstrap.txt");
     cmd.assert().success();
     fs::remove_file("data/test/testGraph/bootstrap/test.stats.bootstrap.txt")?;
 
@@ -70,9 +68,7 @@ fn node_bootstrap_yeast() -> Result<(), Box<dyn std::error::Error>> {
         .arg("--gfa")
         .arg("./data/example_data/chr5.yeast.gfa")
         .arg("--output")
-        .arg("./data//test/yeast/bootstrap/test.stats.bootstrap.txt")
-        .arg("--meta")
-        .arg("data/testmeta.txt");
+        .arg("./data//test/yeast/bootstrap/test.stats.bootstrap.txt");
     cmd.assert().success();
     fs::remove_file("data/test/yeast/bootstrap/test.stats.bootstrap.txt")?;
 

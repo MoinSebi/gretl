@@ -167,7 +167,7 @@ Meta files can be used to use the same "combinations" for multiple graphs. This 
 ```
 
 **Result**
-[bootstrap plot](scripts/plots/bootstrap.pdf)
+- Using this [script](scripts/bootstrap.ipynb) to get [bootstrap plot](scripts/plots/bootstrap.pdf)
 
 ### (Sliding, path) window
 Calculate statistics on a node level (graph- or path-based) and summarize them for each path in a sliding window approach. In detail: Iterate over the nodes of a path (window-like), summarize the stats of all nodes in the window and report a single value for each window. 
@@ -178,7 +178,7 @@ Calculate statistics on a node level (graph- or path-based) and summarize them f
 ````
 
 **Result**
-- [window plot](scripts/plots/analysis.window.pdf)
+- Using this [script](scripts/window.ipynb) to get [window plot](scripts/plots/analysis.window.pdf)
 
 
 
