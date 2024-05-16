@@ -1,7 +1,8 @@
+use std::process;
 use crate::nwindow::n_windows::stats2;
 use crate::nwindow::writer_nwindow::{make_buffer, write_list};
 use clap::ArgMatches;
-use gfa_reader::Gfa;
+use gfa_reader::{check_numeric_gfafile, Gfa};
 use log::info;
 
 pub fn nwindow_main(matches: &ArgMatches) {
@@ -52,19 +53,25 @@ pub fn nwindow_main(matches: &ArgMatches) {
     info!("Sum jumps: {}", sum_jumps);
     info!("Return type: {}", rtype);
 
-    // Read the graph
-    let graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(matches.value_of("gfa").unwrap());
-    let output = matches.value_of("output").unwrap();
 
-    let a = stats2(
-        &graph,
-        window_nodes,
-        window_size,
-        window_metric as u128,
-        rtype,
-    );
+    if check_numeric_gfafile(matches.value_of("gfa").unwrap()) {
+        // Read the graph
+        let graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(matches.value_of("gfa").unwrap());
+        let output = matches.value_of("output").unwrap();
 
-    info!("Writing to file: {}", output);
-    let mut buffer = make_buffer(output);
-    write_list(&a, &mut buffer, &graph.segments);
+        let a = stats2(
+            &graph,
+            window_nodes,
+            window_size,
+            window_metric as u128,
+            rtype,
+        );
+
+        info!("Writing to file: {}", output);
+        let mut buffer = make_buffer(output);
+        write_list(&a, &mut buffer, &graph.segments);
+    } else {
+        eprintln!("GFA file is not numeric");
+        process::exit(1);
+    }
 }

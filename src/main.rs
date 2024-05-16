@@ -170,9 +170,9 @@ fn main() {
                 .about("Output")
                 .takes_value(true)
                 .required(true))
-            .arg(Arg::new("Pan-SN")
+            .arg(Arg::new("PanSN")
                 .long("pansn")
-                .about("Seperate by first entry in Pan-SN spec")
+                .about("Separate by first entry in Pan-SN spec")
                 .takes_value(true)))
 
         // Subcommand to convert string graph to numeric

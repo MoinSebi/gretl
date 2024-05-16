@@ -16,7 +16,7 @@ pub fn wrapper_node(
     let mut ff = make_buffer(filename);
     let len = calc_node_len(graph);
     let po = get_zero_vec(&len);
-    write_header(&len, &mut ff);
+    write_header(&graph.segments, &mut ff);
     //write_header(real_node_name, &mut ff);
     if what.contains(&"Length") {
         write_list(("Length", &len), &mut ff, &po);
@@ -31,9 +31,9 @@ pub fn wrapper_node(
     }
     if what.contains(&"ND") {
         let (nd_out, node_in, node_total) = calc_node_degree(graph);
-        write_list(("ND_out", &nd_out), &mut ff, &po);
-        write_list(("ND_in", &node_in), &mut ff, &po);
-        write_list(("ND_in", &node_total), &mut ff, &po);
+        write_list(("ND_in", &nd_out), &mut ff, &po);
+        write_list(("ND_out", &node_in), &mut ff, &po);
+        write_list(("ND_total", &node_total), &mut ff, &po);
     }
 }
 

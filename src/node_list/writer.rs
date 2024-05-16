@@ -1,5 +1,6 @@
 use std::fs::File;
 use std::io::{BufWriter, Write};
+use gfa_reader::{Segment, SeqIndex};
 
 pub fn make_buffer(filename: &str) -> BufWriter<File> {
     let f = File::create(filename).expect("Unable to create file");
@@ -7,12 +8,14 @@ pub fn make_buffer(filename: &str) -> BufWriter<File> {
     BufWriter::new(f)
 }
 
-pub fn write_header(data: &Vec<u32>, f: &mut BufWriter<File>) {
+
+
+/// Write the header of 'gretl ps' output
+pub fn write_header(data: &Vec<Segment<u32, ()>>, f: &mut BufWriter<File>) {
     let f1: Vec<String> = data
         .iter()
-        .enumerate()
-        .filter(|x| *x.1 != 0)
-        .map(|x| x.0.to_string())
+        .filter(|x| x.sequence.get_len() != 0)
+        .map(|x| x.id.to_string())
         .collect();
     writeln!(f, "Nodes\t{}", f1.join("\t")).expect("hilfe");
 }
