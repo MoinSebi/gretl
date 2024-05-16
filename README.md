@@ -1,6 +1,15 @@
 # gretl - Graph evaluation toolkit
 ## Description 
-Tool for basic graph statistics using GFA format input. Our statistics are based on nodes, edges and paths. Walks can also be used, but will be represented as paths internally. Many commands do not work without paths/walk information. 
+```gretl``` is a tool for basic graph statistics using GFA format input. Our statistics are based on nodes, edges and paths. Walks can also be used, but will be represented as paths internally. Many commands do not work without paths/walk information. 
+
+## Requirements on GFA file: 
+GFA file is 
+- format v1.0, v1.1 or v1.2.
+- has numerical node ID
+
+**Comment**:  
+- Sorted node IDs are not required, but all "Jump" related statistics will be based on the order of the nodes in the GFA file.
+- We recommend dense node ID, starting at 1 and end at the number of nodes +1. Memory efficient on multiple levels. 
 
 ## Installation: 
 
