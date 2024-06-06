@@ -22,7 +22,7 @@ pub fn pan_genome(
                 let level = stats[*node as usize] as usize;
                 if level == 1 {
                     nodes += 1;
-                    seq += graph.get_node_by_id(*node).sequence.get_len();
+                    seq += graph.get_node_by_id(&node).sequence.get_len();
                 }
             }
         }
@@ -35,7 +35,7 @@ pub fn pan_genome(
     for (i, x) in stats.iter().enumerate() {
         if *x != 0 {
             similarity_level[*x as usize].0 += 1;
-            similarity_level[*x as usize].1 += graph.get_node_by_id(i as u32).sequence.get_len();
+            similarity_level[*x as usize].1 += graph.get_node_by_id(&(i as u32)).sequence.get_len();
         }
     }
 

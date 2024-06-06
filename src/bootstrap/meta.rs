@@ -81,14 +81,14 @@ pub fn one_iteration(
         for (i, x) in info2.iter().enumerate() {
             if *x != 0 {
                 result[*x as usize] += 1;
-                result2[*x as usize] += graph.get_node_by_id(i as u32).sequence.get_len();
+                result2[*x as usize] += graph.get_node_by_id(&(i as u32)).sequence.get_len();
             }
         }
     } else {
         for (i, x) in info2.iter().enumerate() {
             if nodes.contains(&(i as u32 + 1)) && *x != 0 {
                 result[*x as usize] += 1;
-                result2[*x as usize] += graph.get_node_by_id(i as u32).sequence.get_len();
+                result2[*x as usize] += graph.get_node_by_id(&(i as u32)).sequence.get_len();
             }
         }
     }
