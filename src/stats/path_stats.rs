@@ -1,5 +1,5 @@
 use crate::helpers::helper::{
-    average_median_std, calc_depth, calc_node_degree, calc_node_len, calc_similarity, mean,
+    average_median_std, calc_depth, calc_node_degree, calc_node_len, calc_similarity,
 };
 use gfa_reader::{Gfa, Pansn, Path};
 
@@ -30,6 +30,7 @@ pub fn path_stats_wrapper(
     // Calculate depth
     let depth = calc_depth(&paths, graph);
     let node_size = calc_node_len(graph);
+    let sum_graph: f64 = graph.segments.iter().map(|n| n.length.clone() as usize).sum::<usize>() as f64;
 
     // Iterate over all paths and calculate statistics
     for path in paths.iter() {
@@ -43,6 +44,7 @@ pub fn path_stats_wrapper(
         //
         // Amount of sequence and number of nodes in the path + number of unique nodes
         result_temp.push(("Sequence [bp]".to_string(), path_seq));
+        result_temp.push(("Covered sequence [%]".to_string(), path_seq / sum_graph));
         result_temp.push(("Nodes".to_string(), path_nodes));
         result_temp.push(("Unique edges".to_string(), dir_nodes));
         // Dumb info, but well

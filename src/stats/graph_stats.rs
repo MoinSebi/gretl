@@ -202,7 +202,7 @@ pub fn graph_path_seq_total(graph: &Gfa<u32, (), ()>) -> usize {
 pub fn graph_node_stats(graph: &Gfa<u32, (), ()>) -> (f64, f64, f64) {
     let mut vec_size: Vec<u32> = calc_node_len(graph);
     vec_size.sort();
-    let (average, median, std) = average_median_std(&vec_size);
+    let (average, median, _std) = average_median_std(&vec_size);
     let sums = vec_size.iter().sum::<u32>() as f64;
     (average, median, sums)
 }
