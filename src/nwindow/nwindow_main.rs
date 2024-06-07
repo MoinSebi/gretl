@@ -2,7 +2,7 @@ use std::process;
 use crate::nwindow::n_windows::stats2;
 use crate::nwindow::writer_nwindow::{make_buffer, write_list};
 use clap::ArgMatches;
-use gfa_reader::{check_numeric_gfafile, Gfa};
+use gfa_reader::{check_numeric_compact_gfafile, check_numeric_gfafile, Gfa};
 use log::info;
 
 pub fn nwindow_main(matches: &ArgMatches) {
@@ -53,8 +53,11 @@ pub fn nwindow_main(matches: &ArgMatches) {
     info!("Sum jumps: {}", sum_jumps);
     info!("Return type: {}", rtype);
 
-
-    if check_numeric_gfafile(matches.value_of("gfa").unwrap()) {
+    let (numeric, sorted) = check_numeric_compact_gfafile(matches.value_of("gfa").unwrap());
+    if numeric {
+        if !sorted {
+            eprintln!("Error: The GFA file is not sorted. All 'jump' stats might be without sense.")
+        }
         // Read the graph
         let graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(matches.value_of("gfa").unwrap());
         let output = matches.value_of("output").unwrap();
