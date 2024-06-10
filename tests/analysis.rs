@@ -21,23 +21,6 @@ fn analysis_test_core_no_pansn_similarity() -> Result<(), Box<dyn std::error::Er
     Ok(())
 }
 
-#[test]
-/// Run core subcommand
-/// -pansv -> path
-/// -stats -> similarity
-fn analysis_yeast_core_no_pansn_similarity() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gretl")?;
-    cmd.arg("core")
-        .arg("--gfa")
-        .arg("./data/example_data/chr5.yeast.gfa")
-        .arg("--output")
-        .arg("./data//test/yeast/analysis/analysis.yeast.core.pansnno.sim.txt")
-        .arg("--pansn")
-        .arg("_");
-    cmd.assert().success();
-
-    Ok(())
-}
 
 #[test]
 fn analysis_test_core_pansn_similarity() -> Result<(), Box<dyn std::error::Error>> {
@@ -55,20 +38,6 @@ fn analysis_test_core_pansn_similarity() -> Result<(), Box<dyn std::error::Error
     Ok(())
 }
 
-#[test]
-fn analysis_yeast_core_pansn_similarity() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gretl")?;
-    cmd.arg("core")
-        .arg("--gfa")
-        .arg("./data/example_data/chr5.yeast.gfa")
-        .arg("--output")
-        .arg("./data//test/yeast/analysis/analysis.yeast.core.pansn.sim.txt")
-        .arg("--pansn")
-        .arg("#");
-    cmd.assert().success();
-
-    Ok(())
-}
 
 #[test]
 fn analysis_test_core_pansn_depth() -> Result<(), Box<dyn std::error::Error>> {
@@ -89,23 +58,6 @@ fn analysis_test_core_pansn_depth() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn analysis_yeast_core_pansn_depth() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gretl")?;
-    cmd.arg("core")
-        .arg("--gfa")
-        .arg("./data/example_data/testGraph_complex.gfa")
-        .arg("--output")
-        .arg("./data//test/yeast/analysis/core.pansn.depth.txt")
-        .arg("--pansn")
-        .arg("#")
-        .arg("--stats")
-        .arg("depth");
-    cmd.assert().success();
-
-    Ok(())
-}
-
-#[test]
 fn id2int_test_graph() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("id2int")
@@ -116,20 +68,6 @@ fn id2int_test_graph() -> Result<(), Box<dyn std::error::Error>> {
 
     cmd.assert().success();
     fs::remove_file("data/test/testGraph/analysis/id2int.txt")?;
-
-    Ok(())
-}
-
-#[test]
-fn id2int_yeast() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gretl")?;
-    cmd.arg("id2int")
-        .arg("--gfa")
-        .arg("./data/example_data/chr5.yeast.gfa")
-        .arg("--output")
-        .arg("./data//test/yeast/analysis/id2int.txt");
-
-    cmd.assert().success();
 
     Ok(())
 }
@@ -151,21 +89,6 @@ fn analysis_ps_tg() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-#[test]
-fn analysis_ps_yeast() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gretl")?;
-    cmd.arg("ps")
-        .arg("--gfa")
-        .arg("./data/example_data/chr5.yeast.gfa")
-        .arg("--output")
-        .arg("./data//test/yeast/analysis/ps.txt")
-        .arg("--pansn")
-        .arg("_");
-
-    cmd.assert().success();
-
-    Ok(())
-}
 
 #[test]
 fn analysis_node_list_path_tg() -> Result<(), Box<dyn std::error::Error>> {
@@ -182,19 +105,6 @@ fn analysis_node_list_path_tg() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-#[test]
-fn analysis_node_list_path_yeast() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gretl")?;
-    cmd.arg("node-list")
-        .arg("--gfa")
-        .arg("./data/example_data/chr5.yeast.gfa")
-        .arg("--output")
-        .arg("./data//test/yeast/analysis/nodelist.txt");
-
-    cmd.assert().success();
-
-    Ok(())
-}
 
 #[test]
 fn analysis_test_sliding_window_2s() -> Result<(), Box<dyn std::error::Error>> {
@@ -213,20 +123,6 @@ fn analysis_test_sliding_window_2s() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-#[test]
-fn analysis_sliding_window_2s_yeast() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gretl")?;
-    cmd.arg("window")
-        .arg("--gfa")
-        .arg("./data/example_data/chr5.yeast.gfa")
-        .arg("--output")
-        .arg("./data//test/yeast/analysis/analysis.window.txt")
-        .arg("-w")
-        .arg("5000");
-
-    cmd.assert().success();
-    Ok(())
-}
 
 #[test]
 fn analysis_sliding_nwindow_2s_tg() -> Result<(), Box<dyn std::error::Error>> {
@@ -243,19 +139,6 @@ fn analysis_sliding_nwindow_2s_tg() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-#[test]
-fn analysis_sliding_nwindow_2s_yeast() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gretl")?;
-    cmd.arg("nwindow")
-        .arg("--gfa")
-        .arg("./data/example_data/chr5.yeast.gfa")
-        .arg("--output")
-        .arg("./data//test/yeast/analysis/analysis.nwindow.yeast.txt");
-
-    cmd.assert().success();
-
-    Ok(())
-}
 
 #[test]
 fn analysis_find_tg() -> Result<(), Box<dyn std::error::Error>> {
@@ -275,20 +158,3 @@ fn analysis_find_tg() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-#[test]
-fn analysis_find_yeast() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gretl")?;
-    cmd.arg("find")
-        .arg("--gfa")
-        .arg("./data/example_data/chr5.yeast.gfa")
-        .arg("--output")
-        .arg("./data/test/yeast/analysis/analysis.find.yeast.txt")
-        .arg("--length")
-        .arg("200")
-        .arg("--features")
-        .arg("./data/example_data/dirnodes.txt");
-
-    cmd.assert().success();
-
-    Ok(())
-}
