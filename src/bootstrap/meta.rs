@@ -112,7 +112,6 @@ pub fn test1(
     for (i, x) in wrapper.iter().enumerate() {
         if !comb.contains(&i) {
             let a = make_vec(&x.1, graph.segments.iter().max().unwrap().id as usize);
-            println!("{} {}", a.len(), info2.len());
             remove_from_vec(&mut info2, &a);
         }
     }
