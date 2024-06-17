@@ -3,8 +3,10 @@ use crate::helpers::helper::calc_node_len;
 use gfa_reader::Gfa;
 use std::cmp::{max, min};
 use std::collections::{HashMap, HashSet};
+use log::info;
 
 pub fn node2node_init(graph: &Gfa<u32, (), ()>) -> HashMap<u32, HashSet<u32>> {
+    info!("Init node2node");
     let mut map: HashMap<u32, HashSet<u32>> = HashMap::new();
 
     for element in graph.segments.iter() {
@@ -40,6 +42,7 @@ pub fn stats2(
     // Result collector
     let mut result: Vec<[u128; 3]> = Vec::with_capacity(nn.len());
 
+    info!("Start analysis");
     // Iterate over all nodes in order
     for node in nn.iter() {
         let mut seen = HashSet::new();

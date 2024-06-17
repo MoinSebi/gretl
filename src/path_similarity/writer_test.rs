@@ -1,8 +1,10 @@
 use std::fs::File;
 use std::io::{BufWriter, Write};
+use log::info;
 
 /// Write path similarity data to a file
 pub fn write_ps(data: &Vec<(String, Vec<(u32, u32)>)>, filename: &str) {
+    info!("Writing path similarity data to file");
     let f = File::create(filename).expect("Unable to create file");
     let mut f = BufWriter::new(f);
     let f1 = data[0].1.len();

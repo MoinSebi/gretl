@@ -1,11 +1,13 @@
 use crate::helpers::helper::calc_similarity;
 use gfa_reader::{Gfa, Pansn};
+use log::info;
 
 /// Compute the amount of sequence in each similarity level
 pub fn accession2level(
     graph: &Gfa<u32, (), ()>,
     wrapper: &Pansn<u32, (), ()>,
 ) -> Vec<(String, Vec<(u32, u32)>)> {
+    info!("Run accession to level");
     let paths = wrapper.get_path_genome();
     let cores = calc_similarity(&paths, graph);
     let metric_maxval = cores.iter().max().unwrap();

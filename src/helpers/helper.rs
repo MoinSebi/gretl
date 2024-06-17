@@ -1,5 +1,6 @@
 use gfa_reader::{Gfa, Path};
 use std::fmt::Debug;
+use log::info;
 
 #[allow(dead_code)]
 /// Calculate the average
