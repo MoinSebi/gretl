@@ -1,14 +1,13 @@
 # gretl - Graph evaluation toolkit
 ## Description 
-```gretl``` is a tool for basic graph statistics using GFA format input. Our statistics are based on nodes, edges and paths. Walks can also be used, but will be represented as paths internally. Many commands do not work without paths/walk information. 
+```gretl``` is a tool for basic graph statistics using GFA format input. Our statistics are based on nodes, edges and paths/walks. Walks can also be used, but will be represented as paths internally. Many commands do not work without paths/walk information. 
 
 ## Requirements on GFA file: 
-GFA file is 
-- format v1.0, v1.1 or v1.2.
-- has numerical node ID
+- GFA format v1.0, v1.1 or v1.2.
+- GFA file has numerical node ID
 
 **Comment**:  
-- Sorted node IDs are not required, but all "Jump" related statistics will be based on the order of the nodes in the GFA file.
+- Sorted node IDs are not required, but all "Jump" related statistics will be based on the order of the nodes in the GFA file. Check this [paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10542513/) for more information. Run odgi sort -O" to sort the graph in pan-genomic order.
 - We recommend dense node ID, starting at 1 and end at the number of nodes +1. Memory efficient on multiple levels. 
 
 ## Installation: 
@@ -58,7 +57,7 @@ Graph statistics also include "hybrid" statistics, which are average and standar
 Convert any string-based node identifier to numeric values. Use ```odgi sort``` to sort the graph in pan-genomic order, which will create more meaningful statistics in ```gretl stats``` (see above). Nevertheless, numerical node IDs a required by any ```gretl``` command. 
 
 Available options:
-- ```-d, --dict <dict>``` Write new and old IDs to a plain text file. 
+- ```-d, --dict <dict>``` Write a dictionary with new and old IDs to a plain text file. 
 
 **Example**
 ```
@@ -70,7 +69,7 @@ Available options:
 
 
 **Comment:** 
-This function will convert all IDs in the graph. Additional data in (segment-specific) tags will not be converted. 
+This function will convert all IDs in the graph. Additional data in tags will not be converted. 
 
 
 ### Node-list
@@ -89,13 +88,23 @@ Length and degree are based on the graph itself, while depth and core are based 
 ```
 
 **Result**
-- Example output
+- TSV file output 
+
+| Nodes    | 1     | 2     | 3     | 4     | 5     | 6   | 7 | 8 |
+|----------|-------|-------|-------|-------|-------|-----|---|---|
+| Length   | 21176 | 15530 | 15530 | 24351 | 24367 | 100 | 1 | 1 |
+| Core     | 1     | 1     | 1     | 1     | 1     | 2   | 1 | 1 |
+| Depth    | 1     | 1     | 1     | 1     | 1     | 2   | 1 | 1 |
+| ND_in    | 0     | 0     | 0     | 0     | 0     | 2   | 1 | 1 |
+| ND_out   | 1     | 1     | 1     | 1     | 1     | 2   | 1 | 1 |
+| ND_total | 1     | 1     | 1     | 1     | 1     | 4   | 2 | 2 |
+
 
 **Comment**
 The information of the reported table can be used as a individual lookup or to create own window-like statistics (over nodes). 
 
 ### Core
-Compute user-defined statistics of the graph (```-s```). Calculate the statistics for each node and summarize for each possible value the number of nodes and sequence. In a additional file ("...private.txt") we report for each path the amount of nodes and sequence sole present by this sample. 
+Compute user-defined statistics of the graph (```-s```). Calculate the statistics for each node and summarize for each possible value the number of nodes and sequence. In an additional file ("```*.private.txt```") we report for each path the amount of nodes and sequence sole present by this sample. 
 
 Available options:
 - ```-s, --stats <statistics>```. Define the statistics you want to summarize (see above) [default: similarity].
@@ -120,9 +129,26 @@ Calculate for each path the amount of nodes and sequence at each similarity leve
 **Result**
 [ps plot](scripts/plots/ps.similarity_path.seq.pdf)
 
+Example output: General path similarity
 
+| Similarity | Sequence[bp] | #Node |
+|------------|--------------|-------|
+| 0          | 0            | 0     |
+| 1          | 264241       | 7315  |
+| 2          | 10804        | 2191  |
+| 3          | 13800        | 2240  |
+| 4          | 73893        | 6833  |
+| 5          | 597805       | 7655  |
 
+Private table: 
 
+| Path       | Sequence[bp] | #Node |
+|------------|--------------|-------|
+| ABQ_6.ChrX | 47050        | 336   |
+| BIH_4.ChrX | 26389        | 278   |
+| ABF_6.ChrX | 33120        | 2181  |
+| BPN_2.ChrX | 104353       | 1250  |
+| BCK_8.ChrX | 53334        | 3275  |
 
 
 ### Feature
@@ -169,6 +195,19 @@ Meta files can be used to use the same "combinations" for multiple graphs. This 
 **Result**
 - Using this [script](scripts/bootstrap.ipynb) to get [bootstrap plot](scripts/plots/bootstrap.pdf)
 
+| Size | Run | Node:1 | Node:2 | Node:3 | Node:4 | Node:5 | Seq:1  | Seq:2  | Seq:3  | Seq:4  | Seq:5  |
+|------|-----|--------|--------|--------|--------|--------|--------|--------|--------|--------|--------|
+| 2    | 0   | 7651   | 13495  |        |        |        | 94383  | 680604 |        |        |        |
+| 2    | 1   | 12238  | 10890  |        |        |        | 112920 | 666501 |        |        |        |
+| 2    | 2   | 10184  | 11766  |        |        |        | 105283 | 665966 |        |        |        |
+| 3    | 0   | 7773   | 7263   | 9587   |        |        | 122129 | 23996  | 662555 |        |        |
+| 3    | 1   | 7710   | 7317   | 9657   |        |        | 140411 | 25086  | 663453 |        |        |
+| 3    | 2   | 5255   | 5680   | 11466  |        |        | 131387 | 23065  | 664906 |        |        |
+| 4    | 2   | 6756   | 2420   | 6487   | 9325   |        | 165241 | 7105   | 22037  | 661811 |        |
+| 4    | 3   | 7870   | 3085   | 7085   | 7858   |        | 220983 | 19845  | 74507  | 598158 |        |
+| 4    | 4   | 4988   | 2305   | 4912   | 10754  |        | 214961 | 9350   | 78758  | 604140 |        |
+| 5    | 0   | 7315   | 2191   | 2240   | 6833   | 7655   | 264241 | 10804  | 13800  | 73893  | 597805 |
+
 ### (Sliding, path) window
 Calculate statistics on a node level (graph- or path-based) and summarize them for each path in a sliding window approach. In detail: Iterate over the nodes of a path (window-like), summarize the stats of all nodes in the window and report a single value for each window. 
 
@@ -180,6 +219,14 @@ Calculate statistics on a node level (graph- or path-based) and summarize them f
 **Result**
 - Using this [script](scripts/window.ipynb) to get [window plot](scripts/plots/analysis.window.pdf)
 
+Table: Path in col1, similarity values on all the other values (each column is 1000 bp, going 100 bp steps)
+
+| ABQ_6.ChrX | 5 | 5   | 5 | 5 | 5 | 5   |
+|------------|---|-----|---|---|---|-----|
+| BIH_4.ChrX | 5 | 3.5 | 5 | 5 | 5 | 5   |
+| ABF_6.ChrX | 5 | 5   | 5 | 5 | 5 | 5   |
+| BPN_2.ChrX | 5 | 5   | 5 | 5 | 5 | 5   |
+| BCK_8.ChrX | 5 | 5   | 5 | 5 | 5 | 4.5 |
 
 
 ### Nwindow
@@ -198,9 +245,24 @@ Summarizing the graph by a window of nodes. We iterate numerically over the node
 
 [nwindow plot](scripts/plots/nwindow.node.pdf)
 
+Table: NodesID, Number of nodes, amount of sequence and sum of jumps (collected in a window)
+
+| nodeid | node | sequence | jumps |
+|--------|------|----------|-------|
+| 240    | 54   | 50623    | 1321  |
+| 241    | 53   | 50589    | 1296  |
+| 242    | 46   | 1862     | 696   |
+| 243    | 46   | 1862     | 709   |
+| 244    | 44   | 1832     | 637   |
+| 245    | 38   | 1762     | 458   |
+| 246    | 38   | 1762     | 463   |
+| 247    | 37   | 1567     | 410   |
+| 248    | 33   | 575      | 280   |
+| 249    | 33   | 575      | 280   |
+| 250    | 33   | 391      | 256   |
 
 ### Find
-Find a specific node (10), directed node (10+), or edge (10+20+) in the graph and get the exact (sequence) position in the paths. Output is a BED file with the positions. You are able to add additional sequence ```-l``` on both sites, which can help if you want to realign to a database and the node is very small. 
+Find a specific node (e.g. 10), directed node (e.g. 10+), or edge (e.g. 10+20+) in the graph and get the exact (sequence) position in the paths. Output is a BED file with the positions. You are able to add additional sequence ```-l``` on both sites, which can help if you want to realign to a database and the node is very small. 
 ```text
 ./gretl find -g /path/to/graph.gfa -o /path/to/output.txt --length 1000 -f feature.txt 
 ```
