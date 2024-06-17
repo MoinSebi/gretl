@@ -1,14 +1,12 @@
+use gfa_reader::{Segment};
 use std::fs::File;
 use std::io::{BufWriter, Write};
-use gfa_reader::{Segment, SeqIndex};
 
 pub fn make_buffer(filename: &str) -> BufWriter<File> {
     let f = File::create(filename).expect("Unable to create file");
 
     BufWriter::new(f)
 }
-
-
 
 /// Write the header of 'gretl ps' output
 pub fn write_header(data: &Vec<Segment<u32, ()>>, f: &mut BufWriter<File>) {

@@ -1,9 +1,9 @@
-use std::process;
 use crate::core::core_calc::pan_genome;
 use crate::core::writer::writer_core;
 use crate::helpers::graphs::get_stats;
 use clap::ArgMatches;
 use gfa_reader::{check_numeric_gfafile, Gfa, Pansn};
+
 
 /// Core main function
 ///
@@ -14,7 +14,6 @@ pub fn core_main(matches: &ArgMatches) {
     eprintln!("Running 'gretl core' analysis");
     // Is the graph file numeric?
     if check_numeric_gfafile(matches.value_of("gfa").unwrap()) {
-
         // Check for panSN separator
         let mut sep = " ";
         if matches.is_present("Pan-SN") {
@@ -27,7 +26,7 @@ pub fn core_main(matches: &ArgMatches) {
         graph.walk_to_path(sep);
 
         // Check if paths are found
-        if graph.paths.len() != 0 {
+        if !graph.paths.is_empty() {
             let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, sep);
 
             // Get output file name
@@ -44,11 +43,9 @@ pub fn core_main(matches: &ArgMatches) {
 
             // Write output in table
             writer_core(similarity_level, private_only, output)
-        }
-        else {
+        } else {
             panic!("Error: No path found in graph file")
         }
-
     } else {
         panic!("Error: Graph file is not numeric");
     }

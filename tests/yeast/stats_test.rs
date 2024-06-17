@@ -40,7 +40,6 @@ fn stats_graph_yaml() -> Result<(), Box<dyn std::error::Error>> {
     };
     assert!(content.contains("Paths: 5"));
 
-
     Ok(())
 }
 

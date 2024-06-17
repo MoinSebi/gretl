@@ -23,13 +23,11 @@ pub fn bootstrap_main(matches: &ArgMatches) {
         .unwrap();
 
     if check_numeric_gfafile(matches.value_of("gfa").unwrap()) {
-
         // Read the graph
         let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(matches.value_of("gfa").unwrap());
         graph.walk_to_path(sep);
 
-
-        if graph.paths.len() == 0 {
+        if graph.paths.is_empty() {
             panic!("Error: No path found in graph file")
         } else {
             let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, sep);
@@ -145,7 +143,6 @@ pub fn bootstrap_main(matches: &ArgMatches) {
             // Write the meta data if wanted
             let metas_output = matches.value_of("output").unwrap().to_string() + ".meta";
             write_meta(metas, &metas_output);
-
 
             // Write the main output
             write_output(total, output);

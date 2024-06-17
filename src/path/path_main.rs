@@ -16,14 +16,16 @@ pub fn path_main(matches: &ArgMatches) {
         let maxs_u32 = parse_max_min(maxs, true);
 
         let graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(graph_file);
-        if graph.paths.len() == 0 {
+        if graph.paths.is_empty() {
             panic!("Error: No path found in graph file")
         }
         let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, " ");
 
         let result = path_runner(&stats, &mins_u32, &maxs_u32, &graph, &wrapper, haplo);
         write_paths(&result, output);
-    } else { panic!("Error: GFA file is not numeric"); }
+    } else {
+        panic!("Error: GFA file is not numeric");
+    }
 }
 
 /// Input are the vectors, do this later

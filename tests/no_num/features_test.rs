@@ -15,16 +15,16 @@ fn stats_graph_feature() {
         .arg("5");
 
     cmd.assert().success();
-    let content = fs::read_to_string("data/test/testGraph/feature_paths/stats.node.s10.txt").unwrap();
+    let content =
+        fs::read_to_string("data/test/testGraph/feature_paths/stats.node.s10.txt").unwrap();
     assert_eq!(content, "1\n4\n5\n8\n9\n");
 
     fs::remove_file("data/test/testGraph/feature_paths/stats.node.s10.txt").unwrap();
-
 }
 
 #[test]
 #[should_panic]
-fn stats_graph_path()  {
+fn stats_graph_path() {
     let mut cmd = Command::cargo_bin("gretl").unwrap();
     cmd.arg("path")
         .arg("--gfa")
@@ -40,5 +40,4 @@ fn stats_graph_path()  {
 
     cmd.assert().success();
     fs::remove_file("data/test/testGraph/feature_paths/stats.path.m10M40.txt").unwrap();
-
 }

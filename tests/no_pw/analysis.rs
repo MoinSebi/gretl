@@ -1,6 +1,6 @@
 use assert_cmd::prelude::*; // Add methods on commands
 use std::fs;
-use std::io::Error;
+
 use std::process::Command;
 
 #[test]
@@ -8,7 +8,7 @@ use std::process::Command;
 /// Run core subcommand
 /// -pansv -> path
 /// -stats -> similarity
-fn analysis_test_core_no_pansn_similarity()  {
+fn analysis_test_core_no_pansn_similarity() {
     let mut cmd = Command::cargo_bin("gretl").unwrap();
     cmd.arg("core")
         .arg("--gfa")
@@ -19,15 +19,11 @@ fn analysis_test_core_no_pansn_similarity()  {
         .arg("_");
     cmd.assert().success();
     fs::remove_file("data/test/testGraph/analysis/analysis.test.core.pansnno.sim.txt").unwrap();
-
-    
 }
-
-
 
 #[test]
 #[should_panic]
-fn analysis_test_core_pansn_depth()  {
+fn analysis_test_core_pansn_depth() {
     let mut cmd = Command::cargo_bin("gretl").unwrap();
     cmd.arg("core")
         .arg("--gfa")
@@ -40,8 +36,6 @@ fn analysis_test_core_pansn_depth()  {
         .arg("depth");
     cmd.assert().success();
     fs::remove_file("data/test/testGraph/analysis/core.pansn.depth.txt").unwrap();
-
-    
 }
 
 #[test]
@@ -55,13 +49,11 @@ fn id2int_test_graph() {
 
     cmd.assert().success();
     fs::remove_file("data/test/testGraph/analysis/id2int.txt").unwrap();
-
-    
 }
 
 #[test]
 #[should_panic]
-fn analysis_ps_tg()  {
+fn analysis_ps_tg() {
     let mut cmd = Command::cargo_bin("gretl").unwrap();
     cmd.arg("ps")
         .arg("--gfa")
@@ -73,14 +65,11 @@ fn analysis_ps_tg()  {
 
     cmd.assert().success();
     fs::remove_file("data/test/testGraph/analysis/ps.txt").unwrap();
-
-    
 }
-
 
 #[test]
 #[should_panic]
-fn analysis_node_list_path_tg()  {
+fn analysis_node_list_path_tg() {
     let mut cmd = Command::cargo_bin("gretl").unwrap();
     cmd.arg("node-list")
         .arg("--gfa")
@@ -90,14 +79,11 @@ fn analysis_node_list_path_tg()  {
 
     cmd.assert().success();
     fs::remove_file("data/test/testGraph/analysis/nodelist2.txt").unwrap();
-
-    
 }
-
 
 #[test]
 #[should_panic]
-fn analysis_test_sliding_window_2s()  {
+fn analysis_test_sliding_window_2s() {
     let mut cmd = Command::cargo_bin("gretl").unwrap();
     cmd.arg("window")
         .arg("--gfa")
@@ -109,13 +95,10 @@ fn analysis_test_sliding_window_2s()  {
 
     cmd.assert().success();
     fs::remove_file("data/test/testGraph/analysis/analysis.window.txt").unwrap();
-
-    
 }
 
-
 #[test]
-fn analysis_sliding_nwindow_2s_tg()  {
+fn analysis_sliding_nwindow_2s_tg() {
     let mut cmd = Command::cargo_bin("gretl").unwrap();
     cmd.arg("nwindow")
         .arg("--gfa")
@@ -125,14 +108,11 @@ fn analysis_sliding_nwindow_2s_tg()  {
 
     cmd.assert().success();
     fs::remove_file("data/test/testGraph/analysis/analysis.nwindow.txt").unwrap();
-
-    
 }
-
 
 #[test]
 #[should_panic]
-fn analysis_find_tg()  {
+fn analysis_find_tg() {
     let mut cmd = Command::cargo_bin("gretl").unwrap();
     cmd.arg("find")
         .arg("--gfa")
@@ -145,7 +125,4 @@ fn analysis_find_tg()  {
         .arg("./data/example_data/dirnodes.txt");
     cmd.assert().success();
     //fs::remove_file("./data/test/testGraph/analysis/analysis.find.tg.txt").unwrap();
-
-    
 }
-

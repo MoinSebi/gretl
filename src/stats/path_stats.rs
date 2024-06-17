@@ -30,7 +30,11 @@ pub fn path_stats_wrapper(
     // Calculate depth
     let depth = calc_depth(&paths, graph);
     let node_size = calc_node_len(graph);
-    let sum_graph: f64 = graph.segments.iter().map(|n| n.length.clone() as usize).sum::<usize>() as f64;
+    let sum_graph: f64 = graph
+        .segments
+        .iter()
+        .map(|n| n.length as usize)
+        .sum::<usize>() as f64;
 
     // Iterate over all paths and calculate statistics
     for path in paths.iter() {

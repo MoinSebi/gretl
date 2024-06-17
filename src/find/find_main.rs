@@ -13,7 +13,6 @@ use std::io::{BufRead, BufReader, Write};
 pub fn find_main(matches: &ArgMatches) {
     info!("Running 'gretl find'");
     if check_numeric_gfafile(matches.value_of("gfa").unwrap()) {
-
         // Inputs
         let graph_file = matches.value_of("gfa").unwrap();
         let feature_file = matches.value_of("features").unwrap();
@@ -23,17 +22,16 @@ pub fn find_main(matches: &ArgMatches) {
         // read the feature file
         let data = FileData::from_file(feature_file);
         // Hashset of the data
-        let data_hs = data.data.iter().collect::<HashSet<&u64>>();
+        let _data_hs = data.data.iter().collect::<HashSet<&u64>>();
 
         let feature = data.feature;
         // Read the graph
         let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(graph_file);
         graph.walk_to_path("#");
         let paths = &graph.paths;
-        if paths.len() == 0 {
+        if paths.is_empty() {
             panic!("Error: No path found in graph file")
         }
-
 
         // Get the node size
         let node_size = calc_node_len(&graph);
@@ -92,7 +90,7 @@ pub fn find_main(matches: &ArgMatches) {
                         position_nodesize[i][i2][1],
                         position_nodesize[i][i2][0],
                     )
-                        .expect("Error writing to file")
+                    .expect("Error writing to file")
                 }
             }
         }

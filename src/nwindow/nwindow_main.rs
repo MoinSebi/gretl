@@ -1,9 +1,9 @@
-use std::process;
 use crate::nwindow::n_windows::stats2;
 use crate::nwindow::writer_nwindow::{make_buffer, write_list};
 use clap::ArgMatches;
-use gfa_reader::{check_numeric_compact_gfafile, check_numeric_gfafile, Gfa};
+use gfa_reader::{check_numeric_compact_gfafile, Gfa};
 use log::info;
+use std::process;
 
 pub fn nwindow_main(matches: &ArgMatches) {
     info!("Running 'gretl nwindow'");

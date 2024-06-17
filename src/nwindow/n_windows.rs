@@ -104,7 +104,7 @@ pub fn iterator(
             seen.insert(*y);
             next_nodes.extend(&nodes2nodes[y]);
             result.push(*y);
-            *total_size += sizes[(*y as usize)];
+            *total_size += sizes[*y as usize];
             *total_jumps += (max(last_node, y) - min(last_node, y)) as u128;
         }
     }

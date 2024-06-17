@@ -8,7 +8,7 @@ pub fn ps_main(matches: &ArgMatches) {
     if check_numeric_gfafile(matches.value_of("gfa").unwrap()) {
         let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(matches.value_of("gfa").unwrap());
         graph.walk_to_path("#");
-        if graph.paths.len() == 0 {
+        if graph.paths.is_empty() {
             panic!("Error: No path found in graph file")
         }
         let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, " ");

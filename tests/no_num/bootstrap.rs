@@ -3,7 +3,7 @@ use std::fs;
 use std::process::Command;
 #[test]
 #[should_panic]
-fn node_bootstrap()  {
+fn node_bootstrap() {
     let mut cmd = Command::cargo_bin("gretl").unwrap();
     cmd.arg("bootstrap")
         .arg("--gfa")
@@ -12,12 +12,11 @@ fn node_bootstrap()  {
         .arg("./data//test/testGraph/bootstrap/test.stats.bootstrap.txt");
     cmd.assert().success();
     fs::remove_file("data/test/testGraph/bootstrap/test.stats.bootstrap.txt").unwrap();
-
 }
 
 #[test]
 #[should_panic]
-fn node_bootstrap3()  {
+fn node_bootstrap3() {
     let mut cmd = Command::cargo_bin("gretl").unwrap();
     cmd.arg("bootstrap")
         .arg("--gfa")
@@ -26,7 +25,6 @@ fn node_bootstrap3()  {
         .arg("./data//test/testGraph/bootstrap/test.stats.bootstrap3.txt");
     cmd.assert().success();
     //fs::remove_file("data/test/testGraph/bootstrap/test.stats.bootstrap3.txt")?;
-
 }
 
 #[test]
@@ -42,7 +40,6 @@ fn node_bootstrap2() {
         .arg("2");
     cmd.assert().success();
     fs::remove_file("data/test/testGraph/bootstrap/test.stats.bootstrap2.txt").unwrap();
-
 }
 
 #[test]
@@ -58,6 +55,4 @@ fn node_bootstrap4() {
         .arg("data/nodes.txt");
     cmd.assert().success();
     //fs::remove_file("data/test/testGraph/bootstrap/test.stats.bootstrap4.txt")?;
-
 }
-

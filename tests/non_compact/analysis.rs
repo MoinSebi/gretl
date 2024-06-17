@@ -55,8 +55,6 @@ fn analysis_test_core_pansn_similarity2() -> Result<(), Box<dyn std::error::Erro
     Ok(())
 }
 
-
-
 #[test]
 fn analysis_test_core_pansn_depth() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gretl")?;
@@ -107,7 +105,6 @@ fn analysis_ps_tg() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-
 #[test]
 fn analysis_node_list_path_tg() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gretl")?;
@@ -122,7 +119,6 @@ fn analysis_node_list_path_tg() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
-
 
 #[test]
 fn analysis_test_sliding_window_2s() -> Result<(), Box<dyn std::error::Error>> {
@@ -141,7 +137,6 @@ fn analysis_test_sliding_window_2s() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-
 #[test]
 fn analysis_sliding_nwindow_2s_tg() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gretl")?;
@@ -156,7 +151,6 @@ fn analysis_sliding_nwindow_2s_tg() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
-
 
 #[test]
 fn analysis_find_tg() -> Result<(), Box<dyn std::error::Error>> {
@@ -175,4 +169,3 @@ fn analysis_find_tg() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
-

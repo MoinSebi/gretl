@@ -45,7 +45,7 @@ pub fn graph_stats_wrapper(
     result.push(("Input genomes size [bp]".to_string(), input_seq.to_string()));
     result.push((
         "Compression".to_string(),
-        (input_seq as f64 / graph_node_sum as f64).to_string(),
+        (input_seq as f64 / graph_node_sum).to_string(),
     ));
 
     result.push((
@@ -259,11 +259,9 @@ pub fn bin_nodes_count_and_size(value: &Vec<u32>, bins: Vec<u32>) -> Vec<(String
     let mut result = vec![0; bins.len()];
     for x in value.iter() {
         for (i, y) in bins.iter().enumerate() {
-            if x != &0 {
-                if x <= y {
-                    result[i] += 1;
-                    break;
-                }
+            if x != &0 && x <= y {
+                result[i] += 1;
+                break;
             }
         }
     }
@@ -298,10 +296,10 @@ pub fn bin_nodes_count_and_size(value: &Vec<u32>, bins: Vec<u32>) -> Vec<(String
 
 /// Top 5 percent of something
 pub fn size5pro(f: &mut Vec<u32>) -> (f64, f64) {
-    let mut a: Vec<_> = f.iter().map(|n| *n).collect();
+    let mut a: Vec<_> = f.to_vec();
     a.retain(|&x| x != 0);
     a.sort_by(|a, b| b.cmp(a));
     let top5 = &a[0..max(1, (a.len() as f64 * 0.05) as usize)].to_vec();
 
-    (median(&top5), mean(&top5))
+    (median(top5), mean(top5))
 }

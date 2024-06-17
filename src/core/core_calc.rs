@@ -22,7 +22,7 @@ pub fn pan_genome(
                 let level = stats[*node as usize] as usize;
                 if level == 1 {
                     nodes += 1;
-                    seq += graph.get_node_by_id(&node).sequence.get_len();
+                    seq += graph.get_node_by_id(node).sequence.get_len();
                 }
             }
         }

@@ -1,5 +1,5 @@
 use assert_cmd::prelude::*; // Add methods on commands
-use std::fs;
+
 use std::process::Command;
 
 #[test]
@@ -14,7 +14,6 @@ fn stats_graph_feature() -> Result<(), Box<dyn std::error::Error>> {
         .arg("5");
 
     cmd.assert().success();
-
 
     Ok(())
 }

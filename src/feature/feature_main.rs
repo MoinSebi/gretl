@@ -41,7 +41,7 @@ pub fn feature_main(matches: &ArgMatches) {
         // Read the graph and make wrapper
         let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(graph_file);
         graph.walk_to_path(pansn_sep);
-        if graph.paths.len() == 0 {
+        if graph.paths.is_empty() {
             panic!("Error: No path found in graph file")
         }
         let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, pansn_sep);
@@ -86,7 +86,6 @@ pub fn feature_main(matches: &ArgMatches) {
         write_list(&result, file_output);
     } else {
         panic!("Error: GFA file is not numeric");
-
     }
 }
 
@@ -108,16 +107,12 @@ pub fn feature_filter(
     let degree = calc_node_degree(graph).2;
     let depth = calc_depth(&paths, graph);
     for (i, (s, (deg, dep))) in size.iter().zip(degree.iter().zip(depth.iter())).enumerate() {
-        if s != &0 {
-            if *s as i128 > minlen
+        if s != &0 && *s as i128 > minlen
                 && *deg as i128 > mindegree
                 && *dep as i128 > mindepth
                 && (*s as i128) < maxlen
-                && (*deg as i128) < maxdegree
-                && (*dep as i128) < maxdepth
-            {
-                result.push(i)
-            }
+                && (*deg as i128) < maxdegree && (*dep as i128) < maxdepth {
+            result.push(i)
         }
     }
     result

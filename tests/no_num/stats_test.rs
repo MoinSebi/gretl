@@ -16,7 +16,6 @@ fn stats_graph_tsv() {
 
     cmd.assert().success();
     fs::remove_file("data/test/testGraph/stats/stats.graph.tsv").unwrap();
-
 }
 
 #[test]
@@ -44,12 +43,11 @@ fn stats_graph_yaml() {
     assert!(content.contains("Node length (average) [bp]: 7.125"));
 
     fs::remove_file("data/test/testGraph/stats/stats.graph.yaml").unwrap();
-
 }
 
 #[test]
 #[should_panic]
-fn stats_path_tsv()  {
+fn stats_path_tsv() {
     let mut cmd = Command::cargo_bin("gretl").unwrap();
     cmd.arg("stats")
         .arg("--gfa")
@@ -60,12 +58,11 @@ fn stats_path_tsv()  {
 
     cmd.assert().success();
     fs::remove_file("data/test/testGraph/stats/stats.path.tsv").unwrap();
-
 }
 
 #[test]
 #[should_panic]
-fn stats_path_tsv_yaml()  {
+fn stats_path_tsv_yaml() {
     let mut cmd = Command::cargo_bin("gretl").unwrap();
     cmd.arg("stats")
         .arg("--gfa")
@@ -78,13 +75,11 @@ fn stats_path_tsv_yaml()  {
 
     cmd.assert().success();
     fs::remove_file("data/test/testGraph/stats/stats.path2.tsv").unwrap();
-
-
 }
 
 #[test]
 #[should_panic]
-fn stats_path_yaml()  {
+fn stats_path_yaml() {
     let mut cmd = Command::cargo_bin("gretl").unwrap();
     cmd.arg("stats")
         .arg("--gfa")

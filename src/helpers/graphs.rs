@@ -1,5 +1,5 @@
 use crate::helpers::helper::{calc_depth, calc_node_degree, calc_similarity};
-use gfa_reader::{Gfa, Pansn, Segment, SeqIndex};
+use gfa_reader::{Gfa, Pansn};
 
 pub fn get_stats(wrapper: &Pansn<u32, (), ()>, graph: &Gfa<u32, (), ()>, kind: &str) -> Vec<u32> {
     let paths = wrapper.get_path_genome();
@@ -12,4 +12,3 @@ pub fn get_stats(wrapper: &Pansn<u32, (), ()>, graph: &Gfa<u32, (), ()>, kind: &
         return calc_similarity(&paths, graph);
     }
 }
-

@@ -5,7 +5,7 @@ use crate::stats::stats_writer::{
     write_tsv_graph, write_tsv_path, write_yaml_graph, write_yaml_path,
 };
 use clap::ArgMatches;
-use gfa_reader::{check_numeric_compact_gfafile, check_numeric_gfafile, Gfa, Pansn};
+use gfa_reader::{check_numeric_compact_gfafile, Gfa, Pansn};
 use log::info;
 
 /// Main function for stats subcommand
@@ -20,14 +20,14 @@ pub fn stats_main(matches: &ArgMatches) {
     }
     let haplo = matches.is_present("haplo");
     let num_com = check_numeric_compact_gfafile(matches.value_of("gfa").unwrap());
-    if num_com.0 == true {
-        if num_com.1 == false{
+    if num_com.0 {
+        if !num_com.1 {
             eprintln!("Error: The GFA file is not sorted. All 'jump' stats might be without sense.")
         }
         info!("Reading graph");
         let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(matches.value_of("gfa").unwrap());
         graph.walk_to_path(sep);
-        if graph.paths.len() == 0 {
+        if graph.paths.is_empty() {
             panic!("Error: No path found in graph file")
         }
 

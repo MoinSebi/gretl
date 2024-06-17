@@ -57,4 +57,3 @@ fn node_bootstrap4() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
-

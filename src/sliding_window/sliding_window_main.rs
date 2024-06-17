@@ -11,12 +11,10 @@ pub fn window_main(matches: &ArgMatches) {
     if check_numeric_gfafile(matches.value_of("gfa").unwrap()) {
         let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(matches.value_of("gfa").unwrap());
         graph.walk_to_path("#");
-        if graph.paths.len() == 0 {
+        if graph.paths.is_empty() {
             panic!("Error: No path found in graph file")
         }
         let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, " ");
-
-
 
         let output = matches.value_of("output").unwrap();
         let mut size: u32 = 100000;
@@ -55,8 +53,7 @@ pub fn window_main(matches: &ArgMatches) {
         let f = sliding_window_wrapper(&graph, &wrapper, size, step, metric, node);
         info!("Writing to file");
         write_window(f, output);
-    }
-    else {
+    } else {
         panic!("Error: GFA file is not numeric");
     }
 }

@@ -1,8 +1,8 @@
-use std::process;
 use crate::node_list::wrapper::wrapper_node;
 use clap::ArgMatches;
 use gfa_reader::{check_numeric_gfafile, Gfa, Pansn};
 use log::info;
+
 
 /// Main function for node list
 pub fn nodelist_main(matches: &ArgMatches) {
@@ -16,7 +16,7 @@ pub fn nodelist_main(matches: &ArgMatches) {
         // Parse GFA file + Wrapper
         let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(matches.value_of("gfa").unwrap());
         graph.walk_to_path(sep);
-        if graph.paths.len() == 0 {
+        if graph.paths.is_empty() {
             panic!("Error: No path found in graph file")
         }
 
@@ -50,5 +50,4 @@ pub fn nodelist_main(matches: &ArgMatches) {
     } else {
         panic!("Error: GFA file is not numeric");
     }
-
 }
