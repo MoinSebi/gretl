@@ -1,7 +1,7 @@
 use clap::ArgMatches;
 
 use crate::helpers::helper::calc_node_len;
-use gfa_reader::Gfa;
+use gfa_reader::{check_numeric_gfafile, Gfa};
 use log::info;
 use std::cmp::max;
 use std::collections::HashSet;
@@ -12,83 +12,92 @@ use std::io::{BufRead, BufReader, Write};
 /// Main function of find subcommand
 pub fn find_main(matches: &ArgMatches) {
     info!("Running 'gretl find'");
+    if check_numeric_gfafile(matches.value_of("gfa").unwrap()) {
 
-    // Inputs
-    let graph_file = matches.value_of("gfa").unwrap();
-    let feature_file = matches.value_of("features").unwrap();
-    let output = matches.value_of("output").unwrap();
-    let length = matches.value_of("length").unwrap().parse::<i128>().unwrap();
+        // Inputs
+        let graph_file = matches.value_of("gfa").unwrap();
+        let feature_file = matches.value_of("features").unwrap();
+        let output = matches.value_of("output").unwrap();
+        let length = matches.value_of("length").unwrap().parse::<i128>().unwrap();
 
-    // read the feature file
-    let data = FileData::from_file(feature_file);
-    // Hashset of the data
-    let data_hs = data.data.iter().collect::<HashSet<&u64>>();
+        // read the feature file
+        let data = FileData::from_file(feature_file);
+        // Hashset of the data
+        let data_hs = data.data.iter().collect::<HashSet<&u64>>();
 
-    let feature = data.feature;
-    // Read the graph
-    let graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(graph_file);
-    let paths = &graph.paths;
+        let feature = data.feature;
+        // Read the graph
+        let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(graph_file);
+        graph.walk_to_path("#");
+        let paths = &graph.paths;
+        if paths.len() == 0 {
+            panic!("Error: No path found in graph file")
+        }
 
-    // Get the node size
-    let node_size = calc_node_len(&graph);
 
-    // Start-end position of each index in the file
-    let mut position_nodesize = Vec::new();
+        // Get the node size
+        let node_size = calc_node_len(&graph);
 
-    // Node, edge or dirnode stored as u64
-    let mut vec_res_u64 = Vec::new();
+        // Start-end position of each index in the file
+        let mut position_nodesize = Vec::new();
 
-    for path in paths.iter() {
-        let mut vec_u64 = Vec::new();
-        let mut index = Vec::new();
-        let mut pos = 0;
-        for i in 0..path.nodes.len() - 1 {
-            index.push([pos, node_size[path.nodes[i] as usize]]);
-            pos += node_size[path.nodes[i] as usize];
+        // Node, edge or dirnode stored as u64
+        let mut vec_res_u64 = Vec::new();
 
-            // Get information for u64
-            let v1 = path.nodes[i];
-            let v2 = path.dir[i];
-            let v3 = path.nodes[i + 1];
-            let v4 = path.dir[i + 1];
+        for path in paths.iter() {
+            let mut vec_u64 = Vec::new();
+            let mut index = Vec::new();
+            let mut pos = 0;
+            for i in 0..path.nodes.len() - 1 {
+                index.push([pos, node_size[path.nodes[i] as usize]]);
+                pos += node_size[path.nodes[i] as usize];
 
-            if feature == Feature::Node {
-                vec_u64.push(v1 as u64);
-            } else if feature == Feature::DirNode {
-                vec_u64.push(v1 as u64 * 2 + v2 as u64);
-            } else if feature == Feature::Edge {
-                let u1 = v1 * 2 + v2 as u32;
-                let u2 = v3 * 2 + v4 as u32;
-                vec_u64.push(merge_u32_to_u64(u1, u2));
+                // Get information for u64
+                let v1 = path.nodes[i];
+                let v2 = path.dir[i];
+                let v3 = path.nodes[i + 1];
+                let v4 = path.dir[i + 1];
+
+                if feature == Feature::Node {
+                    vec_u64.push(v1 as u64);
+                } else if feature == Feature::DirNode {
+                    vec_u64.push(v1 as u64 * 2 + v2 as u64);
+                } else if feature == Feature::Edge {
+                    let u1 = v1 * 2 + v2 as u32;
+                    let u2 = v3 * 2 + v4 as u32;
+                    vec_u64.push(merge_u32_to_u64(u1, u2));
+                }
+            }
+            vec_res_u64.push(vec_u64);
+            position_nodesize.push(index)
+        }
+
+        /// Check the path if it contains the data
+        let file = File::create(output).unwrap();
+        let mut writer = std::io::BufWriter::new(file);
+        let data_hs = data.data.iter().collect::<HashSet<&u64>>();
+        for (i, x) in vec_res_u64.iter().enumerate() {
+            for (i2, y) in x.iter().enumerate() {
+                if data_hs.contains(y) {
+                    writeln!(
+                        writer,
+                        "{}\t{}\t{}\tID:{};NS:{};NB:{}",
+                        graph.paths[i].name,
+                        max(0, position_nodesize[i][i2][0] as i128 - length),
+                        position_nodesize[i][i2][0] as i128
+                            + position_nodesize[i][i2][1] as i128
+                            + 1
+                            + length,
+                        to_string1(*y, &feature),
+                        position_nodesize[i][i2][1],
+                        position_nodesize[i][i2][0],
+                    )
+                        .expect("Error writing to file")
+                }
             }
         }
-        vec_res_u64.push(vec_u64);
-        position_nodesize.push(index)
-    }
-
-    /// Check the path if it contains the data
-    let file = File::create(output).unwrap();
-    let mut writer = std::io::BufWriter::new(file);
-    let data_hs = data.data.iter().collect::<HashSet<&u64>>();
-    for (i, x) in vec_res_u64.iter().enumerate() {
-        for (i2, y) in x.iter().enumerate() {
-            if data_hs.contains(y) {
-                writeln!(
-                    writer,
-                    "{}\t{}\t{}\tID:{};NS:{};NB:{}",
-                    graph.paths[i].name,
-                    max(0, position_nodesize[i][i2][0] as i128 - length),
-                    position_nodesize[i][i2][0] as i128
-                        + position_nodesize[i][i2][1] as i128
-                        + 1
-                        + length,
-                    to_string1(*y, &feature),
-                    position_nodesize[i][i2][1],
-                    position_nodesize[i][i2][0],
-                )
-                .expect("Error writing to file")
-            }
-        }
+    } else {
+        panic!("Error: GFA file is not numeric");
     }
 }
 

@@ -1,24 +1,29 @@
 use crate::path::writer::write_paths;
 use crate::stats::path_stats::path_stats_wrapper;
 use clap::ArgMatches;
-use gfa_reader::{Gfa, Pansn};
+use gfa_reader::{check_numeric_gfafile, Gfa, Pansn};
 
 pub fn path_main(matches: &ArgMatches) {
-    let graph_file = matches.value_of("gfa").unwrap();
-    let output = matches.value_of("output").unwrap();
-    let haplo = matches.is_present("pansn");
+    if check_numeric_gfafile(matches.value_of("gfa").unwrap()) {
+        let graph_file = matches.value_of("gfa").unwrap();
+        let output = matches.value_of("output").unwrap();
+        let haplo = matches.is_present("pansn");
 
-    let stats: Vec<&str> = matches.values_of("stats").unwrap().collect();
-    let mins: Vec<&str> = matches.values_of("mins").unwrap().collect();
-    let maxs: Vec<&str> = matches.values_of("maxs").unwrap().collect();
-    let mins_u32 = parse_max_min(mins, false);
-    let maxs_u32 = parse_max_min(maxs, true);
+        let stats: Vec<&str> = matches.values_of("stats").unwrap().collect();
+        let mins: Vec<&str> = matches.values_of("mins").unwrap().collect();
+        let maxs: Vec<&str> = matches.values_of("maxs").unwrap().collect();
+        let mins_u32 = parse_max_min(mins, false);
+        let maxs_u32 = parse_max_min(maxs, true);
 
-    let graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(graph_file);
-    let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, " ");
+        let graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(graph_file);
+        if graph.paths.len() == 0 {
+            panic!("Error: No path found in graph file")
+        }
+        let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, " ");
 
-    let result = path_runner(&stats, &mins_u32, &maxs_u32, &graph, &wrapper, haplo);
-    write_paths(&result, output);
+        let result = path_runner(&stats, &mins_u32, &maxs_u32, &graph, &wrapper, haplo);
+        write_paths(&result, output);
+    } else { panic!("Error: GFA file is not numeric"); }
 }
 
 /// Input are the vectors, do this later

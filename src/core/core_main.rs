@@ -46,12 +46,10 @@ pub fn core_main(matches: &ArgMatches) {
             writer_core(similarity_level, private_only, output)
         }
         else {
-            eprintln!("Error: No path found in graph file");
-            process::exit(1)
+            panic!("Error: No path found in graph file")
         }
 
     } else {
-        eprintln!("Error: Graph file is not numeric");
-        process::exit(1)
+        panic!("Error: Graph file is not numeric");
     }
 }

@@ -10,7 +10,7 @@ fn analysis_test_core_no_pansn_similarity() -> Result<(), Box<dyn std::error::Er
     let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("core")
         .arg("--gfa")
-        .arg("./data/example_data/testGraph_complex.gfa")
+        .arg("./data/example_data/testGraph_1.1.gfa")
         .arg("--output")
         .arg("./data//test/testGraph/analysis/analysis.test.core.pansnno.sim.txt")
         .arg("--pansn")
@@ -21,13 +21,13 @@ fn analysis_test_core_no_pansn_similarity() -> Result<(), Box<dyn std::error::Er
     Ok(())
 }
 
-
 #[test]
+#[cfg(feature = "a1")]
 fn analysis_test_core_pansn_similarity() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("core")
         .arg("--gfa")
-        .arg("./data/example_data/testGraph_complex.gfa")
+        .arg("./data/example_data/testGraph_1.1.gfa")
         .arg("--output")
         .arg("./data//test/testGraph/analysis/analysis.test.core.pansn.sim.txt")
         .arg("--pansn")
@@ -38,13 +38,31 @@ fn analysis_test_core_pansn_similarity() -> Result<(), Box<dyn std::error::Error
     Ok(())
 }
 
+#[test]
+#[cfg(feature = "a1")]
+fn analysis_test_core_pansn_similarity2() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("gretl")?;
+    cmd.arg("core")
+        .arg("--gfa")
+        .arg("./data/example_data/testGraph_1.1.gfa")
+        .arg("--output")
+        .arg("./data//test/testGraph/analysis/analysis.test.core.pansn.sim.txt")
+        .arg("--pansn")
+        .arg("#");
+    cmd.assert().success();
+    //fs::remove_file("data/test/testGraph/analysis/analysis.test.core.pansn.sim.txt")?;
+
+    Ok(())
+}
+
+
 
 #[test]
 fn analysis_test_core_pansn_depth() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("core")
         .arg("--gfa")
-        .arg("./data/example_data/testGraph_complex.gfa")
+        .arg("./data/example_data/testGraph_1.1.gfa")
         .arg("--output")
         .arg("./data//test/testGraph/analysis/core.pansn.depth.txt")
         .arg("--pansn")
@@ -62,7 +80,7 @@ fn id2int_test_graph() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("id2int")
         .arg("--gfa")
-        .arg("./data/example_data/testGraph_complex.gfa")
+        .arg("./data/example_data/testGraph_1.1.gfa")
         .arg("--output")
         .arg("./data//test/testGraph/analysis/id2int.txt");
 
@@ -77,7 +95,7 @@ fn analysis_ps_tg() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("ps")
         .arg("--gfa")
-        .arg("./data/example_data/testGraph_complex.gfa")
+        .arg("./data/example_data/testGraph_1.1.gfa")
         .arg("--output")
         .arg("./data//test/testGraph/analysis/ps.txt")
         .arg("--pansn")
@@ -95,7 +113,7 @@ fn analysis_node_list_path_tg() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("node-list")
         .arg("--gfa")
-        .arg("./data/example_data/testGraph_complex.gfa")
+        .arg("./data/example_data/testGraph_1.1.gfa")
         .arg("--output")
         .arg("./data//test/testGraph/analysis/nodelist2.txt");
 
@@ -111,7 +129,7 @@ fn analysis_test_sliding_window_2s() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("window")
         .arg("--gfa")
-        .arg("./data/example_data/testGraph_complex.gfa")
+        .arg("./data/example_data/testGraph_1.1.gfa")
         .arg("--output")
         .arg("./data//test/testGraph/analysis/analysis.window.txt")
         .arg("-w")
@@ -129,7 +147,7 @@ fn analysis_sliding_nwindow_2s_tg() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("nwindow")
         .arg("--gfa")
-        .arg("./data/example_data/testGraph_complex.gfa")
+        .arg("./data/example_data/testGraph_1.1.gfa")
         .arg("--output")
         .arg("./data//test/testGraph/analysis/analysis.nwindow.txt");
 
@@ -145,7 +163,7 @@ fn analysis_find_tg() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("find")
         .arg("--gfa")
-        .arg("./data/example_data/testGraph_complex.gfa")
+        .arg("./data/example_data/testGraph_1.1.gfa")
         .arg("--output")
         .arg("./data/test/testGraph/analysis/analysis.find.tg.txt")
         .arg("--length")

@@ -16,6 +16,10 @@ pub fn nodelist_main(matches: &ArgMatches) {
         // Parse GFA file + Wrapper
         let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(matches.value_of("gfa").unwrap());
         graph.walk_to_path(sep);
+        if graph.paths.len() == 0 {
+            panic!("Error: No path found in graph file")
+        }
+
         let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, sep);
 
         // Other inputs
@@ -44,8 +48,7 @@ pub fn nodelist_main(matches: &ArgMatches) {
         wrapper_node(&graph, &wrapper, output, final_features);
         info!("Finished writing to file");
     } else {
-        eprintln!("Error: GFA file is not numeric");
-        process::exit(1);
+        panic!("Error: GFA file is not numeric");
     }
 
 }

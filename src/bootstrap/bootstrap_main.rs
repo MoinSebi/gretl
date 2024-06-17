@@ -28,9 +28,9 @@ pub fn bootstrap_main(matches: &ArgMatches) {
         let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(matches.value_of("gfa").unwrap());
         graph.walk_to_path(sep);
 
+
         if graph.paths.len() == 0 {
-            eprintln!("No paths in the GFA file");
-            std::process::exit(1);
+            panic!("Error: No path found in graph file")
         } else {
             let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, sep);
             let output = matches.value_of("output").unwrap();
@@ -151,7 +151,6 @@ pub fn bootstrap_main(matches: &ArgMatches) {
             write_output(total, output);
         }
     } else {
-        eprintln!("GFA file is not numeric");
-        std::process::exit(1);
+        panic!("GFA file is not numeric");
     }
 }

@@ -40,7 +40,7 @@ pub fn path_stats_wrapper(
         let path_nodes = path_node_len(&path.1) as f64;
         let dir_nodes = dir_node(&path.1) as f64;
         let edges = edges_num(&path.1);
-        let edges_total_numb = path_nodes - 1.0;
+        let edges_total_numb = path_nodes;
         //
         // Amount of sequence and number of nodes in the path + number of unique nodes
         result_temp.push(("Sequence [bp]".to_string(), path_seq));

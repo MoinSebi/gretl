@@ -27,6 +27,9 @@ pub fn stats_main(matches: &ArgMatches) {
         info!("Reading graph");
         let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(matches.value_of("gfa").unwrap());
         graph.walk_to_path(sep);
+        if graph.paths.len() == 0 {
+            panic!("Error: No path found in graph file")
+        }
 
         info!("Creating wrapper");
         let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, sep);
@@ -64,6 +67,6 @@ pub fn stats_main(matches: &ArgMatches) {
             }
         }
     } else {
-        eprintln!("Error: The GFA file is not numeric")
+        panic!("Error: The GFA file is not numeric")
     }
 }
