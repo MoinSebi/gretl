@@ -8,7 +8,7 @@ fn node_bootstrap() -> Result<(), Box<dyn std::error::Error>> {
         .arg("--gfa")
         .arg("./data/example_data/chr5.yeast.gfa")
         .arg("--output")
-        .arg("./data//test/yeast/bootstrap/yeast.chr5.bootstrap.txt");
+        .arg("./data/test/yeast/bootstrap/yeast.chr5.bootstrap.txt");
     cmd.assert().success();
     fs::remove_file("data/test/yeast/bootstrap/yeast.chr5.bootstrap.txt")?;
 

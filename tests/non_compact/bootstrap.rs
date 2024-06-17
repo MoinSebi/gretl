@@ -8,7 +8,7 @@ fn node_bootstrap() -> Result<(), Box<dyn std::error::Error>> {
         .arg("--gfa")
         .arg("./data/example_data/testGraph_complex.gfa")
         .arg("--output")
-        .arg("./data//test/testGraph/bootstrap/test.stats.bootstrap.txt");
+        .arg("./data/test/testGraph/bootstrap/test.stats.bootstrap.txt");
     cmd.assert().success();
     fs::remove_file("data/test/testGraph/bootstrap/test.stats.bootstrap.txt")?;
 
@@ -22,7 +22,7 @@ fn node_bootstrap3() -> Result<(), Box<dyn std::error::Error>> {
         .arg("--gfa")
         .arg("./data/example_data/testGraph_complex.gfa")
         .arg("--output")
-        .arg("./data//test/testGraph/bootstrap/test.stats.bootstrap3.txt");
+        .arg("./data/test/testGraph/bootstrap/test.stats.bootstrap3.txt");
     cmd.assert().success();
     //fs::remove_file("data/test/testGraph/bootstrap/test.stats.bootstrap3.txt")?;
 
@@ -36,7 +36,7 @@ fn node_bootstrap2() -> Result<(), Box<dyn std::error::Error>> {
         .arg("--gfa")
         .arg("./data/example_data/testGraph_complex.gfa")
         .arg("--output")
-        .arg("./data//test/testGraph/bootstrap/test.stats.bootstrap2.txt")
+        .arg("./data/test/testGraph/bootstrap/test.stats.bootstrap2.txt")
         .arg("--level")
         .arg("2");
     cmd.assert().success();
@@ -52,7 +52,7 @@ fn node_bootstrap4() -> Result<(), Box<dyn std::error::Error>> {
         .arg("--gfa")
         .arg("./data/example_data/testGraph_complex.gfa")
         .arg("--output")
-        .arg("./data//test/testGraph/bootstrap/test.stats.bootstrap4.txt")
+        .arg("./data/test/testGraph/bootstrap/test.stats.bootstrap4.txt")
         .arg("--nodes")
         .arg("data/nodes.txt");
     cmd.assert().success();

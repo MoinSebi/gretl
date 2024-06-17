@@ -9,7 +9,7 @@ fn node_bootstrap() {
         .arg("--gfa")
         .arg("./data/example_data/testGraph_non-num.gfa")
         .arg("--output")
-        .arg("./data//test/testGraph/bootstrap/test.stats.bootstrap.txt");
+        .arg("./data/test/testGraph/bootstrap/test.stats.bootstrap.txt");
     cmd.assert().success();
     fs::remove_file("data/test/testGraph/bootstrap/test.stats.bootstrap.txt").unwrap();
 }
@@ -22,9 +22,9 @@ fn node_bootstrap3() {
         .arg("--gfa")
         .arg("./data/example_data/testGraph_non-num.gfa")
         .arg("--output")
-        .arg("./data//test/testGraph/bootstrap/test.stats.bootstrap3.txt");
+        .arg("./data/test/testGraph/bootstrap/test.stats.bootstrap3.txt");
     cmd.assert().success();
-    //fs::remove_file("data/test/testGraph/bootstrap/test.stats.bootstrap3.txt")?;
+    fs::remove_file("data/test/testGraph/bootstrap/test.stats.bootstrap3.txt").unwrap();
 }
 
 #[test]
@@ -35,7 +35,7 @@ fn node_bootstrap2() {
         .arg("--gfa")
         .arg("./data/example_data/testGraph_non-num.gfa")
         .arg("--output")
-        .arg("./data//test/testGraph/bootstrap/test.stats.bootstrap2.txt")
+        .arg("./data/test/testGraph/bootstrap/test.stats.bootstrap2.txt")
         .arg("--level")
         .arg("2");
     cmd.assert().success();
@@ -50,7 +50,7 @@ fn node_bootstrap4() {
         .arg("--gfa")
         .arg("./data/example_data/testGraph_non-num.gfa")
         .arg("--output")
-        .arg("./data//test/testGraph/bootstrap/test.stats.bootstrap4.txt")
+        .arg("./data/test/testGraph/bootstrap/test.stats.bootstrap4.txt")
         .arg("--nodes")
         .arg("data/nodes.txt");
     cmd.assert().success();

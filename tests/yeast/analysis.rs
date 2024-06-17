@@ -12,7 +12,7 @@ fn analysis_test_core_no_pansn_similarity() -> Result<(), Box<dyn std::error::Er
         .arg("--gfa")
         .arg("./data/example_data/chr5.yeast.gfa")
         .arg("--output")
-        .arg("./data//test/yeast/analysis/yeast.chr5.test.core.pansnno.sim.txt")
+        .arg("./data//test/yeast/analysis/yeast.chr5.core.pansnno.sim.txt")
         .arg("--pansn")
         .arg("_");
     cmd.assert().success();
@@ -21,14 +21,13 @@ fn analysis_test_core_no_pansn_similarity() -> Result<(), Box<dyn std::error::Er
 }
 
 #[test]
-#[cfg(feature = "a1")]
 fn analysis_test_core_pansn_similarity() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("core")
         .arg("--gfa")
         .arg("./data/example_data/chr5.yeast.gfa")
         .arg("--output")
-        .arg("./data//test/yeast/analysis/yeast.chr5.test.core.pansn.sim.txt")
+        .arg("./data//test/yeast/analysis/yeast.chr5.core.pansn.sim")
         .arg("--pansn")
         .arg("#");
     cmd.assert().success();
@@ -37,14 +36,13 @@ fn analysis_test_core_pansn_similarity() -> Result<(), Box<dyn std::error::Error
 }
 
 #[test]
-#[cfg(feature = "a1")]
 fn analysis_test_core_pansn_similarity2() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("gretl")?;
     cmd.arg("core")
         .arg("--gfa")
         .arg("./data/example_data/chr5.yeast.gfa")
         .arg("--output")
-        .arg("./data//test/yeast/analysis/yeast.chr5.test.core.pansn.sim.txt")
+        .arg("./data//test/yeast/analysis/yeast.chr5.core.pansn.sim.txt")
         .arg("--pansn")
         .arg("#");
     cmd.assert().success();
