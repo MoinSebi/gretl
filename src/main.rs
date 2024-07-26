@@ -26,7 +26,7 @@ use crate::sliding_window::sliding_window_main::window_main;
 use crate::stats::stats_main::stats_main;
 use clap::{App, AppSettings, Arg};
 
-fn main() {
+fn main() -> Result<(),  Box<dyn std::error::Error>>{
     let matches = App::new("gretl")
         .setting(AppSettings::ArgRequiredElseHelp)
         .version("0.1.0")
@@ -457,26 +457,28 @@ fn main() {
     newbuilder(&matches);
 
     if let Some(matches) = matches.subcommand_matches("core") {
-        core_main(matches);
+        Ok(core_main(matches))
     } else if let Some(matches) = matches.subcommand_matches("bootstrap") {
-        bootstrap_main(matches);
+        Ok(bootstrap_main(matches))
     } else if let Some(matches) = matches.subcommand_matches("stats") {
-        stats_main(matches);
+        Ok(stats_main(matches))
     } else if let Some(matches) = matches.subcommand_matches("id2int") {
-        id2int_main(matches);
+        id2int_main(matches)
     } else if let Some(matches) = matches.subcommand_matches("ps") {
-        ps_main(matches);
+        Ok(ps_main(matches))
     } else if let Some(matches) = matches.subcommand_matches("node-list") {
-        nodelist_main(matches);
+        Ok(nodelist_main(matches))
     } else if let Some(matches) = matches.subcommand_matches("window") {
-        window_main(matches);
+        Ok(window_main(matches))
     } else if let Some(matches) = matches.subcommand_matches("feature") {
-        feature_main(matches);
+        Ok(feature_main(matches))
     } else if let Some(matches) = matches.subcommand_matches("path") {
-        path_main(matches);
+        Ok(path_main(matches))
     } else if let Some(matches) = matches.subcommand_matches("nwindow") {
-        nwindow_main(matches);
+        Ok(nwindow_main(matches))
     } else if let Some(matches) = matches.subcommand_matches("find") {
-        find_main(matches);
+        Ok(find_main(matches))
+    } else {
+        panic!("Error: Subcommand not found")
     }
 }

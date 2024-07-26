@@ -11,7 +11,7 @@ use std::io::{BufRead, BufReader};
 /// Main function for converting string ID to integer ID
 ///
 /// This returns numeric, compact graph (starting node = 1)
-pub fn id2int_main(matches: &ArgMatches) {
+pub fn id2int_main(matches: &ArgMatches) -> Result<(),  Box<dyn std::error::Error>>{
     info!("Starting id2int_main");
     info!("Read nodes + index");
     let (s, index, count) = node_reader(matches.value_of("gfa").unwrap());
@@ -28,6 +28,7 @@ pub fn id2int_main(matches: &ArgMatches) {
     if matches.is_present("dict") {
         write_hm(&hm, matches.value_of("dict").unwrap());
     }
+    Ok(())
 }
 
 /// Get all nodes in the file
@@ -92,47 +93,48 @@ pub fn get_string_from_hm(hm: &HashMap<&str, usize>, s: &String) -> String {
     hm.get(a).unwrap().to_string()
 }
 
+#[derive(Debug, PartialOrd, PartialEq)]
+enum DelEnum {
+    Space,
+    Comma,
+    Walk,
+}
+
 /// Convert a string to a string with integer ID
 /// Split the string at every digit, convert the digit to integer using hashmap
 /// and join the string again
 ///
 /// Return:
 ///    - String: string with converted ID (string -> integer)
-pub fn convert_string(k: &str, hm: &HashMap<&str, usize>) -> String {
-    let mut res = Vec::new();
-    let mut is_digit = false;
-    let char_first = k.chars().next().unwrap();
-    if char_first.is_ascii_digit() {
-        is_digit = true;
-    }
-    let mut char1 = k.chars().next().unwrap().to_string();
+pub fn convert_string(k: &str, hm: &HashMap<&str, usize>, del_enum: DelEnum) -> Result<String,  Box<dyn std::error::Error>>  {
+    if del_enum == DelEnum::Space {
+        let a = k.split(" ").collect::<Vec<&str>>();
+        Ok(hm.get(a[0]).ok_or("Error converting ID").unwrap().to_string())
+    } else if del_enum == DelEnum::Comma {
+        let mut dirs = Vec::new();
+        let mut values = Vec::new();
+        for x in k.split(",") {
 
-    for c in k.chars().skip(1) {
-        if c.is_ascii_digit() {
-            if is_digit {
-                char1 += &c.to_string();
-            } else {
-                res.push(char1);
-                char1 = c.to_string();
-            }
-            is_digit = true;
-        } else {
-            if is_digit {
-                res.push(get_string_from_hm(hm, &char1));
-                char1 = c.to_string();
-            } else {
-                char1 += &c.to_string();
-            }
-            is_digit = false
+                dirs.push(x.chars().last().ok_or("Error converting ID").unwrap());
+                values.push(hm.get(&x.to_string()[0..x.len()-1]).ok_or("Error converting ID").unwrap().to_string());
+
         }
-    }
-    if is_digit {
-        res.push(get_string_from_hm(hm, &char1));
+        Ok(values.iter().zip(dirs.iter()).map(|(x, y)| format!("{}{}", y, x)).collect::<Vec<String>>().join(""))
     } else {
-        res.push(char1);
+        let mut dirs = Vec::new();
+        let mut values = Vec::new();
+        let mut oo = String::new();
+        for x in k.chars(){
+            if x.to_string() == ">" || x.to_string() == "<" {
+                dirs.push(x);
+                values.push(hm.get(oo.as_str()).ok_or("Error converting ID").unwrap().to_string());
+                oo = x.to_string();
+            } else {
+                oo += &x.to_string();
+            }
+        }
+        Ok(values.iter().zip(dirs.iter()).map(|(x, y)| format!("{}{}", y, x)).collect::<Vec<String>>().join(""))
     }
-
-    res.join("")
 }
 
 /// Read a file and write to another file at the same time
@@ -145,7 +147,7 @@ pub fn convert_string(k: &str, hm: &HashMap<&str, usize>) -> String {
 ///    - Write a new file with integer ID (same structure as the original file, but different ID)
 ///
 /// Comment: Which entries are converted is based on the first character of the line
-pub fn read_write(f1: &str, f2: &str, hm: &HashMap<&str, usize>, count: &usize) {
+pub fn read_write(f1: &str, f2: &str, hm: &HashMap<&str, usize>, count: &usize) -> Result<(),  Box<dyn std::error::Error>>{
     let file = File::open(f1).unwrap();
     let reader = BufReader::new(file);
     let file = File::create(f2).unwrap();
@@ -157,64 +159,64 @@ pub fn read_write(f1: &str, f2: &str, hm: &HashMap<&str, usize>, count: &usize) 
         let mut fields: Vec<&str> = line.split_whitespace().collect();
         match fields[0] {
             "S" => {
-                let a = convert_string(fields[1], hm);
+                let a = convert_string(fields[1], hm, DelEnum::Space)?;
                 fields[1] = &a;
                 writeln!(writer, "{}", fields.join("\t")).expect("Error writing to file");
             }
             "L" => {
-                let a = convert_string(fields[1], hm);
+                let a = convert_string(fields[1], hm, DelEnum::Space)?;
                 fields[1] = &a;
-                let b = convert_string(fields[3], hm);
+                let b = convert_string(fields[3], hm, DelEnum::Space)?;
                 fields[3] = &b;
                 writeln!(writer, "{}", fields.join("\t")).expect("Error writing to file");
             }
             "P" => {
-                let a = convert_string(fields[2], hm);
+                let a = convert_string(fields[2], hm, DelEnum::Comma)?;
                 fields[2] = &a;
                 writeln!(writer, "{}", fields.join("\t")).expect("Error writing to file");
             }
             "J" => {
-                let a = convert_string(fields[1], hm);
+                let a = convert_string(fields[1], hm, DelEnum::Space)?;
                 fields[1] = &a;
-                let b = convert_string(fields[3], hm);
+                let b = convert_string(fields[3], hm, DelEnum::Space)?;
                 fields[3] = &b;
                 writeln!(writer, "{}", fields.join("\t")).expect("Error writing to file");
             }
             "W" => {
-                let a = convert_string(fields[6], hm);
+                let a = convert_string(fields[6], hm, DelEnum::Walk)?;
                 fields[6] = &a;
                 writeln!(writer, "{}", fields.join("\t")).expect("Error writing to file");
             }
             "C" => {
-                let a = convert_string(fields[1], hm);
+                let a = convert_string(fields[1], hm, DelEnum::Space)?;
                 fields[1] = &a;
-                let b = convert_string(fields[3], hm);
+                let b = convert_string(fields[3], hm, DelEnum::Space)?;
                 fields[3] = &b;
                 writeln!(writer, "{}", fields.join("\t")).expect("Error writing to file");
             }
             "F" => {
-                let a = convert_string(fields[1], hm);
+                let a = convert_string(fields[1], hm, DelEnum::Space)?;
                 fields[1] = &a;
                 writeln!(writer, "{}", fields.join("\t")).expect("Error writing to file");
             }
             "E" => {
-                let a = convert_string(fields[2], hm);
+                let a = convert_string(fields[2], hm, DelEnum::Space)?;
                 fields[2] = &a;
-                let n = convert_string(fields[3], hm);
+                let n = convert_string(fields[3], hm, DelEnum::Space)?;
                 fields[3] = &n;
                 writeln!(writer, "{}", fields.join("\t")).expect("Error writing to file");
             }
             "G" => {
-                let a = convert_string(fields[2], hm);
+                let a = convert_string(fields[2], hm, DelEnum::Space)?;
                 fields[2] = &a;
-                let n = convert_string(fields[3], hm);
+                let n = convert_string(fields[3], hm, DelEnum::Space)?;
                 fields[3] = &n;
                 writeln!(writer, "{}", fields.join("\t")).expect("Error writing to file");
             }
             "U" => {
                 let mut b: Vec<String> = vec![fields[0].to_string(), fields[1].to_string()];
                 for x in fields.iter().skip(2) {
-                    let a = convert_string(x, hm);
+                    let a = convert_string(x, hm, DelEnum::Space)?;
                     b.push(a);
                 }
                 writeln!(writer, "{}", b.join("\t")).expect("Error writing to file");
@@ -222,7 +224,7 @@ pub fn read_write(f1: &str, f2: &str, hm: &HashMap<&str, usize>, count: &usize) 
             "O" => {
                 let mut b: Vec<String> = vec![fields[0].to_string(), fields[1].to_string()];
                 for x in fields.iter().skip(2) {
-                    let a = convert_string(x, hm);
+                    let a = convert_string(x, hm, DelEnum::Space)?;
                     b.push(a);
                 }
                 writeln!(writer, "{}", b.join("\t")).expect("Error writing to file");
@@ -252,6 +254,7 @@ pub fn read_write(f1: &str, f2: &str, hm: &HashMap<&str, usize>, count: &usize) 
             100.0
         )
     );
+    Ok(())
 }
 
 /// Get the version of a GFA file
