@@ -3,25 +3,27 @@ use std::fs;
 use std::fs::File;
 use std::io::Read;
 use std::process::Command;
+use tempfile::tempdir;
 
 #[test]
-fn stats_graph_tsv() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gretl")?;
+fn stats_graph_tsv() {
+    let mut cmd = Command::cargo_bin("gretl").unwrap();
+    let tmp_dir = tempdir().expect("Failed to create temp dir");
+    let output = tmp_dir.path().join("test.stats.graph.tsv");
     cmd.arg("stats")
         .arg("--gfa")
         .arg("./data/example_data/testGraph_1.1.gfa")
         .arg("--output")
-        .arg("./data/test/testGraph/stats/stats.graph.tsv");
+        .arg(output.to_str().unwrap());
 
     cmd.assert().success();
-    fs::remove_file("data/test/testGraph/stats/stats.graph.tsv")?;
-
-    Ok(())
 }
 
 #[test]
-fn stats_graph_yaml() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gretl")?;
+fn stats_graph_yaml() {
+    let mut cmd = Command::cargo_bin("gretl").unwrap();
+    let tmp_dir = tempdir().expect("Failed to create temp dir");
+    let output = tmp_dir.path().join("test.stats.graph.yaml");
     cmd.arg("stats")
         .arg("--gfa")
         .arg("./data/example_data/testGraph_1.1.gfa")
@@ -29,11 +31,11 @@ fn stats_graph_yaml() -> Result<(), Box<dyn std::error::Error>> {
         .arg("--pansn")
         .arg("#")
         .arg("--output")
-        .arg("./data/test/testGraph/stats/stats.graph.yaml");
+        .arg(output.to_str().unwrap());
 
     cmd.assert().success();
     let content: String = {
-        let mut file = File::open("data/test/testGraph/stats/stats.graph.yaml")?;
+        let mut file = File::open(output.to_str().unwrap()).unwrap();
         let mut content = String::new();
         file.read_to_string(&mut content)?;
         content
@@ -41,31 +43,28 @@ fn stats_graph_yaml() -> Result<(), Box<dyn std::error::Error>> {
     assert!(content.contains("Paths: 6"));
     assert!(content.contains("Nodes: 8"));
     assert!(content.contains("Node length (average) [bp]: 7.125"));
-
-    fs::remove_file("data/test/testGraph/stats/stats.graph.yaml")?;
-
-    Ok(())
 }
 
 #[test]
-fn stats_path_tsv() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gretl")?;
+fn stats_path_tsv() {
+    let mut cmd = Command::cargo_bin("gretl").unwrap();
+    let tmp_dir = tempdir().expect("Failed to create temp dir");
+    let output = tmp_dir.path().join("test.stats.path.tsv");
     cmd.arg("stats")
         .arg("--gfa")
         .arg("./data/example_data/testGraph_1.1.gfa")
         .arg("--path")
         .arg("--output")
-        .arg("./data/test/testGraph/stats/stats.path.tsv");
+        .arg(output.to_str().unwrap());
 
     cmd.assert().success();
-    fs::remove_file("data/test/testGraph/stats/stats.path.tsv")?;
-
-    Ok(())
 }
 
 #[test]
-fn stats_path_tsv_yaml() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gretl")?;
+fn stats_path_tsv_yaml() {
+    let mut cmd = Command::cargo_bin("gretl").unwrap();
+    let tmp_dir = tempdir().expect("Failed to create temp dir");
+    let output = tmp_dir.path().join("test.stats.path2.tsv");
     cmd.arg("stats")
         .arg("--gfa")
         .arg("./data/example_data/testGraph_1.1.gfa")
@@ -73,32 +72,29 @@ fn stats_path_tsv_yaml() -> Result<(), Box<dyn std::error::Error>> {
         .arg("--pansn")
         .arg("test")
         .arg("--output")
-        .arg("./data/test/testGraph/stats/stats.path2.tsv");
+        .arg(output.to_str().unwrap());
 
     cmd.assert().success();
-    fs::remove_file("data/test/testGraph/stats/stats.path2.tsv")?;
-
-    Ok(())
 }
 
 #[test]
-fn stats_path_yaml() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("gretl")?;
+fn stats_path_yaml() {
+    let mut cmd = Command::cargo_bin("gretl").unwrap();
+    let tmp_dir = tempdir().expect("Failed to create temp dir");
+    let output = tmp_dir.path().join("stats.path.yaml");
     cmd.arg("stats")
         .arg("--gfa")
         .arg("./data/example_data/testGraph_1.1.gfa")
         .arg("--path")
         .arg("-y")
         .arg("--output")
-        .arg("./data/test/testGraph/stats/stats.path.yaml");
+        .arg(output.to_str().unwrap());
 
     cmd.assert().success();
     let _content: String = {
-        let mut file = File::open("./data/test/testGraph/stats/stats.path.yaml")?;
+        let mut file = File::open(output.to_str().unwrap()).unwrap();
         let mut content = String::new();
         file.read_to_string(&mut content)?;
         content
     };
-    //fs::remove_file("data/test/testGraph/stats/stats.path.yaml")?;
-    Ok(())
 }
