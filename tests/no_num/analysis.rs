@@ -4,6 +4,7 @@ use std::fs;
 use std::process::Command;
 
 #[test]
+#[should_panic]
 /// Run core subcommand
 /// -pansv -> path
 /// -stats -> similarity
@@ -16,8 +17,8 @@ fn analysis_test_core_no_pansn_similarity() {
         .arg("./data//test/testGraph/analysis/analysis.test.core.pansnno.sim.txt")
         .arg("--pansn")
         .arg("_");
-    let a = cmd.assert().failure();
-    //fs::remove_file("data/test/testGraph/analysis/analysis.test.core.pansnno.sim.txt").unwrap();
+    cmd.assert().success();
+    fs::remove_file("data/test/testGraph/analysis/analysis.test.core.pansnno.sim.txt").unwrap();
 }
 
 #[test]
