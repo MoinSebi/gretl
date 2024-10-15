@@ -457,7 +457,7 @@ fn main() -> Result<(),  Box<dyn std::error::Error>>{
     newbuilder(&matches);
 
     if let Some(matches) = matches.subcommand_matches("core") {
-        Ok(core_main(matches))
+        core_main(matches)
     } else if let Some(matches) = matches.subcommand_matches("bootstrap") {
         Ok(bootstrap_main(matches))
     } else if let Some(matches) = matches.subcommand_matches("stats") {

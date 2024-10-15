@@ -9,7 +9,7 @@ use gfa_reader::{check_numeric_gfafile, Gfa, Pansn};
 ///
 /// Calculate amount of nodes and sequence for each level.
 /// Everything is written in one file.
-pub fn core_main(matches: &ArgMatches) {
+pub fn core_main(matches: &ArgMatches) -> Result<(),  Box<dyn std::error::Error>> {
     // Reading the graph and converting it to a graph wrapper
     eprintln!("Running 'gretl core' analysis");
     // Is the graph file numeric?
@@ -44,9 +44,13 @@ pub fn core_main(matches: &ArgMatches) {
             // Write output in table
             writer_core(similarity_level, private_only, output)
         } else {
-            panic!("Error: No path found in graph file")
+            //panic!("Error: No path found in graph file")
+            let a: usize = "kkk".to_string().parse()?;
         }
     } else {
-        panic!("Error: Graph file is not numeric");
+        let a: usize = "kkk".to_string().parse()?;
+
+        //panic!("Error: Graph file is not numeric");
     }
+    Ok(())
 }
