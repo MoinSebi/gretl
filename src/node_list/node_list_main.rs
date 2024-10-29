@@ -1,10 +1,10 @@
-use crate::node_list::wrapper::wrapper_node;
+use crate::node_list::nl_wrapper::wrapper_node_list;
 use clap::ArgMatches;
 use gfa_reader::{check_numeric_gfafile, Gfa, Pansn};
 use log::info;
 
 
-/// Main function for node list
+/// Main function for node list (nl) subcommand
 pub fn nodelist_main(matches: &ArgMatches) {
     info!("Running 'gretl node-list'");
     let mut sep = " ";
@@ -20,6 +20,7 @@ pub fn nodelist_main(matches: &ArgMatches) {
             panic!("Error: No path found in graph file")
         }
 
+        // PanSN
         let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, sep);
 
         // Other inputs
@@ -45,7 +46,7 @@ pub fn nodelist_main(matches: &ArgMatches) {
 
         info!("Running wrapper + writing direclty to file");
         // This wrapper also writes data to a file
-        wrapper_node(&graph, &wrapper, output, final_features);
+        wrapper_node_list(&graph, &wrapper, output, final_features);
         info!("Finished writing to file");
     } else {
         panic!("Error: GFA file is not numeric");

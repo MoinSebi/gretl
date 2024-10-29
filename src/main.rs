@@ -11,6 +11,7 @@ mod path;
 mod path_similarity;
 mod sliding_window;
 mod stats;
+mod block;
 
 use crate::bootstrap::bootstrap_main::bootstrap_main;
 use crate::core::core_main::core_main;
@@ -25,6 +26,7 @@ use crate::path_similarity::ps_main::ps_main;
 use crate::sliding_window::sliding_window_main::window_main;
 use crate::stats::stats_main::stats_main;
 use clap::{App, AppSettings, Arg};
+use crate::block::block_main::block_main;
 
 fn main() -> Result<(),  Box<dyn std::error::Error>>{
     let matches = App::new("gretl")
@@ -67,6 +69,96 @@ fn main() -> Result<(),  Box<dyn std::error::Error>>{
             .arg(Arg::new("YAML")
                 .short('y')
                 .about("Report output in YAML format (default:off -> report in tsv)")))
+
+        .subcommand(
+            App::new("block")
+                .version("1.0.1")
+                .about("Statistics on pangenome blocks")
+
+                .help_heading("Input parameters")
+                .arg(
+                    Arg::new("gfa")
+                        .short('g')
+                        .long("graph")
+                        .about("GFA input file")
+                        .takes_value(true)
+                        .required(true),
+                )
+                .arg(
+                    Arg::new("PanSN")
+                        .long("PanSN")
+                        .about("PanSN-spec separator")
+                        .takes_value(true),
+                )
+
+
+                .help_heading("Parameter")
+                .arg(
+                    Arg::new("node-window")
+                        .short('w')
+                        .long("node-window")
+                        .about("Window size (in nodes)")
+                        .takes_value(true)
+                        .default_value("1000"),
+                )
+                .arg(
+                    Arg::new("node-step")
+                        .short('s')
+                        .long("node-step")
+                        .about("Node step")
+                        .takes_value(true)
+                        .default_value("1000"),
+                )
+
+                .arg(
+                    Arg::new("sequence-window")
+                        .long("sequence-window")
+                        .about("Sequence window")
+                        .takes_value(true),
+                )
+                .arg(
+                    Arg::new("sequence-step")
+                        .long("sequence-step")
+                        .about("Sequence step")
+                        .takes_value(true),
+                )
+
+
+
+
+                .arg(Arg::new("distance")
+                    .short('d')
+                    .long("distance")
+                    .about("Distance till breaking the block")
+                    .takes_value(true)
+                    .default_value("10000"))
+
+
+                .help_heading("Output parameter")
+                .arg(
+                    Arg::new("output")
+                        .short('o')
+                        .long("output")
+                        .about("Output prefix for the new plink file")
+                        .takes_value(true)
+                        .required(true),
+                )
+                .arg(
+                    Arg::new("threads")
+                        .long("threads")
+                        .short('t')
+                        .about("Number of threads")
+                        .takes_value(true)
+                        .default_value("1")
+                )
+                .arg(
+                    Arg::new("blocks")
+                        .long("blocks")
+                        .short('b')
+                        .about("Output blocks [default: false]")
+                ),
+        )
+
 
         .subcommand(App::new("bootstrap")
             .about("Bootstrap approach")
@@ -478,6 +570,8 @@ fn main() -> Result<(),  Box<dyn std::error::Error>>{
         Ok(nwindow_main(matches))
     } else if let Some(matches) = matches.subcommand_matches("find") {
         Ok(find_main(matches))
+    } else if let Some(matches) = matches.subcommand_matches("block") {
+        block_main(matches)
     } else {
         panic!("Error: Subcommand not found")
     }

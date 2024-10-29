@@ -5,7 +5,7 @@ use gfa_reader::{Gfa, Pansn};
 
 /// Wrapper function for node list analysis
 ///
-pub fn wrapper_node(
+pub fn wrapper_node_list(
     graph: &Gfa<u32, (), ()>,
     wrapper: &Pansn<u32, (), ()>,
     filename: &str,

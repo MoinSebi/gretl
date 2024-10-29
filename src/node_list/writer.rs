@@ -15,17 +15,17 @@ pub fn write_header(data: &Vec<Segment<u32, ()>>, f: &mut BufWriter<File>) {
         .filter(|x| x.sequence.get_len() != 0)
         .map(|x| x.id.to_string())
         .collect();
-    writeln!(f, "Nodes\t{}", f1.join("\t")).expect("hilfe");
+    writeln!(f, "Nodes\t{}", f1.join("\t")).expect("Error: Node-list writer");
 }
 
 /// Write
 pub fn write_list(data: (&str, &Vec<u32>), f: &mut BufWriter<File>, ko: &Vec<bool>) {
-    write!(f, "{}\t", data.0).expect("hilfe");
+    write!(f, "{}\t", data.0).expect("Error: Node-list writer");
 
     for (x, i) in data.1.iter().zip(ko.iter()) {
         if *i {
-            write!(f, "{}\t", x).expect("hilfe");
+            write!(f, "{}\t", x).expect("Error: Node-list writer");
         }
     }
-    writeln!(f).expect("hilfe");
+    writeln!(f).expect("Error: Node-list writer");
 }
