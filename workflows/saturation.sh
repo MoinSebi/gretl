@@ -2,7 +2,8 @@
 
 # Function to display usage information
 function usage() {
-    echo "Usage: $0 <input_graph_file> <output_file> [separator]"
+    echo "Usage: $0 <tool_path> <input_graph_file> <output_file> [separator]"
+    echo "tool_path: The full path to the Rust tool executable."
     echo "input_graph_file: The path to the input GFA file."
     echo "output_file: The path where the output should be saved."
     echo "separator: Optional. The separator character to use in the output file."
@@ -10,14 +11,21 @@ function usage() {
 }
 
 # Check if the minimum number of arguments was provided
-if [ "$#" -lt 2 ]; then
+if [ "$#" -lt 3 ]; then
     usage
 fi
 
 # Assign command line arguments to variables
-input_graph="$1"
-output_file="$2"
-separator="${3:-}"  # Default to empty if not provided
+tool_path="$1"
+input_graph="$2"
+output_file="$3"
+separator="${4:-}"  # Default to empty if not provided
+
+# Check if the tool exists
+if [ ! -f "$tool_path" ]; then
+    echo "Error: Tool executable does not exist."
+    exit 1
+fi
 
 # Check if the input file exists
 if [ ! -f "$input_graph" ]; then
@@ -38,9 +46,9 @@ fi
 
 # Run the Rust tool, include the separator if provided
 if [[ -n "$separator" ]]; then
-    /path/to/your/rust/tool bootstrap --gfa "$input_graph" --output "$output_file" --separator "$separator" 2>&1
+    "$tool_path" bootstrap --gfa "$input_graph" --output "$output_file" --pansn "$separator" 2>&1
 else
-    /path/to/your/rust/tool bootstrap --gfa "$input_graph" --output "$output_file" 2>&1
+    "$tool_path" bootstrap --gfa "$input_graph" --output "$output_file" 2>&1
 fi
 status=$?
 
@@ -53,4 +61,6 @@ else
 fi
 
 
-python3 bootstrap -i "$output_file" -o "$output_file".png
+
+
+python3 ../scripts/scripts/saturation_plotter.py -i "$output_file" -o "$output_file"

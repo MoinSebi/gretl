@@ -48,7 +48,7 @@ Graph statistics also include "hybrid" statistics, which are average and standar
 **Result**
 - TSV or YAML file with statistics
 - Merge the output of multiple graphs to compare them. 
-- Example comparison: [plot](scripts/plots/stats.path.scatter.pdf) 
+- Example comparison: [plot](scripts/notebooks/plots/stats.path.scatter.pdf) 
 - Example output
 
 
@@ -116,7 +116,7 @@ Available options:
 
 
 **Result**
-- [core plot](scripts/plots/pancore.pdf)
+- [core plot](scripts/notebooks/plots/pancore.pdf)
 
 ### Path similarity (PS)
 
@@ -127,7 +127,7 @@ Calculate for each path the amount of nodes and sequence at each similarity leve
 ```
 
 **Result**
-[ps plot](scripts/plots/ps.similarity_path.seq.pdf)
+[ps plot](scripts/notebooks/plots/ps.similarity_path.seq.pdf)
 
 Example output: General path similarity
 
@@ -193,7 +193,7 @@ Meta files can be used to use the same "combinations" for multiple graphs. This 
 ```
 
 **Result**
-- Using this [script](scripts/bootstrap.ipynb) to get [bootstrap plot](scripts/plots/bootstrap.pdf)
+- Using this [script](scripts/notebooks/bootstrap.ipynb) to get [bootstrap plot](scripts/notebooks/plots/bootstrap.pdf)
 
 | Size | Run | Node:1 | Node:2 | Node:3 | Node:4 | Node:5 | Seq:1  | Seq:2  | Seq:3  | Seq:4  | Seq:5  |
 |------|-----|--------|--------|--------|--------|--------|--------|--------|--------|--------|--------|
@@ -217,7 +217,7 @@ Calculate statistics on a node level (graph- or path-based) and summarize them f
 ````
 
 **Result**
-- Using this [script](scripts/window.ipynb) to get [window plot](scripts/plots/analysis.window.pdf)
+- Using this [script](scripts/notebooks/window.ipynb) to get [window plot](scripts/notebooks/plots/analysis.window.pdf)
 
 Table: Path in col1, similarity values on all the other values (each column is 1000 bp, going 100 bp steps)
 
@@ -243,7 +243,7 @@ Summarizing the graph by a window of nodes. We iterate numerically over the node
 
 **Output**: You are able to return the number of collected nodes, the total number of jumps or the total sequence. Some combinations of input limitation and output do not gain any additional information.
 
-[nwindow plot](scripts/plots/nwindow.node.pdf)
+[nwindow plot](scripts/notebooks/plots/nwindow.node.pdf)
 
 Table: NodesID, Number of nodes, amount of sequence and sum of jumps (collected in a window)
 
