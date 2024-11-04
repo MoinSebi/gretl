@@ -1,5 +1,5 @@
 use gfa_reader::{Gfa, Path};
-use log::info;
+
 use std::fmt::Debug;
 use std::fs::File;
 
@@ -168,7 +168,7 @@ use std::io::{stdout, BufWriter, Write};
 /// If `output` is Some, it writes to the given file, otherwise it prints to stdout.
 pub fn print_or_write(output: Option<&mut dyn Write>, message: &str) {
     match output {
-        Some(mut output) => {
+        Some(output) => {
             writeln!(output, "{}", message).expect("Failed to write to output");
         }
         None => {

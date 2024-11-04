@@ -112,7 +112,7 @@ pub fn convert_string(
     del_enum: DelEnum,
 ) -> Result<String, Box<dyn std::error::Error>> {
     if del_enum == DelEnum::Space {
-        let a = k.split(" ").collect::<Vec<&str>>();
+        let a = k.split(' ').collect::<Vec<&str>>();
         Ok(hm
             .get(a[0])
             .ok_or("Error converting ID")
@@ -121,7 +121,7 @@ pub fn convert_string(
     } else if del_enum == DelEnum::Comma {
         let mut dirs = Vec::new();
         let mut values = Vec::new();
-        for x in k.split(",") {
+        for x in k.split(',') {
             dirs.push(x.chars().last().ok_or("Error converting ID").unwrap());
             values.push(
                 hm.get(&x.to_string()[0..x.len() - 1])

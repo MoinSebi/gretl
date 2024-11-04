@@ -1,10 +1,9 @@
-use crate::helpers::helper::{get_writer, print_or_write};
+use crate::helpers::helper::get_writer;
 use log::info;
 use std::collections::HashSet;
-use std::fmt::format;
-use std::fs::File;
+
 use std::io;
-use std::io::{stdout, BufWriter, Write};
+use std::io::Write;
 
 /// Write the meta file
 pub fn write_meta(data: Vec<(usize, usize, HashSet<usize>)>, filename: &str) -> io::Result<()> {

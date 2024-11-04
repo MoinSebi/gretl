@@ -1,5 +1,4 @@
 use assert_cmd::prelude::*; // Add methods on commands
-use std::fs;
 
 use std::process::Command;
 use tempfile::tempdir;

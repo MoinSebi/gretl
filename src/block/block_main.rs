@@ -1,15 +1,9 @@
 use clap::ArgMatches;
 use gfa_reader::{Gfa, Pansn};
 use rayon::prelude::*;
-use std::cmp::min;
 
-use hashbrown::HashMap;
 use log::{info, warn};
-use std::collections::HashSet;
-use std::ffi::c_ushort;
-use std::fmt::format;
-use std::fs::File;
-use std::io::{BufWriter, Write};
+
 use std::sync::atomic::{AtomicU32, Ordering};
 use std::sync::{Arc, Mutex};
 
@@ -140,7 +134,7 @@ pub fn block_wrapper(
 ///  - Returns start and end nodes of a block
 pub fn blocks_node(graph: &Gfa<u32, (), ()>, step: usize, wsize: usize) -> Vec<[u32; 2]> {
     let mut blocks = Vec::new();
-    let (min1, max1) = get_min_max(&graph);
+    let (_min1, _max1) = get_min_max(graph);
     let total_segments = graph.segments.len();
 
     for (segment_index, segment) in graph.segments.iter().enumerate().step_by(step) {
@@ -206,32 +200,32 @@ pub fn node_size(graph: &Gfa<u32, (), ()>, min: u32, max: u32) -> Vec<usize> {
 ///    else: create new block
 /// else: add distance
 pub fn wrapper_blocks(
-    graph2: &Pansn<u32, (), ()>,
-    node_size: Vec<usize>,
+    _graph2: &Pansn<u32, (), ()>,
+    _node_size: Vec<usize>,
     block: Vec<[u32; 2]>,
     max_distance: usize,
-    blocks: bool,
-    out_prefix: &str,
+    _blocks: bool,
+    _out_prefix: &str,
     threads: usize,
     graph: &Gfa<u32, (), ()>,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    let (min1, max1) = get_min_max(&graph);
+    let (min1, _max1) = get_min_max(graph);
 
     println!("{}", block.len());
     println!("{:?}", &block[..5]);
     let mut block_index: Vec<usize> = block
         .iter()
         .enumerate()
-        .flat_map(|(i, x)| (x[0]..x[1]).map(move |y| i))
+        .flat_map(|(i, x)| (x[0]..x[1]).map(move |_y| i))
         .collect();
     block_index.push(block.len() - 1);
     info!("Block4: {:?}", block_index.len());
     let p1 = Arc::new(Mutex::new(vec![Vec::new(); block.len()]));
     //
-    let path_per_chunk = (graph.paths.len() + threads - 1) / threads as usize;
+    let path_per_chunk = (graph.paths.len() + threads - 1) / threads;
     info!("Path per chunk: {:?}", path_per_chunk);
 
-    let mut atomic_count = AtomicU32::new(0);
+    let atomic_count = AtomicU32::new(0);
     let paths_number = graph.paths.len();
     graph.paths.par_chunks(path_per_chunk).for_each(|chunk| {
         for (genome_id, path) in chunk.iter().enumerate() {
@@ -258,12 +252,12 @@ pub fn wrapper_blocks(
             block_index_cumulative.sort_by(|comp1, b| comp1.0.cmp(&b.0));
 
             // Start index, end index, genome id
-            let mut p: Vec<Vec<[usize; 3]>> = vec![Vec::new(); (block.len())];
+            let mut p: Vec<Vec<[usize; 3]>> = vec![Vec::new(); block.len()];
             //info!("{:?}", [block_index_cumulative[0], block_index_cumulative[1], block_index_cumulative[2]]);
             let mut prev_block = block_index_cumulative[0].0;
             let mut prev_pos = block_index_cumulative[0].2;
             let mut start_index = block_index_cumulative[0].1;
-            for index in (1..block_index_cumulative.len()) {
+            for index in 1..block_index_cumulative.len() {
                 let (block_value, i, pos) = &block_index_cumulative[index];
                 if *block_value != prev_block {
                     //println!("hit2 {} {} {}", start_index, i, prev_pos);
@@ -283,9 +277,7 @@ pub fn wrapper_blocks(
                     let pp = *pos as usize
                         - prev_pos as usize
                         - graph
-                            .get_node_by_id(
-                                &(path.nodes[block_index_cumulative[index - 1].1 as usize]),
-                            )
+                            .get_node_by_id(&(path.nodes[block_index_cumulative[index - 1].1]))
                             .length as usize;
                     //println!("hit");
                     if pp > max_distance {
@@ -312,7 +304,7 @@ pub fn wrapper_blocks(
         }
     });
 
-    let o = p1.lock().unwrap();
+    let _o = p1.lock().unwrap();
 
     info!("Done");
     Ok(())

@@ -557,25 +557,34 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     if let Some(matches) = matches.subcommand_matches("core") {
         core_main(matches)
     } else if let Some(matches) = matches.subcommand_matches("bootstrap") {
-        Ok(bootstrap_main(matches))
+        bootstrap_main(matches);
+        Ok(())
     } else if let Some(matches) = matches.subcommand_matches("stats") {
-        Ok(stats_main(matches))
+        stats_main(matches);
+        Ok(())
     } else if let Some(matches) = matches.subcommand_matches("id2int") {
         id2int_main(matches)
     } else if let Some(matches) = matches.subcommand_matches("ps") {
-        Ok(ps_main(matches))
+        ps_main(matches);
+        Ok(())
     } else if let Some(matches) = matches.subcommand_matches("node-list") {
-        Ok(nodelist_main(matches))
+        nodelist_main(matches);
+        Ok(())
     } else if let Some(matches) = matches.subcommand_matches("window") {
-        Ok(window_main(matches))
+        window_main(matches);
+        Ok(())
     } else if let Some(matches) = matches.subcommand_matches("feature") {
-        Ok(feature_main(matches))
+        feature_main(matches);
+        Ok(())
     } else if let Some(matches) = matches.subcommand_matches("path") {
-        Ok(path_main(matches))
+        path_main(matches);
+        Ok(())
     } else if let Some(matches) = matches.subcommand_matches("nwindow") {
-        Ok(nwindow_main(matches))
+        nwindow_main(matches);
+        Ok(())
     } else if let Some(matches) = matches.subcommand_matches("find") {
-        Ok(find_main(matches))
+        find_main(matches);
+        Ok(())
     } else if let Some(matches) = matches.subcommand_matches("block") {
         block_main(matches)
     } else {

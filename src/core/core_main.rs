@@ -44,10 +44,10 @@ pub fn core_main(matches: &ArgMatches) -> Result<(), Box<dyn std::error::Error>>
             writer_core(similarity_level, private_only, output)
         } else {
             //panic!("Error: No path found in graph file")
-            let a: usize = "kkk".to_string().parse()?;
+            let _a: usize = "kkk".to_string().parse()?;
         }
     } else {
-        let a: usize = "kkk".to_string().parse()?;
+        let _a: usize = "kkk".to_string().parse()?;
 
         //panic!("Error: Graph file is not numeric");
     }
