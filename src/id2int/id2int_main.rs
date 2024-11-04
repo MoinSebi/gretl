@@ -7,6 +7,7 @@ use std::fs::File;
 use std::io;
 use std::io::Write;
 use std::io::{BufRead, BufReader};
+use crate::helpers::helper::get_writer;
 
 /// Main function for converting string ID to integer ID
 ///
@@ -182,7 +183,7 @@ pub fn read_write(
     let file = File::open(f1).unwrap();
     let reader = BufReader::new(file);
     let file = File::create(f2).unwrap();
-    let mut writer = std::io::BufWriter::new(file);
+    let mut writer = get_writer(f2)?;
     let mut c = 0;
     let mut lastpro = 0.0;
     for line in reader.lines() {
