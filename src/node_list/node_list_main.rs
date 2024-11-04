@@ -3,7 +3,6 @@ use clap::ArgMatches;
 use gfa_reader::{check_numeric_gfafile, Gfa, Pansn};
 use log::info;
 
-
 /// Main function for node list (nl) subcommand
 pub fn nodelist_main(matches: &ArgMatches) {
     info!("Running 'gretl node-list'");

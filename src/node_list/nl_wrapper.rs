@@ -2,7 +2,6 @@ use crate::helpers::helper::{calc_depth, calc_node_degree, calc_node_len, calc_s
 use crate::node_list::writer::{make_buffer, write_header, write_list};
 use gfa_reader::{Gfa, Pansn};
 
-
 /// Wrapper function for node list analysis
 ///
 pub fn wrapper_node_list(

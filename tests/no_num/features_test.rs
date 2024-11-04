@@ -18,8 +18,7 @@ fn stats_graph_feature() {
         .arg("5");
 
     cmd.assert().success();
-    let content =
-        fs::read_to_string(output.to_str().unwrap()).unwrap();
+    let content = fs::read_to_string(output.to_str().unwrap()).unwrap();
     assert_eq!(content, "1\n4\n5\n8\n9\n");
 }
 

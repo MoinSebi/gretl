@@ -45,7 +45,6 @@ fn stats_graph_yaml() {
     assert!(content.contains("Paths: 6"));
     assert!(content.contains("Nodes: 8"));
     assert!(content.contains("Node length (average) [bp]: 7.125"));
-
 }
 
 #[test]

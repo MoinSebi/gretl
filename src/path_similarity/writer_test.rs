@@ -1,6 +1,6 @@
+use log::info;
 use std::fs::File;
 use std::io::{BufWriter, Write};
-use log::info;
 
 /// Write path similarity data to a file
 pub fn write_ps(data: &Vec<(String, Vec<(u32, u32)>)>, filename: &str) {

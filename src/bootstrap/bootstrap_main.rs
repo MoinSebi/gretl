@@ -5,12 +5,14 @@ use crate::bootstrap::writer::{write_meta, write_output};
 use crate::helpers::helper::calc_similarity;
 use clap::ArgMatches;
 use gfa_reader::{check_numeric_gfafile, Gfa, Pansn};
+use log::info;
 use rayon::prelude::*;
 use std::cmp::min;
 use std::collections::HashSet;
 
 /// Main function for bootstrapping
 pub fn bootstrap_main(matches: &ArgMatches) {
+    info!("Running bootstrap");
     let mut sep = " ";
     if matches.is_present("Pan-SN") {
         sep = matches.value_of("Pan-SN").unwrap();
@@ -26,7 +28,6 @@ pub fn bootstrap_main(matches: &ArgMatches) {
         // Read the graph
         let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(matches.value_of("gfa").unwrap());
         graph.walk_to_path(sep);
-
         if graph.paths.is_empty() {
             panic!("Error: No path found in graph file")
         } else {
@@ -67,8 +68,6 @@ pub fn bootstrap_main(matches: &ArgMatches) {
             if matches.is_present("level") {
                 core = matches.value_of("level").unwrap().parse().unwrap();
             }
-
-            eprintln!("Running bootstrap");
 
             // The which "geomes" have been used in this run
             // let mut metas = Vec::new();
@@ -141,8 +140,10 @@ pub fn bootstrap_main(matches: &ArgMatches) {
             // }
 
             // Write the meta data if wanted
-            let metas_output = matches.value_of("output").unwrap().to_string() + ".meta";
-            write_meta(metas, &metas_output);
+            if matches.is_present("meta-output") {
+                let metas_output = matches.value_of("meta-output").unwrap();
+                write_meta(metas, &metas_output);
+            }
 
             // Write the main output
             write_output(total, output);

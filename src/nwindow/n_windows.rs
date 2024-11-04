@@ -1,9 +1,9 @@
 use crate::helpers::helper::calc_node_len;
 
 use gfa_reader::Gfa;
+use log::info;
 use std::cmp::{max, min};
 use std::collections::{HashMap, HashSet};
-use log::info;
 
 pub fn node2node_init(graph: &Gfa<u32, (), ()>) -> HashMap<u32, HashSet<u32>> {
     info!("Init node2node");

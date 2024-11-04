@@ -14,7 +14,7 @@ fn node_bootstrap() {
         .arg("--output")
         .arg(output.to_str().unwrap());
 
-        cmd.assert().success();
+    cmd.assert().success();
 }
 
 #[test]
@@ -62,6 +62,6 @@ fn node_bootstrap4() {
         .arg(output.to_str().unwrap())
         .arg("--nodes")
         .arg("data/nodes.txt");
-    
+
     cmd.assert().success();
 }

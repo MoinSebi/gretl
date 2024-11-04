@@ -51,7 +51,7 @@ fn analysis_test_core_pansn_similarity2() {
         .arg("--pansn")
         .arg("#");
 
-        cmd.assert().success();
+    cmd.assert().success();
 }
 
 #[test]
@@ -162,6 +162,6 @@ fn analysis_find_tg() {
         .arg("200")
         .arg("--features")
         .arg("./data/example_data/dirnodes.txt");
-    
+
     cmd.assert().success();
 }

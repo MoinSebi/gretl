@@ -1,3 +1,4 @@
+mod block;
 mod bootstrap;
 mod core;
 mod feature;
@@ -11,8 +12,8 @@ mod path;
 mod path_similarity;
 mod sliding_window;
 mod stats;
-mod block;
 
+use crate::block::block_main::block_main;
 use crate::bootstrap::bootstrap_main::bootstrap_main;
 use crate::core::core_main::core_main;
 use crate::feature::feature_main::feature_main;
@@ -26,9 +27,8 @@ use crate::path_similarity::ps_main::ps_main;
 use crate::sliding_window::sliding_window_main::window_main;
 use crate::stats::stats_main::stats_main;
 use clap::{App, AppSettings, Arg};
-use crate::block::block_main::block_main;
 
-fn main() -> Result<(),  Box<dyn std::error::Error>>{
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     let matches = App::new("gretl")
         .setting(AppSettings::ArgRequiredElseHelp)
         .version("0.1.0")
@@ -210,7 +210,13 @@ fn main() -> Result<(),  Box<dyn std::error::Error>>{
                 .long("output")
                 .about("Output")
                 .takes_value(true)
-                .required(true)))
+                .required(true))
+            .arg(Arg::new("meta-output")
+                .long("meta-output")
+                .about("Output meta file")
+                .takes_value(true)))
+
+
 
 
 

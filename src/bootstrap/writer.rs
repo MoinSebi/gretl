@@ -1,39 +1,46 @@
+use crate::helpers::helper::{get_writer, print_or_write};
+use log::info;
 use std::collections::HashSet;
+use std::fmt::format;
 use std::fs::File;
-use std::io::{BufWriter, Write};
+use std::io;
+use std::io::{stdout, BufWriter, Write};
 
 /// Write the meta file
-pub fn write_meta(data: Vec<(usize, usize, HashSet<usize>)>, filename: &str) {
-    eprintln!("Writing meta");
+pub fn write_meta(data: Vec<(usize, usize, HashSet<usize>)>, filename: &str) -> io::Result<()> {
+    info!("Writing meta");
 
-    let f = File::create(filename).expect("Unable to create file");
-    let mut f = BufWriter::new(f);
+    let mut writer = get_writer(filename)?;
 
-    for x in data.iter() {
+    for entry in data.iter() {
         writeln!(
-            f,
+            writer,
             "{}\t{}\t{}",
-            x.0,
-            x.1,
-            x.2.iter()
+            entry.0,
+            entry.1,
+            entry
+                .2
+                .iter()
                 .collect::<Vec<&usize>>()
                 .iter()
                 .map(|n| n.to_string())
                 .collect::<Vec<String>>()
                 .join(",")
-        )
-        .expect("Not able to write");
+        )?;
     }
+    Ok(())
 }
 
 /// Write output file
-pub fn write_output(data: Vec<(usize, usize, (Vec<usize>, Vec<usize>))>, filename: &str) {
-    eprintln!("Writing meta");
-    //println!("Writing meta {:?}", data);
+pub fn write_output(
+    data: Vec<(usize, usize, (Vec<usize>, Vec<usize>))>,
+    filename: &str,
+) -> io::Result<()> {
+    info!("Writing output");
     let max_len = data.iter().map(|n| n.2 .1.len()).max().unwrap();
 
-    let f = File::create(filename).expect("Unable to create file");
-    let mut f = BufWriter::new(f);
+    let mut f = get_writer(filename)?;
+
     let header = make_header(max_len);
     writeln!(f, "{}", header).expect("Not able to write");
     for (size, run, data) in data.iter() {
@@ -61,9 +68,10 @@ pub fn write_output(data: Vec<(usize, usize, (Vec<usize>, Vec<usize>))>, filenam
         )
         .expect("Not able to write");
     }
+    Ok(())
 }
 
-/// Create header for output
+/// Create header for normal bootstrap output
 pub fn make_header(max_len: usize) -> String {
     let mut a = String::from("Size\tRun\t");
     for x in 0..max_len {

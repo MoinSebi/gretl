@@ -37,7 +37,8 @@ fn stats_graph_yaml() {
     let content: String = {
         let mut file = File::open(output.to_str().unwrap()).expect("Failed to open file");
         let mut content = String::new();
-        file.read_to_string(&mut content).expect("Failed to read file");
+        file.read_to_string(&mut content)
+            .expect("Failed to read file");
         content
     };
     assert!(content.contains("Paths: 6"));
@@ -94,7 +95,8 @@ fn stats_path_yaml() {
     let _content: String = {
         let mut file = File::open(output.to_str().unwrap()).expect("Failed to open file");
         let mut content = String::new();
-        file.read_to_string(&mut content).expect("Failed to read file");
+        file.read_to_string(&mut content)
+            .expect("Failed to read file");
         content
     };
 }

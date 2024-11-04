@@ -1,6 +1,7 @@
 use gfa_reader::{Gfa, Path};
-use std::fmt::Debug;
 use log::info;
+use std::fmt::Debug;
+use std::fs::File;
 
 #[allow(dead_code)]
 /// Calculate the average
@@ -159,4 +160,35 @@ where
     let std = standard_deviation(&vec_size, average);
 
     (average, med, std)
+}
+
+use std::io::{stdout, BufWriter, Write};
+
+/// Prints or writes the formatted string depending on the output provided
+/// If `output` is Some, it writes to the given file, otherwise it prints to stdout.
+pub fn print_or_write(output: Option<&mut dyn Write>, message: &str) {
+    match output {
+        Some(mut output) => {
+            writeln!(output, "{}", message).expect("Failed to write to output");
+        }
+        None => {
+            writeln!(stdout(), "{}", message).expect("Failed to write to output");
+        }
+    }
+}
+
+use std::io::{self};
+
+pub fn get_writer(filename: &str) -> io::Result<Box<dyn Write>> {
+    if filename == "-" || filename.is_empty() {
+        // Create a BufWriter for stdout
+        let stdout = io::stdout();
+        let writer = BufWriter::new(stdout);
+        Ok(Box::new(writer))
+    } else {
+        // Create a BufWriter for a file
+        let file = File::create(filename)?;
+        let writer = BufWriter::new(file);
+        Ok(Box::new(writer))
+    }
 }

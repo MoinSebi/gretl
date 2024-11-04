@@ -1,17 +1,17 @@
-use std::cmp::min;
 use clap::ArgMatches;
 use gfa_reader::{Gfa, Pansn};
 use rayon::prelude::*;
+use std::cmp::min;
 
+use hashbrown::HashMap;
 use log::{info, warn};
 use std::collections::HashSet;
 use std::ffi::c_ushort;
 use std::fmt::format;
 use std::fs::File;
 use std::io::{BufWriter, Write};
-use std::sync::{Arc, Mutex};
 use std::sync::atomic::{AtomicU32, Ordering};
-use hashbrown::HashMap;
+use std::sync::{Arc, Mutex};
 
 /// Block main function
 ///
@@ -40,7 +40,6 @@ pub fn block_main(matches: &ArgMatches) -> Result<(), Box<dyn std::error::Error>
     let sequence_window = matches.value_of("sequence-window");
     let sequence_step = matches.value_of("sequence-step");
 
-
     let cutoff_distance: usize = matches.value_of("distance").unwrap().parse().unwrap();
 
     // Output
@@ -64,7 +63,13 @@ pub fn block_main(matches: &ArgMatches) -> Result<(), Box<dyn std::error::Error>
     let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, sep);
 
     info!("Indexing graph");
-    let blocks = block_wrapper(&graph, node_step, node_window, sequence_window, sequence_step)?;
+    let blocks = block_wrapper(
+        &graph,
+        node_step,
+        node_window,
+        sequence_window,
+        sequence_step,
+    )?;
     info!("Number of blocks: {}", blocks.len());
 
     let node_sizes = node_size(&graph, min1, max1);
@@ -139,13 +144,12 @@ pub fn blocks_node(graph: &Gfa<u32, (), ()>, step: usize, wsize: usize) -> Vec<[
     let total_segments = graph.segments.len();
 
     for (segment_index, segment) in graph.segments.iter().enumerate().step_by(step) {
-        let end = (segment_index + wsize).min(total_segments-1) ;
+        let end = (segment_index + wsize).min(total_segments - 1);
 
         blocks.push([segment.id, graph.segments[end].id]);
     }
     blocks
 }
-
 
 /// Use the step-index to start a new block
 /// Finish block if the size is larger than the sequence
@@ -168,7 +172,6 @@ pub fn block_seq(graph: &Gfa<u32, (), ()>, size: usize, step_size: usize) -> Vec
     result
 }
 
-
 /// Get the index where the window changes (by step)
 pub fn get_starts(graph: &Gfa<u32, (), ()>, step: usize) -> Vec<usize> {
     let mut step_index = Vec::new();
@@ -182,7 +185,6 @@ pub fn get_starts(graph: &Gfa<u32, (), ()>, step: usize) -> Vec<usize> {
     }
     step_index
 }
-
 
 /// Node size index
 pub fn node_size(graph: &Gfa<u32, (), ()>, min: u32, max: u32) -> Vec<usize> {
@@ -213,9 +215,7 @@ pub fn wrapper_blocks(
     threads: usize,
     graph: &Gfa<u32, (), ()>,
 ) -> Result<(), Box<dyn std::error::Error>> {
-
     let (min1, max1) = get_min_max(&graph);
-
 
     println!("{}", block.len());
     println!("{:?}", &block[..5]);
@@ -228,7 +228,7 @@ pub fn wrapper_blocks(
     info!("Block4: {:?}", block_index.len());
     let p1 = Arc::new(Mutex::new(vec![Vec::new(); block.len()]));
     //
-    let path_per_chunk = (graph.paths.len() + threads -1) / threads as usize;
+    let path_per_chunk = (graph.paths.len() + threads - 1) / threads as usize;
     info!("Path per chunk: {:?}", path_per_chunk);
 
     let mut atomic_count = AtomicU32::new(0);
@@ -236,17 +236,22 @@ pub fn wrapper_blocks(
     graph.paths.par_chunks(path_per_chunk).for_each(|chunk| {
         for (genome_id, path) in chunk.iter().enumerate() {
             atomic_count.fetch_add(1, Ordering::Relaxed);
-            println!("{:?}/{}", atomic_count.load(Ordering::Relaxed), paths_number);
+            println!(
+                "{:?}/{}",
+                atomic_count.load(Ordering::Relaxed),
+                paths_number
+            );
             let mut cumulative_length = 0; // Variable to track the cumulative length
 
-            let mut block_index_cumulative: Vec < (usize, usize, u32) > = path.nodes
+            let mut block_index_cumulative: Vec<(usize, usize, u32)> = path
+                .nodes
                 .iter()
                 .enumerate()
                 .map(|(i, node_id)| {
                     let node = graph.get_node_by_id(node_id).length; // Return None if the node isn't found
                     let block_value = block_index[(*node_id - min1) as usize];
-                    cumulative_length += node;  // Update cumulative length
-                    // Get the block value
+                    cumulative_length += node; // Update cumulative length
+                                               // Get the block value
                     (block_value, i, cumulative_length - node) // Return the block value and cumulative length
                 })
                 .collect();
@@ -263,7 +268,11 @@ pub fn wrapper_blocks(
                 if *block_value != prev_block {
                     //println!("hit2 {} {} {}", start_index, i, prev_pos);
                     if !p.is_empty() {
-                        p[prev_block].push([start_index, block_index_cumulative[index - 1].1, genome_id]);
+                        p[prev_block].push([
+                            start_index,
+                            block_index_cumulative[index - 1].1,
+                            genome_id,
+                        ]);
                     }
                     prev_block = *block_value;
                     prev_pos = *pos;
@@ -271,11 +280,21 @@ pub fn wrapper_blocks(
                 } else {
                     //println!("dsakjdsa {} {} {}", *pos as usize, prev_pos as usize , graph.get_node_by_id(&(path.nodes[aa[index-1].1 as usize])).length as usize);
 
-                    let pp = *pos as usize - prev_pos as usize - graph.get_node_by_id(&(path.nodes[block_index_cumulative[index - 1].1 as usize])).length as usize;
+                    let pp = *pos as usize
+                        - prev_pos as usize
+                        - graph
+                            .get_node_by_id(
+                                &(path.nodes[block_index_cumulative[index - 1].1 as usize]),
+                            )
+                            .length as usize;
                     //println!("hit");
                     if pp > max_distance {
                         //println!("dsakjdsa {} {} {} {} {} {}", *pos as usize, prev_pos as usize , aa[index].1, aa[index-1].1, graph.get_node_by_id(&(path.nodes[aa[index].1 as usize])).length as usize, graph.get_node_by_id(&(path.nodes[aa[index-1].1 as usize])).length as usize);
-                        p[prev_block].push([start_index, block_index_cumulative[index - 1].1, genome_id]);
+                        p[prev_block].push([
+                            start_index,
+                            block_index_cumulative[index - 1].1,
+                            genome_id,
+                        ]);
                         prev_pos = *pos;
                         start_index = *i;
                     }
@@ -287,14 +306,13 @@ pub fn wrapper_blocks(
             let p1 = Arc::clone(&p1); // Clone the Arc to share the Mutex across threads
 
             let mut shared_p1 = p1.lock().unwrap();
-            for (i, x) in p.iter_mut().enumerate(){
+            for (i, x) in p.iter_mut().enumerate() {
                 shared_p1[i].append(x)
             }
-
-        }});
+        }
+    });
 
     let o = p1.lock().unwrap();
-
 
     info!("Done");
     Ok(())

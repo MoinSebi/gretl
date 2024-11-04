@@ -4,12 +4,11 @@ use crate::helpers::graphs::get_stats;
 use clap::ArgMatches;
 use gfa_reader::{check_numeric_gfafile, Gfa, Pansn};
 
-
 /// Core main function
 ///
 /// Calculate amount of nodes and sequence for each level.
 /// Everything is written in one file.
-pub fn core_main(matches: &ArgMatches) -> Result<(),  Box<dyn std::error::Error>> {
+pub fn core_main(matches: &ArgMatches) -> Result<(), Box<dyn std::error::Error>> {
     // Reading the graph and converting it to a graph wrapper
     eprintln!("Running 'gretl core' analysis");
     // Is the graph file numeric?

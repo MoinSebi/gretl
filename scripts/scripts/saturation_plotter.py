@@ -5,21 +5,20 @@ import argparse
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-
+import sys
 
 
 
 def read_data(filename):
+    if filename == "-": # Read from stdin
+        df = pd.read_csv(sys.stdin, sep = "\t")
+        return df
+    else:
+        return pd.read_csv(filename, sep = "\t")
 
-    # File name
-    f = filename
 
-    # Pandas data frame
-    df = pd.read_csv(f, sep = "\t")
-    return df
 
 def get_index(df):
-    print(df)
     # Get the index when sequence starts (it goes till end)
     seq_index = [i for i, x in enumerate(list(df.columns)) if x.startswith("Seq")][0]
 

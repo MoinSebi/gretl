@@ -1,4 +1,4 @@
-use gfa_reader::{Segment};
+use gfa_reader::Segment;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 

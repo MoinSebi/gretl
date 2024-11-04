@@ -107,11 +107,14 @@ pub fn feature_filter(
     let degree = calc_node_degree(graph).2;
     let depth = calc_depth(&paths, graph);
     for (i, (s, (deg, dep))) in size.iter().zip(degree.iter().zip(depth.iter())).enumerate() {
-        if s != &0 && *s as i128 > minlen
-                && *deg as i128 > mindegree
-                && *dep as i128 > mindepth
-                && (*s as i128) < maxlen
-                && (*deg as i128) < maxdegree && (*dep as i128) < maxdepth {
+        if s != &0
+            && *s as i128 > minlen
+            && *deg as i128 > mindegree
+            && *dep as i128 > mindepth
+            && (*s as i128) < maxlen
+            && (*deg as i128) < maxdegree
+            && (*dep as i128) < maxdepth
+        {
             result.push(i)
         }
     }

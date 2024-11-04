@@ -11,7 +11,7 @@ use std::io::{BufRead, BufReader};
 /// Main function for converting string ID to integer ID
 ///
 /// This returns numeric, compact graph (starting node = 1)
-pub fn id2int_main(matches: &ArgMatches) -> Result<(),  Box<dyn std::error::Error>>{
+pub fn id2int_main(matches: &ArgMatches) -> Result<(), Box<dyn std::error::Error>> {
     info!("Starting id2int_main");
     info!("Read nodes + index");
     let (s, index, count) = node_reader(matches.value_of("gfa").unwrap());
@@ -106,34 +106,60 @@ enum DelEnum {
 ///
 /// Return:
 ///    - String: string with converted ID (string -> integer)
-pub fn convert_string(k: &str, hm: &HashMap<&str, usize>, del_enum: DelEnum) -> Result<String,  Box<dyn std::error::Error>>  {
+pub fn convert_string(
+    k: &str,
+    hm: &HashMap<&str, usize>,
+    del_enum: DelEnum,
+) -> Result<String, Box<dyn std::error::Error>> {
     if del_enum == DelEnum::Space {
         let a = k.split(" ").collect::<Vec<&str>>();
-        Ok(hm.get(a[0]).ok_or("Error converting ID").unwrap().to_string())
+        Ok(hm
+            .get(a[0])
+            .ok_or("Error converting ID")
+            .unwrap()
+            .to_string())
     } else if del_enum == DelEnum::Comma {
         let mut dirs = Vec::new();
         let mut values = Vec::new();
         for x in k.split(",") {
-
-                dirs.push(x.chars().last().ok_or("Error converting ID").unwrap());
-                values.push(hm.get(&x.to_string()[0..x.len()-1]).ok_or("Error converting ID").unwrap().to_string());
-
+            dirs.push(x.chars().last().ok_or("Error converting ID").unwrap());
+            values.push(
+                hm.get(&x.to_string()[0..x.len() - 1])
+                    .ok_or("Error converting ID")
+                    .unwrap()
+                    .to_string(),
+            );
         }
-        Ok(values.iter().zip(dirs.iter()).map(|(x, y)| format!("{}{}", y, x)).collect::<Vec<String>>().join(""))
+        Ok(values
+            .iter()
+            .zip(dirs.iter())
+            .map(|(x, y)| format!("{}{}", y, x))
+            .collect::<Vec<String>>()
+            .join(""))
     } else {
         let mut dirs = Vec::new();
         let mut values = Vec::new();
         let mut oo = String::new();
-        for x in k.chars(){
+        for x in k.chars() {
             if x.to_string() == ">" || x.to_string() == "<" {
                 dirs.push(x);
-                values.push(hm.get(oo.as_str()).ok_or("Error converting ID").unwrap().to_string());
+                values.push(
+                    hm.get(oo.as_str())
+                        .ok_or("Error converting ID")
+                        .unwrap()
+                        .to_string(),
+                );
                 oo = x.to_string();
             } else {
                 oo += &x.to_string();
             }
         }
-        Ok(values.iter().zip(dirs.iter()).map(|(x, y)| format!("{}{}", y, x)).collect::<Vec<String>>().join(""))
+        Ok(values
+            .iter()
+            .zip(dirs.iter())
+            .map(|(x, y)| format!("{}{}", y, x))
+            .collect::<Vec<String>>()
+            .join(""))
     }
 }
 
@@ -147,7 +173,12 @@ pub fn convert_string(k: &str, hm: &HashMap<&str, usize>, del_enum: DelEnum) -> 
 ///    - Write a new file with integer ID (same structure as the original file, but different ID)
 ///
 /// Comment: Which entries are converted is based on the first character of the line
-pub fn read_write(f1: &str, f2: &str, hm: &HashMap<&str, usize>, count: &usize) -> Result<(),  Box<dyn std::error::Error>>{
+pub fn read_write(
+    f1: &str,
+    f2: &str,
+    hm: &HashMap<&str, usize>,
+    count: &usize,
+) -> Result<(), Box<dyn std::error::Error>> {
     let file = File::open(f1).unwrap();
     let reader = BufReader::new(file);
     let file = File::create(f2).unwrap();
