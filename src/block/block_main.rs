@@ -1,3 +1,5 @@
+use std::fs::File;
+use std::io::{BufWriter, Write};
 use clap::ArgMatches;
 use gfa_reader::{Gfa, Pansn};
 use rayon::prelude::*;
@@ -6,6 +8,9 @@ use log::{info, warn};
 
 use std::sync::atomic::{AtomicU32, Ordering};
 use std::sync::{Arc, Mutex};
+use chrono::Local;
+use hashbrown::HashSet;
+use crate::helpers::helper::{get_writer, mean};
 
 /// Block main function
 ///
@@ -43,15 +48,15 @@ pub fn block_main(matches: &ArgMatches) -> Result<(), Box<dyn std::error::Error>
     info!("Block subcommand");
     info!("Graph file: {}", graph_file);
     info!("Separator: {:?}", sep);
-    info!("Node window size: {}", node_window);
+    info!("Node window.md size: {}", node_window);
     info!("Node step size: {}", node_step);
-    info!("Sequence window size: {:?}", sequence_window);
+    info!("Sequence window.md size: {:?}", sequence_window);
     info!("Sequence step size: {:?}", sequence_step);
     info!("Distance: {}", cutoff_distance);
     info!("Output prefix: {}\n", output_prefix);
 
     info!("Reading graph file");
-    let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(graph_file);
+    let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file_multi(graph_file, threads);
     graph.walk_to_path(sep);
     let (min1, max1) = get_min_max(&graph);
     let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, sep);
@@ -211,32 +216,31 @@ pub fn wrapper_blocks(
 ) -> Result<(), Box<dyn std::error::Error>> {
     let (min1, _max1) = get_min_max(graph);
 
-    println!("{}", block.len());
-    println!("{:?}", &block[..5]);
     let mut block_index: Vec<usize> = block
         .iter()
         .enumerate()
         .flat_map(|(i, x)| (x[0]..x[1]).map(move |_y| i))
         .collect();
     block_index.push(block.len() - 1);
-    info!("Block4: {:?}", block_index.len());
     let p1 = Arc::new(Mutex::new(vec![Vec::new(); block.len()]));
     //
     let path_per_chunk = (graph.paths.len() + threads - 1) / threads;
-    info!("Path per chunk: {:?}", path_per_chunk);
 
     let atomic_count = AtomicU32::new(0);
     let paths_number = graph.paths.len();
-    graph.paths.par_chunks(path_per_chunk).for_each(|chunk| {
+    graph.paths.par_chunks(path_per_chunk).enumerate().for_each(|(index, chunk)| {
         for (genome_id, path) in chunk.iter().enumerate() {
             atomic_count.fetch_add(1, Ordering::Relaxed);
-            println!(
-                "{:?}/{}",
+            std::io::stderr().flush().unwrap();
+            eprint!(
+                "\r{}          {:?}/{}",
+                Local::now().format("%d/%m/%Y %H:%M:%S %p"),
                 atomic_count.load(Ordering::Relaxed),
                 paths_number
             );
-            let mut cumulative_length = 0; // Variable to track the cumulative length
 
+            let mut cumulative_length = 0; // Variable to track the cumulative length
+            let genome_id = genome_id + index * path_per_chunk;
             let mut block_index_cumulative: Vec<(usize, usize, u32)> = path
                 .nodes
                 .iter()
@@ -303,9 +307,33 @@ pub fn wrapper_blocks(
             }
         }
     });
-
+    eprintln!();
+    info!("Writing output");
     let _o = p1.lock().unwrap();
+    assert_eq!(block.len(), _o.len());
+    let combined: Vec<_> = _o.iter().zip(block.iter()).collect();
+    let mut writer = get_writer(_out_prefix)?;
 
-    info!("Done");
+    if _out_prefix == "-"{
+        for traversal in combined.iter() {
+            let mut s = String::new();
+            let block_name = format!("{}-{}\t", traversal.1[0], traversal.1[1]);
+            let trav = traversal.0.iter().len();
+            let paths = traversal.0.iter().map(|y| y[2]).collect::<HashSet<usize>>().len();
+            let trav1 = traversal.0.iter().map(|y| &graph.paths[y[2]].nodes[y[0]..y[1]]).collect::<Vec<_>>();
+
+            let len1 = trav1.iter().map(|y| y.len() as u32).collect::<Vec<u32>>();
+            let total_len = trav1.iter().map(|y| y.iter().map(|z| graph.get_sequence_by_id(&z).len() as f64).sum::<f64>()).collect::<Vec<f64>>();
+
+            s.push_str(&block_name);
+            s.push_str(&format!("{:?}\t", trav).as_str());
+            s.push_str(&format!("{:?}\t", paths).as_str());
+            s.push_str(&format!("{:?}\t", len1.len()).as_str());
+            s.push_str(&format!("{:?}\t", mean(&len1)).as_str());
+            s.push_str(&format!("{:?}", mean(&total_len)).as_str());
+
+            writeln!(writer, "{}", &s);
+        }
+    }
     Ok(())
 }
