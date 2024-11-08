@@ -1,15 +1,12 @@
 use gfa_reader::Segment;
 use std::fs::File;
 use std::io::{BufWriter, Write};
+use crate::helpers::helper::get_writer;
 
-pub fn make_buffer(filename: &str) -> BufWriter<File> {
-    let f = File::create(filename).expect("Unable to create file");
-
-    BufWriter::new(f)
-}
 
 /// Write
-pub fn write_list(data: &Vec<[u128; 3]>, f: &mut BufWriter<File>, nodes: &Vec<Segment<u32, ()>>) {
+pub fn write_list(data: &Vec<[u128; 3]>, filename: &str, nodes: &Vec<Segment<u32, ()>>) {
+    let mut f = get_writer(filename).expect("hilfe");
     writeln!(f, "nodeid\tnode\tsequence\tjumps").expect("hilfe");
 
     for (x, node) in data.iter().zip(nodes.iter()) {

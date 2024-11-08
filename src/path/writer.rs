@@ -1,11 +1,11 @@
 use std::fs::File;
 use std::io::{BufWriter, Write};
+use crate::helpers::helper::get_writer;
 
 pub fn write_paths(data: &Vec<String>, filename: &str) {
-    let f = File::create(filename).expect("Unable to create file");
-    let mut f = BufWriter::new(f);
+    let mut writer = get_writer(filename).expect("Write path writer");
 
     for x in data.iter() {
-        writeln!(f, "{}", x).expect("Write path writer");
+        writeln!(writer, "{}", x).expect("Write path writer");
     }
 }

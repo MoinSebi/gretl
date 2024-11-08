@@ -10,18 +10,15 @@ pub fn writer_core(
     let f = File::create(filename).expect("Unable to create file");
     let mut f = BufWriter::new(f);
     // Header
-    writeln!(f, "Similarity\tSequence[bp]\t#Node").expect("Not able to write");
-    // Write the overall distribution
-    for (i, x) in data_total.iter().enumerate() {
-        writeln!(f, "{}\t{}\t{}", i, x.1, x.0).expect("Not able to write");
+    writeln!(f, "Similarity\tName\tSequence[bp]\t#Node").expect("Not able to write");
+    writeln!(f, "{}\t{}\t{}\t{}", 0, 0, data_total[0].1, data_total[0].0).expect("Not able to write");
+
+    for (name, nodes, seq) in data_private.iter() {
+        writeln!(f, "{}\t{}\t{}\t{}", 1, name, seq, nodes).expect("Not able to write");
     }
 
-    let f = File::create(filename.to_string() + ".private.txt").expect("Unable to create file");
-    let mut f = BufWriter::new(f);
-
-    writeln!(f, "Path\tSequence[bp]\t#Node").expect("Not able to write");
-    // Write the accession based information
-    for (name, nodes, seq) in data_private.iter() {
-        writeln!(f, "{}\t{}\t{}", name, seq, nodes).expect("Not able to write");
+    // Write the overall distribution
+    for (i, (node, seq)) in data_total.iter().enumerate().skip(1) {
+        writeln!(f, "{}\t{}\t{}\t{}", i, i, seq, node).expect("Not able to write");
     }
 }

@@ -1,12 +1,12 @@
 use log::info;
 use std::fs::File;
 use std::io::{BufWriter, Write};
+use crate::helpers::helper::get_writer;
 
 /// Write path similarity data to a file
 pub fn write_ps(data: &Vec<(String, Vec<(u32, u32)>)>, filename: &str) {
     info!("Writing path similarity data to file");
-    let f = File::create(filename).expect("Unable to create file");
-    let mut f = BufWriter::new(f);
+    let mut f = get_writer(filename).expect("Not able to write");
     let f1 = data[0].1.len();
 
     let k = "Accession";

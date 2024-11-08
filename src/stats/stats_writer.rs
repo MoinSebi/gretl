@@ -1,12 +1,12 @@
 use std::fs::File;
 use std::io::{BufWriter, Write};
+use crate::helpers::helper::get_writer;
 
 /// Write statistics in a YAML file
 ///
 /// Input:
 pub fn write_tsv_graph(data: &Vec<(String, String)>, filename: &str) {
-    let f = File::create(filename).expect("Unable to create file");
-    let mut f = BufWriter::new(f);
+    let mut f = get_writer(filename).expect("Not able to write");
     for (d, x) in data.iter() {
         writeln!(f, "{}: {}", d, x).expect("Not able to write");
     }
@@ -14,8 +14,8 @@ pub fn write_tsv_graph(data: &Vec<(String, String)>, filename: &str) {
 
 /// Write statistics in tab-separated file (tsv)
 pub fn write_yaml_graph(data: &Vec<(String, String)>, filename: &str) {
-    let f = File::create(filename).expect("Unable to create file");
-    let mut f = BufWriter::new(f);
+    let mut f = get_writer(filename).expect("Not able to write");
+
     for (column_name, _value) in data.iter().take(data.len() - 1) {
         write!(f, "{}\t", column_name).expect("Not able to write");
     }
@@ -29,8 +29,8 @@ pub fn write_yaml_graph(data: &Vec<(String, String)>, filename: &str) {
 
 /// Write function for path stats in yaml
 pub fn write_yaml_path(data: &Vec<(String, Vec<(String, String)>)>, filename: &str) {
-    let f = File::create(filename).expect("Unable to create file");
-    let mut f = BufWriter::new(f);
+    let mut f = get_writer(filename).expect("Not able to write");
+
     for x1 in data.iter() {
         writeln!(f, "{}:", x1.0).expect("Not able to write");
         for (d, x) in x1.1.iter() {
@@ -41,8 +41,8 @@ pub fn write_yaml_path(data: &Vec<(String, Vec<(String, String)>)>, filename: &s
 
 /// Write function for path stats in tsv
 pub fn write_tsv_path(data: &Vec<(String, Vec<(String, String)>)>, filename: &str) {
-    let f = File::create(filename).expect("Unable to create file");
-    let mut f = BufWriter::new(f);
+    let mut f = get_writer(filename).expect("Not able to write");
+
     write!(f, "Path\t").expect("Not able to write");
     let x = &data[0];
     for y in data[0].1.iter().take(x.1.len() - 1) {
