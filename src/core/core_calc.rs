@@ -1,4 +1,5 @@
 use gfa_reader::{Gfa, Pansn};
+use log::info;
 
 ///
 pub fn pan_genome(
@@ -6,7 +7,7 @@ pub fn pan_genome(
     graph: &Gfa<u32, (), ()>,
     stats: &Vec<u32>,
 ) -> (Vec<(usize, usize)>, Vec<(String, usize, usize)>) {
-    eprintln!("Running core analysis");
+    info!("Running core analysis");
 
     let paths = gwrapper.get_path_genome();
 

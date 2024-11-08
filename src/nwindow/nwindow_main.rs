@@ -1,5 +1,5 @@
 use crate::nwindow::n_windows::stats2;
-use crate::nwindow::writer_nwindow::{make_buffer, write_list};
+use crate::nwindow::writer_nwindow::{write_list};
 use clap::ArgMatches;
 use gfa_reader::{check_numeric_compact_gfafile, Gfa};
 use log::info;
@@ -71,8 +71,7 @@ pub fn nwindow_main(matches: &ArgMatches) {
         );
 
         info!("Writing to file: {}", output);
-        let mut buffer = make_buffer(output);
-        write_list(&a, &mut buffer, &graph.segments);
+        write_list(&a, output, &graph.segments);
     } else {
         eprintln!("GFA file is not numeric");
         process::exit(1);

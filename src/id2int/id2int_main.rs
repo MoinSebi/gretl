@@ -182,7 +182,6 @@ pub fn read_write(
 ) -> Result<(), Box<dyn std::error::Error>> {
     let file = File::open(f1).unwrap();
     let reader = BufReader::new(file);
-    let file = File::create(f2).unwrap();
     let mut writer = get_writer(f2)?;
     let mut c = 0;
     let mut lastpro = 0.0;

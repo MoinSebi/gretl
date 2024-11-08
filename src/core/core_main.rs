@@ -3,6 +3,7 @@ use crate::core::writer::writer_core;
 use crate::helpers::graphs::get_stats;
 use clap::ArgMatches;
 use gfa_reader::{check_numeric_gfafile, Gfa, Pansn};
+use log::info;
 
 /// Core main function
 ///
@@ -10,7 +11,7 @@ use gfa_reader::{check_numeric_gfafile, Gfa, Pansn};
 /// Everything is written in one file.
 pub fn core_main(matches: &ArgMatches) -> Result<(), Box<dyn std::error::Error>> {
     // Reading the graph and converting it to a graph wrapper
-    eprintln!("Running 'gretl core' analysis");
+    info!("Running 'gretl core' analysis");
     // Is the graph file numeric?
     if check_numeric_gfafile(matches.value_of("gfa").unwrap()) {
         // Check for panSN separator
@@ -21,7 +22,7 @@ pub fn core_main(matches: &ArgMatches) -> Result<(), Box<dyn std::error::Error>>
 
         // Read graph and parser
         let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(matches.value_of("gfa").unwrap());
-        println!("Walking to path {}", graph.paths.len());
+        info!("Walking to path {}", graph.paths.len());
         graph.walk_to_path(sep);
 
         // Check if paths are found
@@ -43,13 +44,11 @@ pub fn core_main(matches: &ArgMatches) -> Result<(), Box<dyn std::error::Error>>
             // Write output in table
             writer_core(similarity_level, private_only, output)
         } else {
-            //panic!("Error: No path found in graph file")
-            let _a: usize = "kkk".to_string().parse()?;
+            panic!("Error: No path found in graph file");
         }
     } else {
-        let _a: usize = "kkk".to_string().parse()?;
 
-        //panic!("Error: Graph file is not numeric");
+        panic!("Error: Graph file is not numeric");
     }
     Ok(())
 }
