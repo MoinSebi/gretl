@@ -1,10 +1,18 @@
 # gretl - Graph evaluation toolkit
 ## Description 
-```gretl``` is a tool for basic graph statistics using GFA format input. Our statistics are based on nodes, edges and paths/walks. Walks can also be used, but will be represented as paths internally. Many commands do not work without paths/walk information. 
+```gretl``` is a tool for basic graph statistics using GFA format input. Our statistics are based on nodes, edges and paths/walks. Walks can also be used, but will be represented as paths internally. Many commands do not work without paths/walk information.  
+In addition, we added some commands, using graph-based statistics, but represent it on a path (sample scale). We also offer commands for more complex analysis - an overview can be seen below. 
 
 ## Requirements on GFA file: 
 - GFA format v1.0, v1.1 or v1.2.
 - GFA file has numerical node ID
+
+## Plotting your results
+We have added python scripts to visualize the output of the tool. The scripts are stored in the `scripts` directory. The output of nearly each subcommand is covered. Follow along our workflow document, to understand when each command should be used and which research questions can be answered.  
+
+## Explaination
+Since some of the commands run relative complex computation, we have added a detailed description of each subcommand in the `doc` directory. It covers how internal each command is structured, what is calculated and how this calculation is done. 
+
 
 **Comment**:  
 - Sorted node IDs are not required, but all "Jump" related statistics will be based on the order of the nodes in the GFA file. Check this [paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10542513/) for more information. Run odgi sort -O" to sort the graph in pan-genomic order.
@@ -20,7 +28,7 @@ cargo build --release
 ./target/release/gretl  
 ```
 ## Testing
-We provide a small test suite to test the basic functionality of the tool. If you are interested in output format, check the data/test/yeast/ directory after running the following command.
+We provide a small test suite to test the basic functionality of the tool.
 
 ```
 cargo test
@@ -57,7 +65,7 @@ Graph statistics also include "hybrid" statistics, which are average and standar
 Convert any string-based node identifier to numeric values. Use ```odgi sort``` to sort the graph in pan-genomic order, which will create more meaningful statistics in ```gretl stats``` (see above). Nevertheless, numerical node IDs a required by any ```gretl``` command. 
 
 Available options:
-- ```-d, --dict <dict>``` Write a dictionary with new and old IDs to a plain text file. 
+- ```-d, --dict <dict>``` Write a dictionary with the new and old IDs to a plain text file. 
 
 **Example**
 ```
