@@ -26,6 +26,8 @@ pub fn nodelist_main(matches: &ArgMatches) {
         let output = matches.value_of("output").unwrap();
         let features = vec!["Length", "Similarity", "Depth", "ND"];
         let bit_feature = get_features(matches, &features);
+        info!("Input option: ");
+        info!("Pan-SN: {:?}", sep);
         info!("Graph file: {}", matches.value_of("gfa").unwrap());
         info!("Output file: {}", output);
         info!("Features: {:?}\n", features.iter().zip(bit_feature.iter()).filter(|(_, &x)| x).map(|(x, _)| *x).collect::<Vec<&str>>());

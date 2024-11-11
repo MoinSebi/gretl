@@ -33,7 +33,7 @@ pub fn wrapper_node_list(
     }
 
 
-    write_wrapper(&result_vec, feature_bitvec, &mask, vec!["Length", "Similarity", "Depth", "ND"], filename)?;
+    write_wrapper(&result_vec, feature_bitvec, &mask, vec!["Length", "Similarity", "Depth", "ND"], filename, graph)?;
     Ok(())
 }
 
