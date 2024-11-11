@@ -1,7 +1,6 @@
 use std::error::Error;
-use gfa_reader::{Gfa, Segment};
-use std::fs::File;
-use std::io::{BufWriter, Write};
+use gfa_reader::{Gfa};
+use std::io::{Write};
 use crate::helpers::helper::get_writer;
 
 pub fn write_wrapper(data: &[[u32; 4]], feature: &Vec<bool>, mask: &Vec<bool>, header: Vec<&str>, filename: &str, graph: &Gfa<u32, (), ()>) -> Result<(), Box<dyn Error>> {

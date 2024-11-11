@@ -25,7 +25,7 @@ pub fn accession2level(
             let metric_value = cores[*x as usize] as usize;
 
             core_data[metric_value].0 += 1;
-            core_data[metric_value].1 += graph.get_node_by_id(x).sequence.get_len() as u32;
+            core_data[metric_value].1 += graph.get_sequence_by_id(x).len() as u32;
         }
         res.push((name.clone(), core_data));
     }

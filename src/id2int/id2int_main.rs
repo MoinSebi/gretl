@@ -1,6 +1,5 @@
 use chrono::Local;
 use clap::ArgMatches;
-
 use log::info;
 use std::collections::HashMap;
 use std::fs::File;
@@ -74,6 +73,8 @@ pub fn create_strvec(index: Vec<usize>, ss: &String) -> Vec<&str> {
 /// Make a hashmap from a vector of strings (&str)
 /// The hashmap is used to convert string ID to integer ID
 ///
+/// Comment: We start at 1
+///
 /// Return:
 ///    - HashMap<&str, usize>: HashMap with key = string ID and value = integer ID
 pub fn create_hashmap<'a>(index: &'a Vec<&str>) -> HashMap<&'a str, usize> {
@@ -108,24 +109,24 @@ enum DelEnum {
 /// Return:
 ///    - String: string with converted ID (string -> integer)
 pub fn convert_string(
-    k: &str,
-    hm: &HashMap<&str, usize>,
+    delim: &str,
+    hashmap_old_new: &HashMap<&str, usize>,
     del_enum: DelEnum,
 ) -> Result<String, Box<dyn std::error::Error>> {
     if del_enum == DelEnum::Space {
-        let a = k.split(' ').collect::<Vec<&str>>();
-        Ok(hm
-            .get(a[0])
+        let string_vec = delim.split(' ').collect::<Vec<&str>>();
+        Ok(hashmap_old_new
+            .get(string_vec[0])
             .ok_or("Error converting ID")
             .unwrap()
             .to_string())
     } else if del_enum == DelEnum::Comma {
         let mut dirs = Vec::new();
         let mut values = Vec::new();
-        for x in k.split(',') {
+        for x in delim.split(',') {
             dirs.push(x.chars().last().ok_or("Error converting ID").unwrap());
             values.push(
-                hm.get(&x.to_string()[0..x.len() - 1])
+                hashmap_old_new.get(&x.to_string()[0..x.len() - 1])
                     .ok_or("Error converting ID")
                     .unwrap()
                     .to_string(),
@@ -141,11 +142,11 @@ pub fn convert_string(
         let mut dirs = Vec::new();
         let mut values = Vec::new();
         let mut oo = String::new();
-        for x in k.chars() {
+        for x in delim.chars() {
             if x.to_string() == ">" || x.to_string() == "<" {
                 dirs.push(x);
                 values.push(
-                    hm.get(oo.as_str())
+                    hashmap_old_new.get(oo.as_str())
                         .ok_or("Error converting ID")
                         .unwrap()
                         .to_string(),
@@ -313,10 +314,10 @@ pub fn get_version(filename: &str) -> f32 {
 /// Return:
 ///     - ()
 ///     - Tab separated file with key and value
-pub fn write_hm(hm: &HashMap<&str, usize>, f: &str) {
-    let file = File::create(f).unwrap();
+pub fn write_hm(hashmap_old_new: &HashMap<&str, usize>, filename: &str) {
+    let file = File::create(filename).unwrap();
     let mut writer = std::io::BufWriter::new(file);
-    for (k, v) in hm.iter() {
-        writeln!(writer, "{}\t{}", k, v).expect("Error writing to file");
+    for (old_id, new_id) in hashmap_old_new.iter() {
+        writeln!(writer, "{}\t{}", old_id, new_id).expect("Error writing to file");
     }
 }

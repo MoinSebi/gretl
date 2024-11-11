@@ -189,7 +189,7 @@ pub fn graph_path_seq_total(graph: &Gfa<u32, (), ()>) -> usize {
         .map(|n| {
             n.nodes
                 .iter()
-                .map(|r| graph.get_node_by_id(r).sequence.get_len())
+                .map(|r| graph.get_sequence_by_id(r).len())
                 .sum::<usize>()
         })
         .sum::<usize>();

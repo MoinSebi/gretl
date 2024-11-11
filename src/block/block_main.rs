@@ -246,7 +246,7 @@ pub fn wrapper_blocks(
                 .iter()
                 .enumerate()
                 .map(|(i, node_id)| {
-                    let node = graph.get_node_by_id(node_id).length; // Return None if the node isn't found
+                    let node = graph.get_sequence_by_id(node_id).len() as u32; // Return None if the node isn't found
                     let block_value = block_index[(*node_id - min1) as usize];
                     cumulative_length += node; // Update cumulative length
                                                // Get the block value
@@ -281,8 +281,7 @@ pub fn wrapper_blocks(
                     let pp = *pos as usize
                         - prev_pos as usize
                         - graph
-                            .get_node_by_id(&(path.nodes[block_index_cumulative[index - 1].1]))
-                            .length as usize;
+                            .get_sequence_by_id(&(path.nodes[block_index_cumulative[index - 1].1])).len();
                     //println!("hit");
                     if pp > max_distance {
                         //println!("dsakjdsa {} {} {} {} {} {}", *pos as usize, prev_pos as usize , aa[index].1, aa[index-1].1, graph.get_node_by_id(&(path.nodes[aa[index].1 as usize])).length as usize, graph.get_node_by_id(&(path.nodes[aa[index-1].1 as usize])).length as usize);

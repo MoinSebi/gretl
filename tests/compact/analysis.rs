@@ -3,6 +3,8 @@ use assert_cmd::prelude::*; // Add methods on commands
 use std::process::Command;
 use tempfile::tempdir;
 
+const filename: &str = "./data/example_data/testGraph_complex.gfa";
+
 #[test]
 /// Run core subcommand
 /// -pansv -> path
@@ -13,7 +15,7 @@ fn analysis_test_core_no_pansn_similarity() {
     let output = tmp_dir.path().join("analysis.test.core.pansnno.sim.txt");
     cmd.arg("core")
         .arg("--gfa")
-        .arg("./data/example_data/testGraph_complex.gfa")
+        .arg(filename)
         .arg("--output")
         .arg(output.to_str().unwrap())
         .arg("--pansn")
@@ -30,7 +32,7 @@ fn analysis_test_core_pansn_similarity() {
     let output = tmp_dir.path().join("analysis.test.core.pansn.sim.txt");
     cmd.arg("core")
         .arg("--gfa")
-        .arg("./data/example_data/testGraph_complex.gfa")
+        .arg(filename)
         .arg("--output")
         .arg(output.to_str().unwrap())
         .arg("--pansn")
@@ -47,7 +49,7 @@ fn analysis_test_core_pansn_similarity2() {
     let output = tmp_dir.path().join("analysis.test.core.pansn.sim.txt");
     cmd.arg("core")
         .arg("--gfa")
-        .arg("./data/example_data/testGraph_complex.gfa")
+        .arg(filename)
         .arg("--output")
         .arg(output.to_str().unwrap())
         .arg("--pansn")
@@ -63,7 +65,7 @@ fn analysis_test_core_pansn_depth() {
     let output = tmp_dir.path().join("core.pansn.depth.txt");
     cmd.arg("core")
         .arg("--gfa")
-        .arg("./data/example_data/testGraph_complex.gfa")
+        .arg(filename)
         .arg("--output")
         .arg(output.to_str().unwrap())
         .arg("--pansn")
@@ -81,7 +83,7 @@ fn id2int_test_graph() {
     let output = tmp_dir.path().join("id2int.txt");
     cmd.arg("id2int")
         .arg("--gfa")
-        .arg("./data/example_data/testGraph_complex.gfa")
+        .arg(filename)
         .arg("--output")
         .arg(output.to_str().unwrap());
 
@@ -95,7 +97,7 @@ fn analysis_ps_tg() {
     let output = tmp_dir.path().join("ps.txt");
     cmd.arg("ps")
         .arg("--gfa")
-        .arg("./data/example_data/testGraph_complex.gfa")
+        .arg(filename)
         .arg("--output")
         .arg(output.to_str().unwrap())
         .arg("--pansn")
@@ -111,7 +113,7 @@ fn analysis_node_list_path_tg() {
     let output = tmp_dir.path().join("nodelist2.txt");
     cmd.arg("node-list")
         .arg("--gfa")
-        .arg("./data/example_data/testGraph_complex.gfa")
+        .arg(filename)
         .arg("--output")
         .arg(output.to_str().unwrap());
 
@@ -125,7 +127,7 @@ fn analysis_test_sliding_window_2s() {
     let output = tmp_dir.path().join("analysis.window.txt");
     cmd.arg("window")
         .arg("--gfa")
-        .arg("./data/example_data/testGraph_complex.gfa")
+        .arg(filename)
         .arg("--output")
         .arg(output.to_str().unwrap())
         .arg("-w")
@@ -141,7 +143,7 @@ fn analysis_sliding_nwindow_2s_tg() {
     let output = tmp_dir.path().join("analysis.nwindow.txt");
     cmd.arg("nwindow")
         .arg("--gfa")
-        .arg("./data/example_data/testGraph_complex.gfa")
+        .arg(filename)
         .arg("--output")
         .arg(output.to_str().unwrap());
 
@@ -155,7 +157,7 @@ fn analysis_find_tg() {
     let output = tmp_dir.path().join("analysis.find.tg.txt");
     cmd.arg("find")
         .arg("--gfa")
-        .arg("./data/example_data/testGraph_complex.gfa")
+        .arg(filename)
         .arg("--output")
         .arg(output.to_str().unwrap())
         .arg("--length")

@@ -202,7 +202,7 @@ pub fn path_seq_len(path: &Vec<&Path<u32, (), ()>>, graph: &Gfa<u32, (), ()>) ->
         .map(|n| {
             n.nodes
                 .iter()
-                .map(|nn| graph.get_node_by_id(nn).sequence.get_len())
+                .map(|nn| graph.get_segment_by_id(nn).sequence.get_len())
                 .sum::<usize>()
         })
         .sum::<usize>();
@@ -256,7 +256,7 @@ pub fn path_seq_inverted(
                 .iter()
                 .zip(&n.nodes)
                 .filter(|&n| !(*n.0))
-                .map(|s| graph.get_node_by_id(s.1).sequence.get_len())
+                .map(|s| graph.get_segment_by_id(s.1).sequence.get_len())
                 .sum::<usize>()
         })
         .sum();
@@ -311,7 +311,7 @@ pub fn path_unique2(path: &Vec<&Path<u32, (), ()>>, graph: &Gfa<u32, (), ()>) ->
 
     let unique_seq = hp
         .iter()
-        .map(|x| graph.get_node_by_id(x).sequence.get_len())
+        .map(|x| graph.get_sequence_by_id(x).len())
         .sum();
     (hp.len(), unique_seq)
 }
