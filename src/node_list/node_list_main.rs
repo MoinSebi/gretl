@@ -24,30 +24,40 @@ pub fn nodelist_main(matches: &ArgMatches) {
 
         // Other inputs
         let output = matches.value_of("output").unwrap();
-        let splits = vec!["Core", "Length", "Depth", "Core", "ND"];
-        let mut split_vec = Vec::new();
-        if matches.is_present("Features") {
-            split_vec = matches.value_of("Features").unwrap().split(',').collect();
-        }
-        let mut final_features = Vec::new();
-        for x in split_vec.iter() {
-            if splits.contains(x) {
-                final_features.push(*x);
-            }
-        }
-
-        if final_features.is_empty() {
-            final_features = splits.clone();
-        }
+        let features = vec!["Length", "Similarity", "Depth", "ND"];
+        let bit_feature = get_features(matches, &features);
         info!("Graph file: {}", matches.value_of("gfa").unwrap());
         info!("Output file: {}", output);
-        info!("Features: {:?}", final_features);
+        info!("Features: {:?}\n", features.iter().zip(bit_feature.iter()).filter(|(_, &x)| x).map(|(x, _)| *x).collect::<Vec<&str>>());
 
-        info!("Running wrapper + writing direclty to file");
+        info!("Starting node list analysis");
         // This wrapper also writes data to a file
-        wrapper_node_list(&graph, &wrapper, output, final_features);
+        wrapper_node_list(&graph, &wrapper, output, &bit_feature);
         info!("Finished writing to file");
     } else {
         panic!("Error: GFA file is not numeric");
     }
+}
+
+
+/// Which features is needed
+pub fn get_features(matches: &ArgMatches, features: &Vec<&str>) -> Vec<bool> {
+    let splits = features;
+    let mut split_vec = Vec::new();
+    if matches.is_present("Features") {
+        split_vec = matches.value_of("Features").unwrap().split(',').collect();
+    }
+
+    let mut result_vec = Vec::new();
+    if split_vec.is_empty(){
+        return splits.iter().map(|x| true).collect();
+    }
+    for x in splits.iter() {
+        if split_vec.contains(x) {
+            result_vec.push(true);
+        } else {
+            result_vec.push(false);
+        }
+    }
+    result_vec
 }

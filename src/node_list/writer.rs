@@ -1,31 +1,22 @@
+use std::error::Error;
 use gfa_reader::Segment;
 use std::fs::File;
 use std::io::{BufWriter, Write};
+use crate::helpers::helper::get_writer;
 
-pub fn make_buffer(filename: &str) -> BufWriter<File> {
-    let f = File::create(filename).expect("Unable to create file");
+pub fn write_wrapper(data: &[[u32; 4]], feature: &Vec<bool>, mask: &Vec<bool>, header: Vec<&str>, filename: &str) -> Result<(), Box<dyn Error>> {
+    let mut writer_test = get_writer(filename)?;
+    let f1: Vec<String> = feature.iter().zip(header.iter()).filter(|(x, _)| **x).map(|(_, x)| x.to_string()).collect();
+    let f2: String = f1.join("\t");
 
-    BufWriter::new(f)
-}
-
-/// Write the header of 'gretl ps' output
-pub fn write_header(data: &Vec<Segment<u32, ()>>, f: &mut BufWriter<File>) {
-    let f1: Vec<String> = data
-        .iter()
-        .filter(|x| x.sequence.get_len() != 0)
-        .map(|x| x.id.to_string())
-        .collect();
-    writeln!(f, "Nodes\t{}", f1.join("\t")).expect("Error: Node-list writer");
-}
-
-/// Write
-pub fn write_list(data: (&str, &Vec<u32>), f: &mut BufWriter<File>, ko: &Vec<bool>) {
-    write!(f, "{}\t", data.0).expect("Error: Node-list writer");
-
-    for (x, i) in data.1.iter().zip(ko.iter()) {
-        if *i {
-            write!(f, "{}\t", x).expect("Error: Node-list writer");
+    writeln!(writer_test, "{}", f2);
+    for (i, x) in data.iter().enumerate() {
+        if mask[i] {
+            let f1: Vec<String> = feature.iter().zip(x.iter()).filter(|(x, _)| **x).map(|(_, x)| x.to_string()).collect();
+            let f2: String = f1.join("\t");
+            writeln!(writer_test, "{}", f2);
         }
     }
-    writeln!(f).expect("Error: Node-list writer");
+    Ok(())
 }
+
