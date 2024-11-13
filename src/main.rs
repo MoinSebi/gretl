@@ -1,14 +1,12 @@
 mod block;
 mod bootstrap;
 mod core;
-mod feature;
 mod find;
 mod helpers;
 mod id2int;
 mod logging;
 mod node_list;
 mod nwindow;
-mod path;
 mod path_similarity;
 mod sliding_window;
 mod stats;
@@ -16,13 +14,11 @@ mod stats;
 use crate::block::block_main::block_main;
 use crate::bootstrap::bootstrap_main::bootstrap_main;
 use crate::core::core_main::core_main;
-use crate::feature::feature_main::feature_main;
 use crate::find::find_main::find_main;
 use crate::id2int::id2int_main::id2int_main;
 use crate::logging::newbuilder;
 use crate::node_list::node_list_main::nodelist_main;
 use crate::nwindow::nwindow_main::nwindow_main;
-use crate::path::path_main::path_main;
 use crate::path_similarity::ps_main::ps_main;
 use crate::sliding_window::sliding_window_main::window_main;
 use crate::stats::stats_main::stats_main;
@@ -409,117 +405,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 
 
-
-        .subcommand(App::new("feature")
-            .about("Get list of nodes which do not fall into filter")
-            .arg(Arg::new("gfa")
-                .short('g')
-                .long("gfa")
-                .about("Input GFA file")
-                .required(true)
-                .takes_value(true))
-            .arg(Arg::new("output")
-                .short('o')
-                .long("output")
-                .about("Output file name")
-                .takes_value(true)
-                .required(true)
-            )
-            .arg(Arg::new("PanSN")
-                .short('p')
-                .long("pansn")
-                .about("Specify PanSN separator")
-                .takes_value(true))
-
-            .arg(Arg::new("min-len")
-                .short('l')
-                .long("min-len")
-                .about("Minimum length")
-                .takes_value(true)
-
-            )
-            .arg(Arg::new("max-len")
-                .short('L')
-                .long("max-len")
-                .about("Maximum node length ")
-                .takes_value(true)
-
-            )
-            .arg(Arg::new("min-degree")
-                .short('n')
-                .long("min-degree")
-                .about("Minimum degree")
-                .takes_value(true)
-
-            )
-            .arg(Arg::new("max-degree")
-                .short('N')
-                .long("max-degree")
-                .about("Maximum node degree ")
-                .takes_value(true)
-
-            )
-            .arg(Arg::new("min-depth")
-            .short('d')
-            .long("min-depth")
-            .about("Minimum depth")
-            .takes_value(true)
-
-        )
-            .arg(Arg::new("max-depth")
-                .short('D')
-                .long("max-depth")
-                .about("Maximum node depth")
-                .takes_value(true)
-            )
-        )
-
-
-        .subcommand(App::new("path")
-            .about("Chose path/samples based on filtering criteria")
-            .arg(Arg::new("gfa")
-                .short('g')
-                .long("gfa")
-                .about("Input GFA file")
-                .takes_value(true)
-                .required(true)
-            )
-            .arg(Arg::new("output")
-                .short('o')
-                .long("output")
-                .about("Output file")
-                .takes_value(true)
-                .required(true)
-            )
-            .arg(Arg::new("stats")
-                .short('s')
-                .long("stats")
-                .about("Which stats to filter?")
-                .takes_value(true)
-                .required(true)
-                .multiple_occurrences(true)
-            )
-            .arg(Arg::new("mins")
-                .short('m')
-                .long("mins")
-                .takes_value(true)
-                .required(true)
-                .multiple_occurrences(true)
-            )
-            .arg(Arg::new("maxs")
-                .short('M')
-                .long("maxs")
-                .takes_value(true)
-                .required(true)
-                .multiple_occurrences(true)
-            )
-            .arg(Arg::new("PanSN")
-                .long("pansn")
-                .about("Separator for PanSN spec")
-            )
-
-
-        )
         .subcommand(App::new("find")
             .about("Find features in the graph and return a BED file for further analysis")
             .arg(Arg::new("gfa")
@@ -575,12 +460,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         Ok(())
     } else if let Some(matches) = matches.subcommand_matches("window") {
         window_main(matches);
-        Ok(())
-    } else if let Some(matches) = matches.subcommand_matches("feature") {
-        feature_main(matches);
-        Ok(())
-    } else if let Some(matches) = matches.subcommand_matches("path") {
-        path_main(matches);
         Ok(())
     } else if let Some(matches) = matches.subcommand_matches("nwindow") {
         nwindow_main(matches);
