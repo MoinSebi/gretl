@@ -1,23 +1,29 @@
 # gretl - Graph evaluation toolkit
-## Description 
+---
 ```gretl``` is a tool for basic graph statistics using GFA format input. Our statistics are based on nodes, edges and paths/walks. Walks can also be used, but will be represented as paths internally. Many commands do not work without paths/walk information.  
 In addition, we added some commands, using graph-based statistics, but represent it on a path (sample scale). We also offer commands for more complex analysis - an overview can be seen below. 
 
+---
 ## Requirements on GFA file: 
 - GFA format v1.0, v1.1 or v1.2.
-- GFA file has numerical node ID
+- Numerical node ID
 
-## Plotting your results
-We have added python scripts to visualize the output of the tool. The scripts are stored in the `scripts` directory. The output of nearly each subcommand is covered. Follow along our workflow document, to understand when each command should be used and which research questions can be answered.  
+**Comment**:
+- Sorted node IDs (in 1D SGD) are not required, but all *"jump"* related statistics and the *block* will be based on the order of the nodes in the GFA file. Check this [paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10542513/) for more information. 
+  - Run `odgi sort -O` to sort the graph in pan-genomic order.
+- We recommend dense node ID, starting at 1 and end at the number of nodes +1. Memory efficient on multiple levels.
 
-## Explaination
-Since some of the commands run relative complex computation, we have added a detailed description of each subcommand in the `doc` directory. It covers how internal each command is structured, what is calculated and how this calculation is done. 
+
+---
+## Plotting your results / Follow-along documentation
+We have added python scripts to visualize the output of the different commands of this tool. The scripts are stored in the `scripts` directory. Almost all commands of gretl are covered, some even multiple times. For better understanding we added a **[follow-along markdown](doc/gretl.examples.md)** with examples, which highlights research questions and ideas can be answered.  
+
+---
+## Explanation
+Since some of the commands run relative complex computation, we have added a **detailed description** of each subcommand in the `doc` directory, which can be found **[here](doc/gretl.explained.md)**. It covers how internal each command is structured, what is calculated and how this calculation is done. 
 
 
-**Comment**:  
-- Sorted node IDs are not required, but all "Jump" related statistics will be based on the order of the nodes in the GFA file. Check this [paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10542513/) for more information. Run odgi sort -O" to sort the graph in pan-genomic order.
-- We recommend dense node ID, starting at 1 and end at the number of nodes +1. Memory efficient on multiple levels. 
-
+---
 ## Installation: 
 
 **Git**  
@@ -25,44 +31,51 @@ Since some of the commands run relative complex computation, we have added a det
 git clone https://github.com/MoinSebi/gretl  
 cd gretl   
 cargo build --release  
-./target/release/gretl  
 ```
+
+**Running gretl:**  
+A list of all subcommands is at the bottom
+```rust
+./target/release/gretl [subcommand] [options]
+```
+
+---
 ## Testing
 We provide a small test suite to test the basic functionality of the tool.
-
 ```
 cargo test
 ```
 
+---
 ## Usage
+
+---
 ### Stats
 
-Calculate statistics on GFA file. A list of all stats can be found [here](paper/stats_explained.md). Please consider using the ```--pansn``` option to group the paths by sample. Read more information about PanSN-spec [here](https://github.com/pangenome/PanSN-spec). 
+Calculate statistics of a graph in GFA format. A list of all stats can be found [here](paper/stats_explained.md). Please consider using the ```--pansn``` option to group the paths by sample. Read more information about PanSN-spec [here](https://github.com/pangenome/PanSN-spec). 
 
-Available options: 
-- ```-bins``` Adjust number and size of bins. Histogram-like statistics which classify nodes by their length into bins. 
-- ```-path``` Report statistics for each path in the graph.
-- ```-y``` Report output in YAML format (default is tsv). 
-
-Graph statistics also include "hybrid" statistics, which are average and standard deviation of all path statistics. All hybrid stats have the prefix "Path". A full list of all statistics be found in paper directory in this repository. 
+In general the `stats` command has two possible options: 
+1. Path-based statistics: Calculate statistics for each path in the graph (```-p``` flag needed)
+2. Graph-based statistics: Calculate statistics for the whole graph, including hybrid statistics based on path statistics (default). These hybrid statistics are the average and standard deviation of all path statistics. A full list of all statistics be found in paper directory in this repository. 
 
 
 **Example**
-```text
-
+```Rust
+/// Graph-based statistics
 ./gretl stats -g /path/to/graph.gfa -o /path/to/output.txt
+
+/// Path-based statistics
+./gretl stats -g /path/to/graph.gfa -o /path/to/output.path.txt -p
 ```
 
 **Result**
 - TSV or YAML file with statistics
-- Merge the output of multiple graphs to compare them. 
-- Example comparison: [plot](scripts/notebooks/plots/stats.path.scatter.pdf) 
-- Example output
+- Check our [examples](doc/gretl.examples.md) for more ideas. 
 
 
-
-### ID2INT
-Convert any string-based node identifier to numeric values. Use ```odgi sort``` to sort the graph in pan-genomic order, which will create more meaningful statistics in ```gretl stats``` (see above). Nevertheless, numerical node IDs a required by any ```gretl``` command. 
+---
+### id2int
+Convert any string-based node identifier to numeric values. Afterwards, use ```odgi sort -O``` to sort the graph in pan-genomic order, which will create more meaningful statistics in ```gretl stats``` (see above). Nevertheless, numerical node IDs a required by any ```gretl``` command. 
 
 Available options:
 - ```-d, --dict <dict>``` Write a dictionary with the new and old IDs to a plain text file. 
@@ -76,19 +89,19 @@ Available options:
 - GFA file with numerical node IDs
 
 
-**Comment:** 
-This function will convert all IDs in the graph. Additional data in tags will not be converted. 
+**Important:** 
+This function will convert **all** node IDs in the graph. **Additional data in tags will not be converted.** 
 
-
+---
 ### Node-list
-Individual node statistics. Statistics provided: 
+Individual node statistics based on graph-related features. Statistics provided: 
 - Length
 - Degree
 - Depth
 - Core
 
-
-Length and degree are based on the graph itself, while depth and core are based on the paths.
+**Comment**
+The information of the reported table can be used as a individual lookup or to create own window-like statistics (over nodes).
 
 **Example**
 ```text
@@ -98,19 +111,18 @@ Length and degree are based on the graph itself, while depth and core are based 
 **Result**
 - TSV file output 
 
-| Nodes    | 1     | 2     | 3     | 4     | 5     | 6   | 7 | 8 |
-|----------|-------|-------|-------|-------|-------|-----|---|---|
-| Length   | 21176 | 15530 | 15530 | 24351 | 24367 | 100 | 1 | 1 |
-| Core     | 1     | 1     | 1     | 1     | 1     | 2   | 1 | 1 |
-| Depth    | 1     | 1     | 1     | 1     | 1     | 2   | 1 | 1 |
-| ND_in    | 0     | 0     | 0     | 0     | 0     | 2   | 1 | 1 |
-| ND_out   | 1     | 1     | 1     | 1     | 1     | 2   | 1 | 1 |
-| ND_total | 1     | 1     | 1     | 1     | 1     | 4   | 2 | 2 |
+| Node_id | Length | Core | Depth | ND |
+|---------|--------|------|-------|----|
+| 1       | 21176  | 1    | 1     | 0  |
+| 2       | 15530  | 1    | 1     | 0  |
+| 3       | 15530  | 1    | 1     | 0  |
+| 4       | 24351  | 1    | 1     | 0  |
+| 5       | 24367  | 1    | 1     | 0  |
+| 6       | 100    | 2    | 2     | 2  |
+| 7       | 1      | 1    | 1     | 1  |
+| 8       | 1      | 1    | 1     | 1  |
 
-
-**Comment**
-The information of the reported table can be used as a individual lookup or to create own window-like statistics (over nodes). 
-
+---
 ### Core
 Compute user-defined statistics of the graph (```-s```). Calculate the statistics for each node and summarize for each possible value the number of nodes and sequence. In an additional file ("```*.private.txt```") we report for each path the amount of nodes and sequence sole present by this sample. 
 
@@ -159,26 +171,7 @@ Private table:
 | BCK_8.ChrX | 53334        | 3275  |
 
 
-### Feature
-Select nodes based on input settings. The output can be used as input for gfa2bin. 
-
-```text
-./gretl feature -g /path/to/graph.gfa -o /path/to/nodes.txt -D 10 
-```
-
-**Result**
-- List of nodes which fulfill the input settings (plain-text, one node per line)
-
-### Path
-Select paths based on input settings. The output can be used as input for gfa2bin.
-
-```text
-./gretl feature -g /path/to/graph.gfa -o /path/to/nodes.txt -s "N/D ration" -m 10
-```
-**Result**
-- List of paths/samples which fulfill the input settings (plain-text, one node per line)
-
-
+---
 ### Bootstrap
 Sample-based bootstrapping to calculate number of nodes and sequence for each number of possible samples. Start with a "complete" graph and remove random path for each run. Then recalculate the general statistics. And summarize the amount of sequence/nodes for each level (e.g. similarity).   
 We recommend bootstrapping a graphs in PanSN-spec. Use ```--nodes``` if the bootstrap should only run on a subset of nodes.  
@@ -216,7 +209,8 @@ Meta files can be used to use the same "combinations" for multiple graphs. This 
 | 4    | 4   | 4988   | 2305   | 4912   | 10754  |        | 214961 | 9350   | 78758  | 604140 |        |
 | 5    | 0   | 7315   | 2191   | 2240   | 6833   | 7655   | 264241 | 10804  | 13800  | 73893  | 597805 |
 
-### (Sliding, path) window
+---
+### Window (sliding, path)
 Calculate statistics on a node level (graph- or path-based) and summarize them for each path in a sliding window approach. In detail: Iterate over the nodes of a path (window-like), summarize the stats of all nodes in the window and report a single value for each window. 
 
 **Example**
@@ -236,7 +230,7 @@ Table: Path in col1, similarity values on all the other values (each column is 1
 | BPN_2.ChrX | 5 | 5   | 5 | 5 | 5 | 5   |
 | BCK_8.ChrX | 5 | 5   | 5 | 5 | 5 | 4.5 |
 
-
+---
 ### Nwindow
 Summarizing the graph by a window of nodes. We iterate numerically over the nodes and calculate the statistics for each window. We start at the current node and move away from it based on provided edges, collecting the new nodes. We repeat this process starting at the "new" nodes until one of the following conditions is met:
 
@@ -251,7 +245,6 @@ Summarizing the graph by a window of nodes. We iterate numerically over the node
 
 **Output**: You are able to return the number of collected nodes, the total number of jumps or the total sequence. Some combinations of input limitation and output do not gain any additional information.
 
-[nwindow plot](scripts/notebooks/plots/nwindow.node.pdf)
 
 Table: NodesID, Number of nodes, amount of sequence and sum of jumps (collected in a window)
 
@@ -269,21 +262,66 @@ Table: NodesID, Number of nodes, amount of sequence and sum of jumps (collected 
 | 249    | 33   | 575      | 280   |
 | 250    | 33   | 391      | 256   |
 
+
+---
+### Block
+Statistics of pangenome blocks. Blocks are defined to be a collection of nodes which are in proximity. Proximity is measured by the node id differences, therefore the order of the nodes in the GFA file is important. Blocks normally contain nodes of consecutive node IDs and can be defined by either number of nodes of each block OR total amount of sequence in each block. 
+
+**Important: This is the only command which requires a sorted node ID space (1D SGD), which can be achieved by ```odgi sort -O```.** 
+
+```text
+./gretl block -g /path/to/graph.gfa -o /path/to/output.txt
+```
+
+**Result**   
+Table: start and end node ID of the block, Number of nodes, amount of sequence and sum of jumps (collected in a window)
+
+| start_end | #Traversal | #Path | #Nodes (sum)      | #Nodes (average)   | Sequence [bp]  (average) |
+|-----------|------------|-------|-------------------|--------------------|--------------------------|
+| 1-101     | 5          | 5     | 5                 | 25.6               | 12201.2                  |
+| 101-201 2 | 2          | 2     | 66.5              | 1748.5             | 1748.5                   |
+| 201-301 4 | 4          | 4     | 57.75             | 884.0              | 884.0                    |
+| 301-401 4 | 4          | 4     | 65.25             | 472.75             | 472.75                   |
+| 401-501 4 | 4          | 4     | 66.0              | 418.0              | 418.0                    |
+| 501-601 4 | 4          | 4     | 52.25             | 1823.25            | 1823.25                  |
+| 601-701 3 | 3          | 3     | 69.33333333333333 | 1646.3333333333333 | 1646.3333333333333       |
+
+
+
+---
 ### Find
-Find a specific node (e.g. 10), directed node (e.g. 10+), or edge (e.g. 10+20+) in the graph and get the exact (sequence) position in the paths. Output is a BED file with the positions. You are able to add additional sequence ```-l``` on both sites, which can help if you want to realign to a database and the node is very small. 
+Find a specific node (e.g. 10), directed node (e.g. 10+), or edge (e.g. 10+20+) in the graph and get the exact (sequence) position in the paths. Output is a BED file with the positions. You are able to add additional sequence (using flag ```-l```) on both sites, which can help if you want to realign to a database and external sequence.  
 ```text
 ./gretl find -g /path/to/graph.gfa -o /path/to/output.txt --length 1000 -f feature.txt 
 ```
-Example of feature file is data/example_data/dirnodes.txt
+
+---
+### Feature
+Return a list of nodes which based on input settings. The output can be used as input for gfa2bin.
+
+```text
+./gretl feature -g /path/to/graph.gfa -o /path/to/nodes.txt -D 10 
+```
+
+**Result**
+- List of nodes which fulfill the input settings (plain-text, one node per line)
+
+---
+### Path
+Select paths based on input settings. The output can be used as input for gfa2bin.
+
+```text
+./gretl feature -g /path/to/graph.gfa -o /path/to/nodes.txt -s "N/D ration" -m 10
+```
+**Result**
+- List of paths/samples which fulfill the input settings (plain-text, one node per line)
+
+## Citation 
+If you use gretl in your work, please cite:  
+Gretl - Variation GRaph Evaluation TooLkit
+Sebastian Vorbrugg, Ilja Bezrukov, Zhigui Bao, Detlef Weigel
+doi: [https://doi.org/10.1101/2024.03.04.580974](https://doi.org/10.1101/2024.03.04.580974)
 
 
-## Scripts 
-We provide multiple jupyter notebooks to visualize the output of the tool. 
 
-**Requirements**
-- Jupyter
-- Matplotlib
-- Pandas
-- Numpy
-- Seaborn
 

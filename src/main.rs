@@ -38,7 +38,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         // Subcommand for normal stats for one graph
         .subcommand(App::new("stats")
-            .about("Create statists about the graph or its path")
+            .about("Basic graph statistics for a single graph")
             .arg(Arg::new("gfa")
                 .short('g')
                 .long("gfa")
@@ -194,11 +194,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             .arg(Arg::new("meta line")
                 .long("meta-line")
                 .about("Take a specific line of the meta file (only works when meta file is provided)")
-                .takes_value(true))
+                .takes_value(true)
+                .hidden(true))
+
             .arg(Arg::new("level")
                 .long("level")
                 .about("Calculate a specific level")
-                .takes_value(true))
+                .takes_value(true)
+                .hidden(true))
             .arg(Arg::new("number")
                 .long("number")
                 .about("How many bootstraps do you want to run")

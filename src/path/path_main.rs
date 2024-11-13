@@ -7,7 +7,7 @@ pub fn path_main(matches: &ArgMatches) {
     if check_numeric_gfafile(matches.value_of("gfa").unwrap()) {
         let graph_file = matches.value_of("gfa").unwrap();
         let output = matches.value_of("output").unwrap();
-        let haplo = matches.is_present("pansn");
+        let haplo = matches.is_present("Pan-SN");
 
         let stats: Vec<&str> = matches.values_of("stats").unwrap().collect();
         let mins: Vec<&str> = matches.values_of("mins").unwrap().collect();
