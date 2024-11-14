@@ -1,6 +1,5 @@
 // Imports
 use assert_cmd::prelude::*; // Add methods on commands
-use std::fs;
 use std::fs::File;
 use std::io::Read;
 use std::process::Command;
