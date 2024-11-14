@@ -1,5 +1,6 @@
 use std::fs::File;
 use std::io::{BufWriter, Write};
+use crate::helpers::helper::get_writer;
 
 /// Write table with both information in one line
 pub fn writer_core(
@@ -7,8 +8,7 @@ pub fn writer_core(
     data_private: Vec<(String, usize, usize)>,
     filename: &str,
 ) {
-    let f = File::create(filename).expect("Unable to create file");
-    let mut f = BufWriter::new(f);
+    let mut f = get_writer(filename).expect("Not able to write");
     // Header
     writeln!(f, "Similarity\tName\tSequence[bp]\t#Node").expect("Not able to write");
     writeln!(f, "{}\t{}\t{}\t{}", 0, 0, data_total[0].1, data_total[0].0).expect("Not able to write");

@@ -1,24 +1,33 @@
-#!/home/svorbrugg/miniconda3/bin/python
+#!/usr/bin/python3
 #!python3
 
 import argparse
 import pandas as pd
 import matplotlib.pyplot as plt
-import numpy as np
-import seaborn as sns
 import sys
-import os
-import itertools
 
 
-def read_stats(filename):
+
+def read_stats(filename: str) -> list:
+    """
+    Parse the input file and return a list of files to read.
+
+    :param filename: File with the absolute path of the graphs to read
+    :return: A list of files to read
+    """
     files = []
     with open(filename, "r") as f:
         for line in f.readlines():
             files.append(line.split())
     return files
 
-def read_data(files):
+def read_data(files: list) -> pd.DataFrame:
+    """
+    Read all the files in the list and return a combined dataframe.
+
+    :param files: List of all files to read
+    :return: A combined dataframe of all the files
+    """
     combined = pd.read_csv(files[0][1], sep = "\t")
 
     for x in files[1:]:
@@ -28,11 +37,27 @@ def read_data(files):
     return combined
 
 
-def check_col(df, x):
+def check_col(df: pd.DataFrame, x: str) -> bool:
+    """
+    Check if the name is in one of the columns of the Dataframe
+
+    :param df: Multiple graphs statistics in pandas Dataframe
+    :param x: Name to check
+    :return: Yes if present, no if not
+    """
     return x in df.columns
 
 
-def plot_scatter(df, output, x, y):
+def plot_scatter(df: pd.DataFrame, output: str, x: str, y: str):
+    """
+    Plot a scatter plot of the two columns in the dataframe
+
+    :param df: Multiple graphs statistics in pandas Dataframe
+    :param output: File name of the plot (PDF)
+    :param x: First column name (x)
+    :param y: Second column name (y)
+    :return: Plot
+    """
     plt.figure(figsize = (5,5))
     plt.scatter(df[x], df[y], color = "royalblue")
     plt.xlabel(x)
@@ -50,11 +75,14 @@ if __name__ == "__main__":
     files = read_stats(args.input)
     df = read_data(files)
 
+    # Check if the cols are present
     if not check_col(df, args.x):
         print("Column not found", file = sys.stderr)
+        print(args.x)
         sys.exit(1)
     if not check_col(df, args.y):
         print("Column not found", file = sys.stderr)
+        print(args.y)
         sys.exit(1)
 
     plot_scatter(df, args.output, args.x, args.y)

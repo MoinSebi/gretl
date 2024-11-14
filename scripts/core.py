@@ -4,29 +4,47 @@
 import argparse
 import pandas as pd
 import matplotlib.pyplot as plt
-import numpy as np
 import sys
 
 
-def read_data(filename):
+def read_data(filename: str) -> (pd.DataFrame, pd.DataFrame):
+    """
+    Read the output of gretl core and split the data into private and public data.
+    Return two dataframes
+
+    :param filename: Input file name
+    :return: Two dataframes, one for private and one for public data
+    """
+
     if filename == "-": # Read from stdin
         df = pd.read_csv(sys.stdin, sep = "\t", index_col=0)
     else:
         df = pd.read_csv(filename, sep = "\t", index_col=0)
 
+    # Separate the two dataframes
     df_priv = df.loc[df["Name"].apply(lambda x: not x.isdigit())]
     df_priv = df_priv.sort_values("Sequence[bp]")
     df_pub = df.loc[df["Name"].apply(lambda x: x.isdigit())]
     return df_priv, df_pub
 
-def plot_test(df, df_seq_sorted, output):
+
+def plot_test(df: pd.DataFrame, df_seq_sorted: pd.DataFrame, output: str) -> None:
+    """
+    Plot the data from private and public data into a PDF file.
+    Sequence and nodes are plotted in two separate plots.
+
+    :param df: Public data (see above)
+    :param df_seq_sorted: Private data (see above)
+    :param output: Output file name
+    :return:
+    """
+
     plt.rcParams.update({
         'text.usetex': False,
         "svg.fonttype": 'none',
         'axes.spines.right': False,
         'axes.spines.top': False
     })
-    print(df)
     plt.figure(figsize=(5,5))
     plt.bar([int(x) for x in df.index], df["Sequence[bp]"]/1000, edgecolor="black")
     plt.bar([int(x) for x in df.index][-1], df["Sequence[bp]"].values[-1]/1000, edgecolor="black")
@@ -51,9 +69,6 @@ def plot_test(df, df_seq_sorted, output):
     plt.xlabel("Similarity")
     plt.savefig(output + ".node.core.pdf")
     plt.close()
-
-
-
 
 
 if __name__ == "__main__":

@@ -9,11 +9,21 @@ In addition, we added some commands, using graph-based statistics, but represent
 - Numerical node ID
 
 **Comment**:
-- Sorted node IDs (in 1D SGD) are not required, but all *"jump"* related statistics and the *block* will be based on the order of the nodes in the GFA file. Check this [paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10542513/) for more information. 
-  - Run `odgi sort -O` to sort the graph in pan-genomic order.
+- Sorted node IDs (in 1D SGD) are not required, but all *"jump"* related statistics and the *block* subcommand will be based on the order of the nodes in the GFA file. Check this [paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10542513/) for more information. 
+  - Run `odgi sort -Y` to sort the graph in pan-genomic order.
 - We recommend dense node ID, starting at 1 and end at the number of nodes +1. Memory efficient on multiple levels.
 
+### Prepare your graph (optional)
+This is normally not needed if your graph is constructed by PGGB, Minigraph-Cactus or vg construct
+```bash
+# Convert string-based node IDs to numerical IDs
+./target/release/gretl id2int -g /path/to/old_grapg.gfa -o /path/to/new_graph.gfa
 
+# Sort the graph in pan-genomic order
+odgi sort -Y -i /path/to/new_graph.gfa -o /path/to/new_graph_sorted.og
+# Convert the ODGI file back to GFA
+odgi view -i /path/to/new_graph_sorted.og -g > /path/to/new_graph_sorted.gfa
+```
 ---
 ## Plotting your results / Follow-along documentation
 We have added python scripts to visualize the output of the different commands of this tool. The scripts are stored in the `scripts` directory. Almost all commands of gretl are covered, some even multiple times. For better understanding we added a **[follow-along markdown](doc/gretl.examples.md)** with examples, which highlights research questions and ideas can be answered.  

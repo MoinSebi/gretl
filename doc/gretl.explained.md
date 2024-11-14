@@ -31,10 +31,6 @@ Creates a **new** graph file with the node IDs replaced by integers. IT DOES NOT
 Internally, the graph is read once, storing all nodes together and their "number" in a hashmap (memory-efficient). Then the graphs is read again, converting all "old" node IDs to the new integer IDs.
 
 
-## node-list
-This is more or len
-
-## ps 
 
 ## Stats
 Calculate the several statistics of the graph. It can be run in two "modes": 
@@ -42,4 +38,3 @@ Calculate the several statistics of the graph. It can be run in two "modes":
 2. Whole graph mode: Calculate the statistics of the whole graph, which includes
    1. Graph statistics (e.g. number of nodes, number of edges, number of paths, etc.)
    2. Hybrid statistics (e.g. average number of nodes in a path, average number of edges in a path, etc.)
-A list of all statistics can be found in when using "names". 

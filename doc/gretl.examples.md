@@ -8,6 +8,9 @@ The python scripts need the following requirements (in brackets are the versions
 - pandas (1.2.3)
 - seaborn (0.11.0)
 - numpy (1.21.6)
+- scipy (1.4.1)
+
+We have run all these commands with a small example graph consisting of five yeast genomes. The graph is stored in the `data/example_data/chr5.yeast.gfa`.  
 
 
 ## Single graph workflows 
@@ -15,19 +18,17 @@ The python scripts need the following requirements (in brackets are the versions
 ### 1. How does my graph saturate?
 Alternative questions: 
 - Is there a tendency that the genomes of my graph saturate with the number of samples?
-- How many genomes do I need to sample to capture the full diversity of my organism? (This needs to be identified by visualisation)
+- How many genomes do I need to sample to capture the full diversity of my organism? (This needs to be identified by eye)
 
 
-**Subcommand: bootstrap**  
+**Gretl subcommand: bootstrap**  
 **Plotting script: [saturation_plotter.py](../scripts/saturation_plotter.py)**   
-**Example: Figure 1** 
+**Example: Yeast plot (s. Fig S1)** 
 
-
-** Run bootstrap + plot**
 ```bash
-INPUT= "path/to/your/graph.gfa".gfa
-OUTPUT= "path/to/your/output.prefix"
-target/release/gretl bootstrap -g data/example_data/chr5.yeast.gfa -o -  |   python3 scripts/scripts/saturation_plotter.py -i - -o $OUTPUT
+INPUT="path/to/your/graph.gfa"
+OUTPUT="path/to/your/output.prefix"
+target/release/gretl bootstrap -g $INPUT -o -  |   python3 scripts/saturation_plotter.py -i - -o $OUTPUT
 ```
 
 ### 2. Are there some nodes that are more connected than others?
@@ -35,14 +36,14 @@ Alternative questions:
 - Which node is the most connected in my graph? (Identify this by the tabular output provided by the gretl toolkit)
 - Are there regions which show exceptional high connectivity?
 
-**Subcommand: nwindow**  
+**Gretl subcommand: nwindow**  
 **Plotting script: [nwindow.py](../scripts/nwindow.py)**  
 **Example: Figure 1**
 
 ```bash
-INPUT= "path/to/your/graph.gfa"
-OUTPUT= "path/to/your/output.prefix"
-target/release/gretl nwindow -g data/example_data/chr5.yeast.gfa -o -  |   python3 scripts/scripts/nwindow.py -i - -o $OUTPUT
+INPUT="path/to/your/graph.gfa"
+OUTPUT="path/to/your/output.prefix"
+target/release/gretl nwindow -g $INPUT -o -  |   python3 scripts/nwindow.py -g $INPUT -i - -o $OUTPUT
 ```
 
 
@@ -52,106 +53,131 @@ Alternative questions:
 - Which regions of my graph show high local similarity?
 
 
-**Subcommand: window**  
+**Gretl subcommand: window**  
 **Plotting script: [window.py](../scripts/window.py)**   
 **Example: Figure 1**
 
 
 ```bash
-INPUT= "path/to/your/graph.gfa"
-OUTPUT= "path/to/your/output.prefix"
-target/release/gretl bootstrap -g data/example_data/chr5.yeast.gfa -o -  |   python3 scripts/scripts/saturation_plotter.py -i - -o $OUTPUT
+INPUT="path/to/your/graph.gfa"
+OUTPUT="path/to/your/output.prefix"
+target/release/gretl window -g $INPUT -o -  |   python3 scripts/window.py -i - -o $OUTPUT
 ```
 
 ### 4. How much core, shell and private sequence do I have?
 Alternative questions:
 - How much of my graph is core, shell and private (in nodes)?
-- If running this for different graphs? Which graph exhibit the most core sequence? 
+- If running this for different graphs, which graph exhibit the most core sequence? 
 
-**Subcommand: core**  
+**Gretl subcommand: core**  
 **Plotting script: [core.py](../scripts/core.py)**   
 **Example: Figure 1**
 
 
 
 ```bash
-INPUT= "path/to/your/graph.gfa"
-OUTPUT= "path/to/your/output.prefix"
-target/release/gretl bootstrap -g data/example_data/chr5.yeast.gfa -o -  |   python3 scripts/scripts/core.py -i - -o $OUTPUT
+INPUT="path/to/your/graph.gfa"
+OUTPUT="path/to/your/output.prefix"
+target/release/gretl core -g $INPUT -o -  |   python3 scripts/core.py -i - -o $OUTPUT
 ```
 
-### 5. My graph seems to be highly connected, create pangenome blocks and return statistics for each block? 
+### 5. Are there specific regions in my graph that are traversed by many paths?
 Alternative questions:
-- Which regions of my graph is traversed by many paths? 
-- Is there a region which is traversed by one path many more times than all the other paths?
+- Is there a region which is traversed by one path many more times than by all the other paths? (e.g. private CNVs)
 
-**Subcommand: block**  
+**Gretl subcommand: block**  
 **Plotting script: [block.py](../scripts/block.py)**   
 **Example: Figure 1**
 
 ```bash
-INPUT= "path/to/your/graph.gfa"
-OUTPUT= "path/to/your/output.prefix"
-target/release/gretl block -g data/example_data/chr5.yeast.gfa -o -  |   python3 scripts/scripts/block.py -i - -o $OUTPUT
+INPUT="path/to/your/graph.gfa"
+OUTPUT="path/to/your/output.prefix"
+target/release/gretl block -g $INPUT -o -  |   python3 scripts/block.py -i - -o $OUTPUT
 ```
 
 
-### 6. I have selected one graph in my data set, now I am interested in the paths of it
+### 6. I have selected one graph in my data set, now I am interested in the paths of it. 
 Alternative questions:
-- In direct comparison, which paths share most of their statistics? (Or: Are closest related?)
-- Is there any path that is unique to all the other paths?
+- In direct comparison, which paths share most of their statistics? (Alternative: Or are most closely related?)
+- Is there a path that is unique in its statistical profile in comparison to the other paths?
 
-**Subcommand: path**  
+**Gretl subcommand: path**  
+**Plotting script: [path.py](../scripts/path.py)**   
+**Example: Figure 1**
+
+
+```bash
+INPUT="path/to/your/graph.gfa"
+OUTPUT="path/to/your/output.prefix"
+target/release/gretl stats -p -g $INPUT -o -  |   python3 scripts/path.py -i - -o $OUTPUT
+```
+
+### 7. I am interested in two statistics from my graph path statistics (`graph stats -p`). How do I directly compare them?  
+Alternative questions:
+- In direct comparison, which paths share most of their statistics? (Or: Are most closely related?)
+
+**Gretl subcommand: path**  
 **Plotting script: [stats_path.py](../scripts/stats_path.py)**   
 **Example: Figure 1**
 
 
 ```bash
-INPUT= "path/to/your/graph.gfa"
-OUTPUT= "path/to/your/output.prefix"
-target/release/gretl path -g data/example_data/chr5.yeast.gfa -o -  |   python3 scripts/scripts/path.py -i - -o $OUTPUT
+INPUT="path/to/your/graph.gfa"
+OUTPUT="path/to/your/output.prefix"
+target/release/gretl stats -p -g $INPUT -o -  |   python3 scripts/stats_path.py -i - -o $OUTPUT -x "Covered sequence [%]" -y "Edges"
 ```
+Comment: Replace **-x "Covered sequence [%]"** and **-y "Edges"** with the two statistics you want to plot.
 
-### 7. I have selected a graph in my data set, how much does each path contain of core, shell and private sequence?
+### 8. I have selected a graph in my data set, how much core, shell and private sequence does each path contain?
 Alternative questions:
 - Which path contains the most core sequence?
 
-**Subcommand: path**  
-**Plotting script: [path.py](../scripts/path.py)**   
+**Gretl subcommand: path**  
+**Plotting script: [ps.py](../scripts/ps.py)**   
 **Example: Figure 1**
 
 ```bash
-INPUT= "path/to/your/graph.gfa"
-OUTPUT= "path/to/your/output.prefix"
-target/release/gretl path -g data/example_data/chr5.yeast.gfa -o -  |   python3 scripts/scripts/path.py -i - -o $OUTPUT
+INPUT="path/to/your/graph.gfa"
+OUTPUT="path/to/your/output.prefix"
+target/release/gretl ps -g $INPUT -o -  |   python3 scripts/ps.py -i - -o $OUTPUT
 ```
 
-### 8. I want to look into details of my graph, give me a list of all nodes and their statistics
-Alternative questions:
-- I want to write a script with some of the statistics of my graph? 
+### 9. I want to look into details of my graph, give me a list of all nodes and their statistics
 
-**Subcommand: node-list**  
+**Gretl subcommand: node-list**  
 
 ```bash
-INPUT= "path/to/your/graph.gfa"
-OUTPUT= "path/to/your/output.prefix"
-target/release/gretl node-list -g data/example_data/chr5.yeast.gfa -o node.list.txt
+INPUT="path/to/your/graph.gfa"
+OUTPUT="path/to/your/output.prefix"
+target/release/gretl node-list -g $INPUT -o node.list.txt
 ```
 
 
 ## Multi-graph workflows - Comparing graphs and find the once that are most interesting
-First, create a full set of statistics for all graphs
+First, create a full set of statistics for all graphs. If you want to run this bash snippet, you need to provide a list of paths to graph files in the input text file. 
 
 
 ```bash
 INPUT="path/to/your/graph.list.txt"
-OUTPUT="path/to/your/output.prefix
+OUTPUT="path/to/your/output.prefix"
 
+# Create a list of statistics for all graphs
 for file in $(cat $INPUT); do
-    target/release/gretl stats -g $file -o $OUTPUT. 
+  basename=$(basename $file)
+  target/release/gretl stats -g $file -o $OUTPUT.$basename.stats
 done
 
-realpath $OUTPUT.*.stats > $OUTPUT.stats.list
+# Create a file with the graph names in the first column and the paths to the stats files in the 2nd
+# This is going to be used in the following snippets to create the plots
+echo -n "" > $OUTPUT.stats.list
+for file in $(cat $INPUT); do
+  basename=$(basename $file)
+  echo -n -e $basename"\t"  >> $OUTPUT.stats.list
+  realpath $OUTPUT.$basename.stats >> $OUTPUT.stats.list
+done
+
+## TODO test this snippet
+
 ```
 
 
@@ -162,10 +188,11 @@ Alternative questions/ideas:
 **Plotting script: [multi.histogram.py](../scripts/multi.histogram.py)**   
 **Example: Figure 1**
 
+The followig snippet creates a histogram for each statistic in the provided list. This results in over 100 plots in the OUTPUT directory.
 ```bash
-INPUT= "path/to/your/stats.list.gfa"
-OUTPUT= "path/to/your/output.multi.prefix"
-python3 scripts/scripts/multi.histogram.py -i $INPUT -o $OUTPUT
+INPUT="path/to/your/stats.list"
+OUTPUT="path/to/your/output.multi.histogram.prefix"
+python3 scripts/multi.histogram.py -i $INPUT -o $OUTPUT
 ```
 
 
@@ -179,9 +206,9 @@ Alternative questions/ideas:
 
 
 ```bash
-INPUT= "path/to/your/stats.list.gfa"
-OUTPUT= "path/to/your/output.multi.prefix"
-python3 scripts/scripts/multi.heatmap.py -i - -o $OUTPUT
+INPUT="path/to/your/stats.list"
+OUTPUT="path/to/your/output.multi.heatmap.prefix"
+python3 scripts/multi.heatmap.py -i $INPUT -o $OUTPUT
 ```
 
 
@@ -192,27 +219,27 @@ Alterative questions/ideas:
 **Plotting script: [multi.auto.py](../scripts/multi.auto.py)**   
 **Example: Figure 1**
 
+If you run this script, the relative deviation will be calculated for each statistic. Those with the highest deviation will be selected and all pairs of those will be plotted in a scatter plot (always 2). The default amount of selected features is 10, therefore 45 scatter plots will be created. Those can be found in the OUTPUT directory.
 ```bash
-INPUT= "path/to/your/stats.list.gfa"
-OUTPUT= "path/to/your/output.multi.prefix"
-python3 scripts/scripts/multi.auto.scatter.py -i - -o $OUTPUT
+INPUT="path/to/your/stats.list"
+OUTPUT="path/to/your/output.multi.auto.prefix"
+python3 scripts/multi.auto.py -i $INPUT -o $OUTPUT
 ```
 
-### 4. Show me scatter plot of these two features (name feature here)? (Scatter plot)
-Alternative questions/ideas:
+### 4. Show me scatter plot of these two features (name feature here)? 
 
 **Plotting script: [multi.scatter.py](../scripts/multi.scatter.py)**   
 **Example: Figure 1**
 
 
 ```bash
-INPUT= "path/to/your/stats.list.gfa"
-OUTPUT= "path/to/your/output.multi.prefix"
-python3 scripts/scripts/multi.span.py -i - -o $OUTPUT
+INPUT="path/to/your/stats.list"
+OUTPUT="path/to/your/output.multi.scatter.prefix"
+python3 scripts/multi.scatter.py -i $INPUT -o $OUTPUT -x "Nodes" -y "Node length (average) [bp]"
 ```
 
 
-### 5. In my dataset (list of graphs), which statistics do (anti-)correlate?
+### 5. Which statistics do (anti-)correlate the most)?
 Alternative questions/ideas:
 - Which statistics are the most unique in my dataset? 
 
@@ -221,9 +248,9 @@ Alternative questions/ideas:
 
 
 ```bash
-INPUT= "path/to/your/stats.list.gfa"
-OUTPUT= "path/to/your/output.multi.prefix"
-python3 scripts/scripts/multi.correlate.py -i - -o $OUTPUT
+INPUT="path/to/your/stats.list"
+OUTPUT="path/to/your/output.multi.correlation.prefix"
+python3 scripts/multi.correlate.py -i $INPUT -o $OUTPUT
 ```
 
 

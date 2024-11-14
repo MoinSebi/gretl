@@ -312,6 +312,7 @@ pub fn wrapper_blocks(
     assert_eq!(block.len(), _o.len());
     let combined: Vec<_> = _o.iter().zip(block.iter()).collect();
     let mut writer = get_writer(_out_prefix)?;
+    writeln!(writer, "{}", "Block\t#Traversals\t#Paths\t#Nodes\t#Nodes (average)\tSequence [bp] (average)").unwrap();
 
     if _out_prefix == "-"{
         for traversal in combined.iter() {

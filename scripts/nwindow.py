@@ -1,34 +1,58 @@
+#!/usr/bin/python3
+#!python3
+
 # Imports
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
 import numpy as np
 import argparse
 import sys
 
 
-def read_gfa(graph_file):
+def read_gfa(filename: str) -> dict:
+    """
+    Node to length dictionary
+
+    :param filename: Input GFA file
+    :return: Node to length dictionary
+    """
     # Read the nodes of the GFA file
     # dict(nodeID -> len)
     node2len = dict()
-    with open(graph_file) as file:
+    with open(filename) as file:
         for line in file.readlines():
             if line.startswith("S"):
                 ls = line.split()
                 node2len[int(ls[1])] = len(ls[2])
 
     # Check
-    node2len
+    return node2len
 
-def read_nwindow_tsv(filename):
-    # Read the nwindow.md output in as DataFrame
+
+def read_nwindow_tsv(filename: str) -> pd.DataFrame:
+    """
+    Read the gretl nwindow  output in as DataFrame
+
+    :param filename: Input file name (or stdint of "-")
+    :return: Pandas DataFrame of the data
+    """
+    # Read the nwindow output in as DataFrame
     if filename == "-": # Read from stdin
         df = pd.read_csv(sys.stdin, sep = "\t")
     else:
         df = pd.read_csv(filename, sep = "\t")
     return df
 
-def get_poslist(df, node2len):
+
+def get_poslist(df: pd.DataFrame, node2len: dict) -> list:
+    """
+    Get the position list for the nodes
+
+    :param df: Gretl nwindow output in pandas DataFrame
+    :param node2len: Node to length dictionary
+    :return: List of pangenomic positions
+    """
+
     current_pos = 0
     pos_list = []
     for x in df.index:
@@ -36,7 +60,22 @@ def get_poslist(df, node2len):
         current_pos += node2len[x+1]
     return pos_list
 
-def plotter1(df, pos_list, output, ylabel, xlabel, df_col, correction = True):
+
+def plot_scatter(df: pd.DataFrame, pos_list: list, output: str, ylabel: str, xlabel: str, df_col: str, correction = True):
+    """
+    Plot a scatter plot of the two columns in the dataframe
+    Correct it by length of the nodes of wanted (default: off)
+
+    :param df: Gretl nwindow output in pandas DataFrame
+    :param pos_list: Positional list of the nodes
+    :param output: Output file name
+    :param ylabel: y label
+    :param xlabel: x label
+    :param df_col: Dataframe column to plot
+    :param correction: Length correction of not
+    :return: Plot
+    """
+
     # Plot #Nodes
     plt.figure(figsize = (8,3))
     cor1 = "correction"
@@ -63,12 +102,12 @@ if __name__ == "__main__":
     node2len = read_gfa(args.graph)
     df = read_nwindow_tsv(args.input)
     pos_list = get_poslist(df, node2len)
-    plotter1(df, pos_list, args.output, "#Nodes (in one window.md)", "Node ID (length corrected) [x10³]", "node")
-    plotter1(df, pos_list, args.output, "Sequence (in one window.md) [kbp]", "Node ID (length corrected) [x10³]", "sequence")
-    plotter1(df, pos_list, args.output, "Sum of Jumps (in one window.md) [x10⁶]", "Node ID (length corrected) [x10³]", "jumps")
-    plotter1(df, pos_list, args.output, "#Nodes (in one window.md)", "Node ID (length corrected) [x10³]", "node", correction=False)
-    plotter1(df, pos_list, args.output, "Sequence (in one window.md) [kbp]", "Node ID (length corrected) [x10³]", "sequence", correction=False)
-    plotter1(df, pos_list, args.output, "Sum of Jumps (in one window.md) [x10⁶]", "Node ID (length corrected) [x10³]", "jumps", correction=False)
+    plot_scatter(df, pos_list, args.output, "#Nodes (in one window)", "Node ID (length corrected) [x10³]", "node")
+    plot_scatter(df, pos_list, args.output, "Sequence (in one window) [kbp]", "Node ID (length corrected) [x10³]", "sequence")
+    plot_scatter(df, pos_list, args.output, "Sum of Jumps (in one window) [x10⁶]", "Node ID (length corrected) [x10³]", "jumps")
+    plot_scatter(df, pos_list, args.output, "#Nodes (in one window)", "Node ID (length corrected) [x10³]", "node", correction=False)
+    plot_scatter(df, pos_list, args.output, "Sequence (in one window) [kbp]", "Node ID (length corrected) [x10³]", "sequence", correction=False)
+    plot_scatter(df, pos_list, args.output, "Sum of Jumps (in one window) [x10⁶]", "Node ID (length corrected) [x10³]", "jumps", correction=False)
 
 
 

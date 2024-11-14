@@ -10,19 +10,34 @@ import sys
 import argparse
 
 
-def read_data(filename):
+def read_data(filename: str) -> pd.DataFrame:
+    """
+    Read the data from a TSV file (from gretl block) and return a pandas DataFrame
+
+    :param filename: File name
+    :return: Block data in a pandas DataFrame
+    """
     if filename == "-": # Read from stdin
-        df = pd.read_csv(sys.stdin, sep = "\t", header = True)
+        df = pd.read_csv(sys.stdin, sep = "\t")
         return df
     else:
-        df = pd.read_csv(filename, sep = "\t", header = True)
+        df = pd.read_csv(filename, sep = "\t")
         return df
 
-def plotter(df, output, what):
+def plotter(df: pd.DataFrame, output: str, what: str) -> None:
+    """
+    Plot each of the different stats of a block to a separate PDF file
+
+    :param df: Block data in pandas DataFrame
+    :param output: Output file name
+    :param what: What to plot (average_path_size, path_size, traversal number)
+    :return:
+    """
+
     plt.figure(figsize = (5,4))
     plt.scatter(df.index, df[what], edgecolor = "black", color = "royalblue")
-    plt.xlabel("Block_number")
-    plt.ylabel("Average path size")
+    plt.xlabel("Block number")
+    plt.ylabel(what)
     plt.tight_layout()
     plt.savefig(output + "." + what + ".block.pdf")
 
@@ -33,6 +48,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     df = read_data(args.input)
-    plotter(df, args.output, "average_path_size")
-    plotter(df, args.output, "path_size")
-    plotter(df, args.output, "traversal number")
+    plotter(df, args.output, "#Nodes (average)")
+    plotter(df, args.output, "Sequence [bp] (average)")
+    plotter(df, args.output, "#Paths")
+    plotter(df, args.output, "#Traversals")

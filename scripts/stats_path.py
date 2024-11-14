@@ -1,40 +1,77 @@
+#!/usr/bin/python3
+#!python
+
+
 # Imports
-import seaborn as sns
-import pandas as pd
-import matplotlib.pyplot as plt
-import matplotlib as mpl
 import sys
 import argparse
+import pandas as pd
+import matplotlib.pyplot as plt
 
-def read_data(filename):
-    if filename == "-": # Read from stdin
+
+def read_path_stats(filename: str) -> pd.DataFrame:
+    """
+    Read the gretl path statistics from the input file
+    Set path as index and normalize the data by max
+
+    :param filename: Input file name
+    :return: Data in pandas DataFrame
+    """
+    if filename == "-":
         df = pd.read_csv(sys.stdin, sep = "\t")
-        return df
     else:
         df = pd.read_csv(filename, sep = "\t")
-        df.index = df["Path"]
-        df.index = [x.split(".")[0] for x in df.index]
-        return df
+    df.index = df["Path"]
+    df = df.drop("Path", axis = 1)
+    return df
 
-def plotter(df, output):
+def check_col(df: pd.DataFrame, x) -> bool:
+    """
+    Check if the name is in one of the columns of the Dataframe
+
+    :param df: Path statistics in pandas Dataframe
+    :param x: Name to check
+    :return: Yes if present, no if not
+    """
+    if x in df.columns:
+        return True
+
+
+def plotter(df: pd.DataFrame, x: str, y: str, output: str) -> None:
+    """
+    Plot the scatter plot of the data.
+
+    :param df: Path statistics in pandas Dataframe
+    :param x: Name of x variable
+    :param y: Name of y variable
+    :param output: Output file name
+    :return: Plot
+    """
+
     plt.figure(figsize = (5,4))
-    plt.scatter(data=df, x="Edges", y="Jumps total", edgecolor = "black", color = "royalblue")
-    for x in df.iterrows():
-        plt.annotate(x[0], (x[1]["Edges"] + 0.0005, x[1]["Jumps total"]))
-    plt.xlabel("Edges")
-    plt.ylabel("Jumps total")
+    plt.scatter(data=df, x=x, y=y, edgecolor = "black", color = "royalblue")
+
+    #for x1 in df.iterrows():
+    #    plt.annotate(x1[0], (x1[1][x] + 0.0005, x1[1][y]))
+    plt.xlabel(x)
+    plt.ylabel(y)
     plt.tight_layout()
     plt.savefig(output + "path.scatter.pdf")
 
-# Plot the example using "Egdes" and "Jumpts total"
-    plt.figure(figsize = (5,4))
-    plt.scatter(data=df, x="Edges", y="Depth average", edgecolor = "black", color = "royalblue")
-    for x in df.iterrows():
-        plt.annotate(x[0], (x[1]["Edges"] + 0.0005, x[1]["Depth average"]))
-    plt.xlabel("Edges")
-    plt.ylabel("Depth average")
-    plt.tight_layout()
-    plt.savefig(output + "path.scatter.pdf")
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Path: Process TSV input and PDF output.")
+    parser.add_argument('-i', '--input', type=str, help='Path to the input TSV file', required=True)
+    parser.add_argument('-o', '--output', type=str, help='Path to the output PDF file', required=True)
+    parser.add_argument('-x', '--x', type=str, help='X-axis', required=True)
+    parser.add_argument('-y', '--y', type=str, help='Y-axis', required=True)
+    args = parser.parse_args()
 
+    df = read_path_stats(args.input)
+    if not check_col(df, args.x):
+        print("Column not found", file = sys.stderr)
+        sys.exit(1)
+    if not check_col(df, args.y):
+        print("Column not found", file = sys.stderr)
+        sys.exit(1)
 
-    df
+    plotter(df, args.x, args.y, args.output)

@@ -1,39 +1,58 @@
-#!/home/svorbrugg/miniconda3/bin/python
+#!/usr/bin/python3
 #!python3
 
 import argparse
 import pandas as pd
 import matplotlib.pyplot as plt
-import numpy as np
-import seaborn as sns
-import sys
 import os
 
 
-def read_stats(filename):
+
+def read_stats(filename: str) -> list:
+    """
+    Parse the input file and return a list of files to read.
+
+    :param filename: File with the absolute path of the graphs to read
+    :return: A list of files to read
+    """
     files = []
     with open(filename, "r") as f:
         for line in f.readlines():
             files.append(line.split())
     return files
 
-def read_data(files):
+def read_data(files: list) -> pd.DataFrame:
+    """
+    Read all the files in the list and return a combined dataframe.
+
+    :param files: List of all files to read
+    :return: A combined dataframe of all the files
+    """
     combined = pd.read_csv(files[0][1], sep = "\t")
 
     for x in files[1:]:
         df = pd.read_csv(x[1], sep = "\t")
         combined = pd.concat([combined, df], ignore_index= True, axis = 0)
     combined.index = [x[0] for x in files]
+    print(combined)
     return combined
 
-def plot_test(df, output):
+def plot_histo(df: pd.DataFrame, output: str) -> None :
+    """
+    Plot a histogram for each column in the dataframe
+
+    :param df: Multiple graphs statistics in pandas Dataframe
+    :param output: Output file name prefix
+    :return:
+    """
     for x in df.columns:
+        fileout = output + "".join(x.split()).replace("/", "") + ".block.pdf"
         plt.figure(figsize = (5,4))
         plt.hist(df[x], edgecolor = "black", color = "royalblue")
         plt.xlabel(x)
         plt.ylabel("Frequency")
         plt.tight_layout()
-        plt.savefig(output + "." + "".join(x.split()).replace("/", "") + ".block.pdf")
+        plt.savefig(fileout)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Multi: Process TSV input and PNG output.")
@@ -43,7 +62,9 @@ if __name__ == "__main__":
 
     files = read_stats(args.input)
     df = read_data(files)
+
+    # We create a new folder since it is going to be a lot of new plots
     os.makedirs(args.output, exist_ok=True)
 
-    plot_test(df, args.output + "/" + args.output)
+    plot_histo(df, args.output + "/" )
 

@@ -4,18 +4,31 @@
 import argparse
 import pandas as pd
 import matplotlib.pyplot as plt
-import numpy as np
 import seaborn as sns
 import sys
 
-def read_stats(filename):
+
+def read_stats(filename: str) -> list:
+    """
+    Parse the input file and return a list of files to read.
+
+    :param filename: File with the absolute path of the graphs to read
+    :return: A list of files to read
+    """
     files = []
     with open(filename, "r") as f:
         for line in f.readlines():
             files.append(line.split())
     return files
 
-def read_data(files):
+
+def read_data(files: list) -> pd.DataFrame:
+    """
+    Read all the files in the list and return a combined dataframe.
+
+    :param files: List of all files to read
+    :return: A combined dataframe of all the files
+    """
     combined = pd.read_csv(files[0][1], sep = "\t")
 
     for x in files[1:]:
@@ -24,10 +37,24 @@ def read_data(files):
     combined.index = [x[0] for x in files]
     return combined
 
-def scale(df):
+
+def scale(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Scale the input data to a range of 0 to 1
+    :param df: multiple graphs statistics in pandas Dataframe
+    :return: Scaled Dataframe (0 to 1)
+    """
     return df.apply(lambda col: col / col.max(), axis=0)
 
-def plot_heatmap(df, output):
+
+def plot_clustermap(df: pd.DataFrame, output: str) -> None:
+    """
+    Plot the scaled data in a clustermap (heatmap with clusering)
+
+    :param df: Scaled graph statistics in pandas Dataframe
+    :param output: Output file name prefix
+    :return: Plots (clustermap)
+    """
     dfnew = df.dropna(how = "all", axis = 1)
     if len(dfnew.columns) == 0:
         print("No data to plot", file = sys.stderr)
@@ -46,6 +73,5 @@ if __name__ == "__main__":
     files = read_stats(args.input)
     df = read_data(files)
     df = scale(df)
-    print (df)
-    plot_heatmap(df, args.output)
+    plot_clustermap(df, args.output)
 
