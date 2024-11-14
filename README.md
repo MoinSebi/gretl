@@ -35,7 +35,7 @@ cargo build --release
 
 **Running gretl:**  
 A list of all subcommands is at the bottom
-```rust
+```
 ./target/release/gretl [subcommand] [options]
 ```
 

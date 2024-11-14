@@ -1,3 +1,6 @@
+#!/usr/bin/python3
+#!python
+
 # Imports
 import seaborn as sns
 import pandas as pd

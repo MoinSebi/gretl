@@ -117,7 +117,7 @@ pub fn convert_string(
         let string_vec = delim.split(' ').collect::<Vec<&str>>();
         Ok(hashmap_old_new
             .get(string_vec[0])
-            .ok_or("Error converting ID")
+            .ok_or("This ID is not in the hashmap")
             .unwrap()
             .to_string())
     } else if del_enum == DelEnum::Comma {
@@ -142,8 +142,9 @@ pub fn convert_string(
         let mut dirs = Vec::new();
         let mut values = Vec::new();
         let mut oo = String::new();
-        for x in delim.chars() {
+        for x in delim.chars().skip(1) {
             if x.to_string() == ">" || x.to_string() == "<" {
+                println!("a{:?} a{:?}", x, oo);
                 dirs.push(x);
                 values.push(
                     hashmap_old_new.get(oo.as_str())
@@ -151,7 +152,7 @@ pub fn convert_string(
                         .unwrap()
                         .to_string(),
                 );
-                oo = x.to_string();
+                oo = String::new();
             } else {
                 oo += &x.to_string();
             }
@@ -191,6 +192,7 @@ pub fn read_write(
         let mut fields: Vec<&str> = line.split_whitespace().collect();
         match fields[0] {
             "S" => {
+
                 let a = convert_string(fields[1], hm, DelEnum::Space)?;
                 fields[1] = &a;
                 writeln!(writer, "{}", fields.join("\t")).expect("Error writing to file");
