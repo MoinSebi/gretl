@@ -22,6 +22,7 @@ def check_data(df_list):
 
 def get_cols(df_list):
     cols = list(df_list.columns)
+    return cols
 
 def collect_col_val(df_list, cols):
     col_vals = []
