@@ -58,6 +58,7 @@ pub fn block_main(matches: &ArgMatches) -> Result<(), Box<dyn std::error::Error>
     info!("Reading graph file");
     let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file_multi(graph_file, threads);
     graph.walk_to_path(sep);
+    info!("Number of paths: {}", graph.paths.len());
     let (min1, max1) = get_min_max(&graph);
     let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, sep);
 
@@ -314,26 +315,26 @@ pub fn wrapper_blocks(
     let mut writer = get_writer(_out_prefix)?;
     writeln!(writer, "{}", "Block\t#Traversals\t#Paths\t#Nodes\t#Nodes (average)\tSequence [bp] (average)").unwrap();
 
-    if _out_prefix == "-"{
-        for traversal in combined.iter() {
-            let mut s = String::new();
-            let block_name = format!("{}-{}\t", traversal.1[0], traversal.1[1]);
-            let trav = traversal.0.iter().len();
-            let paths = traversal.0.iter().map(|y| y[2]).collect::<HashSet<usize>>().len();
-            let trav1 = traversal.0.iter().map(|y| &graph.paths[y[2]].nodes[y[0]..y[1]]).collect::<Vec<_>>();
 
-            let len1 = trav1.iter().map(|y| y.len() as u32).collect::<Vec<u32>>();
-            let total_len = trav1.iter().map(|y| y.iter().map(|z| graph.get_sequence_by_id(&z).len() as f64).sum::<f64>()).collect::<Vec<f64>>();
+    for traversal in combined.iter() {
+        let mut s = String::new();
+        let block_name = format!("{}-{}\t", traversal.1[0], traversal.1[1]);
+        let trav = traversal.0.iter().len();
+        let paths = traversal.0.iter().map(|y| y[2]).collect::<HashSet<usize>>().len();
+        let trav1 = traversal.0.iter().map(|y| &graph.paths[y[2]].nodes[y[0]..y[1]]).collect::<Vec<_>>();
 
-            s.push_str(&block_name);
-            s.push_str(&format!("{:?}\t", trav).as_str());
-            s.push_str(&format!("{:?}\t", paths).as_str());
-            s.push_str(&format!("{:?}\t", len1.len()).as_str());
-            s.push_str(&format!("{:?}\t", mean(&len1)).as_str());
-            s.push_str(&format!("{:?}", mean(&total_len)).as_str());
+        let len1 = trav1.iter().map(|y| y.len() as u32).collect::<Vec<u32>>();
+        let total_len = trav1.iter().map(|y| y.iter().map(|z| graph.get_sequence_by_id(&z).len() as f64).sum::<f64>()).collect::<Vec<f64>>();
 
-            writeln!(writer, "{}", &s);
-        }
+        s.push_str(&block_name);
+        s.push_str(&format!("{:?}\t", trav).as_str());
+        s.push_str(&format!("{:?}\t", paths).as_str());
+        s.push_str(&format!("{:?}\t", len1.len()).as_str());
+        s.push_str(&format!("{:?}\t", mean(&len1)).as_str());
+        s.push_str(&format!("{:?}", mean(&total_len)).as_str());
+
+        writeln!(writer, "{}", &s);
     }
+
     Ok(())
 }
