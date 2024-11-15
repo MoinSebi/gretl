@@ -144,7 +144,6 @@ pub fn convert_string(
         let mut oo = String::new();
         for x in delim.chars().skip(1) {
             if x.to_string() == ">" || x.to_string() == "<" {
-                println!("a{:?} a{:?}", x, oo);
                 dirs.push(x);
                 values.push(
                     hashmap_old_new.get(oo.as_str())
