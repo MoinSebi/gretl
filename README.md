@@ -30,7 +30,7 @@ We have added python scripts to visualize the output of the different commands o
 
 ---
 ## Explanation
-Since some of the commands run relative complex computation, we have added a **detailed description** of each subcommand in the `doc` directory, which can be found **[here](doc/gretl.explained.md)**. It covers how internal each command is structured, what is calculated and how this calculation is done. 
+Since some of the commands run relative complex computation, we have added a **detailed description** of each subcommand in the `doc` directory, which can be found **[here](doc/gretl.explained.md)**. It covers how internal each command is structured, what is calculated and how this calculation is performed (very roughly).
 
 
 ---
@@ -251,7 +251,7 @@ Table: NodesID, Number of nodes, amount of sequence and sum of jumps (collected 
 ### Block
 Statistics of pangenome blocks. Blocks are defined to be a collection of nodes which are in proximity. Proximity is measured by the node id differences, therefore the order of the nodes in the GFA file is important. Blocks normally contain nodes of consecutive node IDs and can be defined by either number of nodes of each block OR total amount of sequence in each block. 
 
-**Important: This is the only command which requires a sorted node ID space (1D SGD), which can be achieved by ```odgi sort -O```.** 
+**Important: This is the only command which requires a sorted node ID space (1D SGD), which can be achieved by ```odgi sort -Y```.** 
 
 **Example usage**
 ```text
@@ -278,7 +278,7 @@ Find a specific node (e.g. 10), directed node (e.g. 10+), or edge (e.g. 10+20+) 
 ./gretl find -g /path/to/graph.gfa -o /path/to/output.txt --length 1000 -f feature.txt 
 ```
 
-**Example input*
+**Example input**
 ```text
 10
 11
