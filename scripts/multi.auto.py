@@ -97,7 +97,8 @@ def plot_scatter(df: pd.DataFrame, output: str):
         plt.scatter(df[x[0]], df[x[1]], color = "royalblue")
         plt.xlabel(x[0])
         plt.ylabel(x[1])
-        plt.savefig(output + "." + "".join(x[0].split()).replace("/", "") + "--" + "".join(x[1].split()).replace("/", "") + ".scatter.png")
+        plt.tight_layout()
+        plt.savefig(output + "multi.auto.scatter." + "".join(x[0].split()).replace("/", "") + "--" + "".join(x[1].split()).replace("/", "") + ".scatter.pdf")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Multi: Process TSV input and PNG output.")

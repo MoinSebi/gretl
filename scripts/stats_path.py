@@ -56,7 +56,7 @@ def plotter(df: pd.DataFrame, x: str, y: str, output: str) -> None:
     plt.xlabel(x)
     plt.ylabel(y)
     plt.tight_layout()
-    plt.savefig(output + "path.scatter.pdf")
+    plt.savefig(output + ".path.scatter.pdf")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Path: Process TSV input and PDF output.")

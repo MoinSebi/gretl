@@ -61,7 +61,7 @@ def plot_heatmap(df: pd.DataFrame, output: str) -> None:
     """
     sns.clustermap(df.T)
     plt.xticks([])  # Remove x-axis tick labels
-    plt.savefig(output + ".multi.corr.heatmap.png")
+    plt.savefig(output + ".multi.corr.heatmap.pdf")
 
 
 if __name__ == "__main__":

@@ -54,7 +54,7 @@ def plot_test(df: pd.DataFrame, df_seq_sorted: pd.DataFrame, output: str) -> Non
         bottom1 += int(x[1]["Sequence[bp]"])/1000
     plt.ylabel("Sequence [kbp]")
     plt.xlabel("Similarity")
-    plt.savefig(output + ".sequence.core.pdf")
+    plt.savefig(output + ".core.sequence.pdf")
     plt.close()
 
     # Plotting the node data
@@ -67,7 +67,7 @@ def plot_test(df: pd.DataFrame, df_seq_sorted: pd.DataFrame, output: str) -> Non
         bottom1 += int(x[1]["#Node"])/1000
     plt.ylabel("#Node [x1000]")
     plt.xlabel("Similarity")
-    plt.savefig(output + ".node.core.pdf")
+    plt.savefig(output + ".core.node.pdf")
     plt.close()
 
 

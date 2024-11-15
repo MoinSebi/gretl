@@ -90,7 +90,7 @@ def plot_scatter(df: pd.DataFrame, pos_list: list, output: str, ylabel: str, xla
     plt.ylabel(ylabel)
     plt.xlabel(xlabel)
     plt.tight_layout()
-    plt.savefig(output + "." + df_col + "." + cor1 + ".pdf")
+    plt.savefig(output + ".nwindow." + df_col + "." + cor1 + ".pdf")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Bootstrap: Process CSV input and PNG output.")

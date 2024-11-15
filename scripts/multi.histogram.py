@@ -46,7 +46,7 @@ def plot_histo(df: pd.DataFrame, output: str) -> None :
     :return:
     """
     for x in df.columns:
-        fileout = output + "".join(x.split()).replace("/", "") + ".block.pdf"
+        fileout = output + "multi.histogram." + "".join(x.split()).replace("/", "") + ".histo.pdf"
         plt.figure(figsize = (5,4))
         plt.hist(df[x], edgecolor = "black", color = "royalblue")
         plt.xlabel(x)

@@ -39,7 +39,7 @@ def plotter(df: pd.DataFrame, output: str, what: str) -> None:
     plt.xlabel("Block number")
     plt.ylabel(what)
     plt.tight_layout()
-    plt.savefig(output + "." + what + ".block.pdf")
+    plt.savefig(output + ".block." + "".join(what.split()) + ".pdf")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Path: Process TSV input and PDF output.")

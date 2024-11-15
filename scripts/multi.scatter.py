@@ -62,7 +62,7 @@ def plot_scatter(df: pd.DataFrame, output: str, x: str, y: str):
     plt.scatter(df[x], df[y], color = "royalblue")
     plt.xlabel(x)
     plt.ylabel(y)
-    plt.savefig(output + "." + "".join(x[0].split()).replace("/", "") + "." + "".join(x[1].split()).replace("/", "") + ".scatter.png")
+    plt.savefig(output + ".multi.scatter." + "".join(x.split()).replace("/", "") + "." + "".join(y.split()).replace("/", "") + ".scatter.pdf")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Multi: Process TSV input and PNG output.")

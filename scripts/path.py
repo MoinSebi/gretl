@@ -49,7 +49,7 @@ def plot_heatmap(df: pd.DataFrame, output: str) -> None:
     df = df.dropna(axis = 1)
     plt.figure(figsize = (5,10))
     sns.clustermap(df.T)
-    plt.savefig(output + "path.heatmap.pdf")
+    plt.savefig(output + ".path.heatmap.pdf")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Path: Process TSV input and PDF output.")

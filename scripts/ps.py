@@ -83,7 +83,7 @@ def plot_node_stats(df2: pd.DataFrame, outfile: str) -> None:
     plt.xlabel("#Nodes [x1000]")
     plt.ylabel("Accession")
     plt.tight_layout()
-    plt.savefig(outfile + "path.similarity.node.pdf")
+    plt.savefig(outfile + ".ps.node.pdf")
 
 
 # Sequence
@@ -123,7 +123,7 @@ def plot_seq_stats(df2, outfile):
     plt.xlabel("Sequence [kbp]")
     plt.ylabel("Accession")
     plt.tight_layout()
-    plt.savefig(outfile + "path.similarity.node.pdf")
+    plt.savefig(outfile + ".ps.sequence.pdf")
 
 
 if __name__ == "__main__":
