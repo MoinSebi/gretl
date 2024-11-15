@@ -70,7 +70,7 @@ In general the `stats` command has two possible options:
 
 
 **Example**
-```Rust
+```bash
 /// Graph-based + hybrid statistics
 ./gretl stats -g /path/to/graph.gfa -o /path/to/output.txt
 
