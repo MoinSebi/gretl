@@ -49,6 +49,7 @@ def plot_heatmap(df: pd.DataFrame, output: str) -> None:
     df = df.dropna(axis = 1)
     plt.figure(figsize = (5,10))
     sns.clustermap(df.T)
+    plt.tight_layout()
     plt.savefig(output + ".path.heatmap.pdf")
 
 if __name__ == "__main__":

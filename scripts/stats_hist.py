@@ -33,6 +33,7 @@ def collect_col_val(df_list, cols):
 def plot_histogram(col_vals, cols, output):
     for i, x in enumerate(col_vals):
         plt.hist(x, bins = 50, alpha = 0.5, label = cols[i])
+        plt.tight_layout()
         plt.savefig(output + "." + cols[i] + ".hist.pdf")
 
 

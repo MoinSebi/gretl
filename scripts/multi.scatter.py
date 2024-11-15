@@ -62,6 +62,7 @@ def plot_scatter(df: pd.DataFrame, output: str, x: str, y: str):
     plt.scatter(df[x], df[y], color = "royalblue")
     plt.xlabel(x)
     plt.ylabel(y)
+    plt.tight_layout()
     plt.savefig(output + ".multi.scatter." + "".join(x.split()).replace("/", "") + "." + "".join(y.split()).replace("/", "") + ".scatter.pdf")
 
 if __name__ == "__main__":

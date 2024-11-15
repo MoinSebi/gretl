@@ -62,6 +62,7 @@ def plot_clustermap(df: pd.DataFrame, output: str) -> None:
     else:
         sns.clustermap(dfnew.T)
         plt.xticks([])  # Remove x-axis tick labels
+        plt.tight_layout()
         plt.savefig(output + ".multi.heatmap.pdf")
 
 if __name__ == "__main__":

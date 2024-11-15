@@ -10,7 +10,7 @@ The python scripts need the following requirements (in brackets are the versions
 - numpy (1.21.6)
 - scipy (1.4.1)
 
-We have run all these commands with a small example graph consisting of five yeast genomes. The graph is stored in the `data/example_data/chr5.yeast.gfa`. For multi-graph analysis, we simulated statistics based on the base dataset.
+We have run all these commands with a small example graph consisting of 50 Ecoli genomes. You can download the graph from here:  https://zenodo.org/record/7937947/files/ecoli50.gfa.zst. 
 
 ## Single graph workflows 
 
@@ -70,7 +70,7 @@ Alternative questions:
 
 **Gretl subcommand: core**  
 **Plotting script: [core.py](../scripts/core.py)**   
-**Example: [ExampleS4](../plots/test.node.core.pdf) (s. Figure 1C (right))**
+**Example: [ExampleS4](../plots/test.core.node.pdf) (s. Figure 1C (right))**
 
 
 

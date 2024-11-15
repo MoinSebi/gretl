@@ -45,6 +45,7 @@ def plotter_window(df: pd.DataFrame, output: str) -> None:
     sns.heatmap(df, cmap="coolwarm", cbar_kws={'label': 'Similarity'})
     plt.tight_layout(rect=[0.05, 0.05, 0.85, 0.95])  # Adjust as needed
     plt.xlabel("Sequence window")
+    plt.tight_layout()
     plt.savefig(output + ".window.pdf")
 
 if __name__ == "__main__":
