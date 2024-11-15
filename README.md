@@ -71,7 +71,7 @@ In general the `stats` command has two possible options:
 
 **Example**
 ```Rust
-/// Graph-based statistics
+/// Graph-based + hybrid statistics
 ./gretl stats -g /path/to/graph.gfa -o /path/to/output.txt
 
 /// Path-based statistics
@@ -80,18 +80,16 @@ In general the `stats` command has two possible options:
 
 **Result**
 - TSV or YAML file with statistics
-- Check our [examples](doc/gretl.examples.md) for more ideas. 
-
 
 ---
 ### id2int
-Convert any string-based node identifier to numeric values. Afterwards, use ```odgi sort -O``` to sort the graph in pan-genomic order, which will create more meaningful statistics in ```gretl stats``` (see above). Nevertheless, numerical node IDs a required by any ```gretl``` command. 
+Convert any string-based node identifier to numeric values. Afterwards, use ```odgi sort -Y``` to sort the graph in pan-genomic order, which will create more meaningful statistics in ```gretl stats``` and is needed in ````block´´´ subcommand (see above). Nevertheless, numerical node IDs a required by any ```gretl``` command. 
 
 Available options:
 - ```-d, --dict <dict>``` Write a dictionary with the new and old IDs to a plain text file. 
 
-**Example**
-```
+**Example usage**
+```bash
 ./gretl id2int -g /path/to/graph.gfa -o /path/to/output.gfa -d /path/to/dict.txt
 ```
 
@@ -106,15 +104,15 @@ This function will convert **all** node IDs in the graph. **Additional data in t
 ### Node-list
 Individual node statistics based on graph-related features. Statistics provided: 
 - Length
-- Degree
+- Node Degree
 - Depth
 - Core
-
-**Comment**
+ 
+**Comment**  
 The information of the reported table can be used as a individual lookup or to create own window-like statistics (over nodes).
 
-**Example**
-```text
+**Example usage**
+```bash
 ./gretl node-list -g /path/to/graph.gfa -o /path/to/output.txt
 ```
 
@@ -134,77 +132,53 @@ The information of the reported table can be used as a individual lookup or to c
 
 ---
 ### Core
-Compute user-defined statistics of the graph (```-s```). Calculate the statistics for each node and summarize for each possible value the number of nodes and sequence. In an additional file ("```*.private.txt```") we report for each path the amount of nodes and sequence sole present by this sample. 
-
-Available options:
-- ```-s, --stats <statistics>```. Define the statistics you want to summarize (see above) [default: similarity].
+Count the amount of sequence and the number of nodes found in each similarity level. The method calculates the similarity for each node and summarize for each possible level the number of nodes and the amount sequence. 
 
 
+**Example usage**
 ```
 ./gretl core -g /path/to/graph.gfa -o /path/to/output.txt
 ```
 
-
-**Result**
-- [core plot](scripts/notebooks/plots/pancore.pdf)
-
+---
 ### Path similarity (PS)
 
-Calculate for each path the amount of nodes and sequence at each similarity level. 
+Calculate for each path the number of nodes and the amount of sequence at each similarity level. 
 
+**Example usage**
 ```
 ./gretl ps -g /path/to/graph.gfa -o /path/to/output.txt
 ```
 
-**Result**
-[ps plot](scripts/notebooks/plots/ps.similarity_path.seq.pdf)
+**Example output**
 
-Example output: General path similarity
-
-| Similarity | Sequence[bp] | #Node |
-|------------|--------------|-------|
-| 0          | 0            | 0     |
-| 1          | 264241       | 7315  |
-| 2          | 10804        | 2191  |
-| 3          | 13800        | 2240  |
-| 4          | 73893        | 6833  |
-| 5          | 597805       | 7655  |
-
-Private table: 
-
-| Path       | Sequence[bp] | #Node |
-|------------|--------------|-------|
-| ABQ_6.ChrX | 47050        | 336   |
-| BIH_4.ChrX | 26389        | 278   |
-| ABF_6.ChrX | 33120        | 2181  |
-| BPN_2.ChrX | 104353       | 1250  |
-| BCK_8.ChrX | 53334        | 3275  |
-
+| Accession  | Node:0 | Node:1 | Node:2 | Node:3 | Node:4 | Node:5 | Seq:0 | Seq:1  | Seq:2 | Seq:3 | Seq:4 | Seq:5  |
+|------------|--------|--------|--------|--------|--------|--------|-------|--------|-------|-------|-------|--------|
+| ABQ_6.ChrX | 0      | 336    | 891    | 1785   | 6630   | 7655   | 0     | 47050  | 3792  | 12833 | 73540 | 597805 |
+| BIH_4.ChrX | 0      | 278    | 764    | 1753   | 6592   | 7655   | 0     | 26389  | 2445  | 12195 | 73030 | 597805 |
+| ABF_6.ChrX | 0      | 2180   | 1092   | 1204   | 5213   | 7655   | 0     | 33119  | 5968  | 12122 | 71557 | 597805 |
+| BPN_2.ChrX | 0      | 1246   | 687    | 916    | 5163   | 7655   | 0     | 104349 | 5349  | 1650  | 9887  | 597805 |
+| BCK_8.ChrX | 0      | 3275   | 948    | 1062   | 3734   | 7655   | 0     | 53334  | 4054  | 2600  | 67558 | 597805 |
 
 ---
 ### Bootstrap
-Sample-based bootstrapping to calculate number of nodes and sequence for each number of possible samples. Start with a "complete" graph and remove random path for each run. Then recalculate the general statistics. And summarize the amount of sequence/nodes for each level (e.g. similarity).   
-We recommend bootstrapping a graphs in PanSN-spec. Use ```--nodes``` if the bootstrap should only run on a subset of nodes.  
-You are able to adjust the number of bootstrap, only calculate one "level" or input a meta file as input. Examples are shown in the data/example_data/ directory.  
-Meta files can be used to use the same "combinations" for multiple graphs. This only works of the paths/samples of the graphs are in the same order. 
+We bootstrap different samples of the graph. We iterate from one sample to the maximum number of samples, each time bootstrapping n different combinations. At each iteration, we calculate the number of nodes and the amount of sequence in each similarity level. If you want to exclude speicifc nodes, you can use the ```--nodes``` option. The most important parameter is the number of bootstraps, which is defined by the ```--number``` option. 
 
 
 **Available options:**
 - ```--nodes <nodes>```Run bootstrap only on these nodes
-- ```--meta-input <meta input>``` Use a meta file as input. 
-- ```--level <level>```Run bootstrap only for a specific level
 - ```--number <number>``` Number of bootstrap for each number of genomes
-- ```--meta-line <meta line>``` Run a boots trap of a specific line in the meta file.
-- ```--meta <meta>``` Report the meta information in the output.
 
-
-**Example**
+**Example usage**
 ```
 ./gretl bootstrap -g /path/to/graph.gfa -o /path/to/output.txt -n 20 
 ```
 
-**Result**
-- Using this [script](scripts/notebooks/bootstrap.ipynb) to get [bootstrap plot](scripts/notebooks/plots/bootstrap.pdf)
+**Example output**
+- Size: Number of samples bootstrapped
+- Run: Which iteration of this bootstrap-level
+- Node:1-5: Number of nodes in each similarity level
+- Seq:1-5: Amount of sequence in each similarity level
 
 | Size | Run | Node:1 | Node:2 | Node:3 | Node:4 | Node:5 | Seq:1  | Seq:2  | Seq:3  | Seq:4  | Seq:5  |
 |------|-----|--------|--------|--------|--------|--------|--------|--------|--------|--------|--------|
@@ -223,14 +197,13 @@ Meta files can be used to use the same "combinations" for multiple graphs. This 
 ### Window (sliding, path)
 Calculate statistics on a node level (graph- or path-based) and summarize them for each path in a sliding window approach. In detail: Iterate over the nodes of a path (window-like), summarize the stats of all nodes in the window and report a single value for each window. 
 
-**Example**
+**Example Usage**
 ````
 ./gretl window -g /path/to/graph.gfa -o /path/to/output.txt -s 1000 --step 100
 ````
 
-**Result**
-- Using this [script](scripts/notebooks/window.ipynb) to get [window plot](scripts/notebooks/plots/analysis.window.pdf)
 
+**Example output**
 Table: Path in col1, similarity values on all the other values (each column is 1000 bp, going 100 bp steps)
 
 | ABQ_6.ChrX | 5 | 5   | 5 | 5 | 5 | 5   |
@@ -242,13 +215,14 @@ Table: Path in col1, similarity values on all the other values (each column is 1
 
 ---
 ### Nwindow
-Summarizing the graph by a window of nodes. We iterate numerically over the nodes and calculate the statistics for each window. We start at the current node and move away from it based on provided edges, collecting the new nodes. We repeat this process starting at the "new" nodes until one of the following conditions is met:
+For each node we calculate how many other nodes can be reached by a certain number of steps, sequence or jumps. The output is a table with the node ID, the number of nodes, the amount of sequence and the sum of jumps.
 
+**Step criteria**
 - Jumps: A jumps is defined as difference between the current and the next node. Your input referees to the sum of all jumps in the window.
 - Steps: A step it the number of moves we make in the graph. Your input is the maximum steps from the starting node. 
 - Sequence: Limit the window by a sequence threshold. We stop if the sequence length is larger than the provided threshold.
 
-**Example: How many nodes do I need to collect 1000 bp?**
+**Example usage: How many nodes do I need to collect 1000 bp?**
 ```text
 ./gretl nwindow -g /path/to/graph.gfa -o /path/to/output.txt --sequence 1000 --node-number
 ```
@@ -279,13 +253,12 @@ Statistics of pangenome blocks. Blocks are defined to be a collection of nodes w
 
 **Important: This is the only command which requires a sorted node ID space (1D SGD), which can be achieved by ```odgi sort -O```.** 
 
+**Example usage**
 ```text
 ./gretl block -g /path/to/graph.gfa -o /path/to/output.txt
 ```
 
-**Result**   
-Table: start and end node ID of the block, Number of nodes, amount of sequence and sum of jumps (collected in a window)
-
+**Example result**
 | start_end | #Traversal | #Path | #Nodes (sum)      | #Nodes (average)   | Sequence [bp]  (average) |
 |-----------|------------|-------|-------------------|--------------------|--------------------------|
 | 1-101     | 5          | 5     | 5                 | 25.6               | 12201.2                  |
@@ -305,26 +278,19 @@ Find a specific node (e.g. 10), directed node (e.g. 10+), or edge (e.g. 10+20+) 
 ./gretl find -g /path/to/graph.gfa -o /path/to/output.txt --length 1000 -f feature.txt 
 ```
 
----
-### Feature
-Return a list of nodes which based on input settings. The output can be used as input for gfa2bin.
-
+**Example input*
 ```text
-./gretl feature -g /path/to/graph.gfa -o /path/to/nodes.txt -D 10 
+10
+11
+12
 ```
 
-**Result**
-- List of nodes which fulfill the input settings (plain-text, one node per line)
-
----
-### Path
-Select paths based on input settings. The output can be used as input for gfa2bin.
-
+**Example output** 
+BED format. Tags: ID: Node ID, NS: Node start, NB: Node end
 ```text
-./gretl feature -g /path/to/graph.gfa -o /path/to/nodes.txt -s "N/D ration" -m 10
+BPN_2.ChrX	0	21377	ID:1+;NS:21176;NB:0
+BCK_8.ChrX	0	15731	ID:3+;NS:15530;NB:0
 ```
-**Result**
-- List of paths/samples which fulfill the input settings (plain-text, one node per line)
 
 ## Citation 
 If you use gretl in your work, please cite:  
