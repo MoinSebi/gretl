@@ -1,5 +1,4 @@
-#!/usr/bin/python3
-#!python3
+#!/usr/bin/env python3
 
 # Imports
 import pandas as pd

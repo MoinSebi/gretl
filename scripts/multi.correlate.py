@@ -1,5 +1,4 @@
-#!/home/svorbrugg/miniconda3/bin/python
-#!python3
+#!/usr/bin/env python3
 
 import argparse
 import pandas as pd
