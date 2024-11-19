@@ -74,6 +74,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .help_heading("Input parameters")
                 .arg(
                     Arg::new("gfa")
+                        .display_order(1 )
                         .short('g')
                         .long("graph")
                         .about("GFA input file")
@@ -82,28 +83,29 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 )
                 .arg(
                     Arg::new("PanSN")
-                        .long("PanSN")
+                        .long("pansn")
                         .about("PanSN-spec separator")
-                        .takes_value(true),
+                        .takes_value(true)
+                        .default_value("\n")
                 )
 
 
-                .help_heading("Parameter")
+                .help_heading("Block definition parameter")
                 .arg(
                     Arg::new("node-window")
+                        .display_order(2)
                         .short('w')
                         .long("node-window")
-                        .about("Window size (in nodes)")
+                        .about("Window size (in nodes) [defaul: 1000]")
                         .takes_value(true)
-                        .default_value("1000"),
                 )
                 .arg(
                     Arg::new("node-step")
+                        .display_order(1)
                         .short('s')
                         .long("node-step")
-                        .about("Node step")
+                        .about("Node step [default: 1000]")
                         .takes_value(true)
-                        .default_value("1000"),
                 )
 
                 .arg(
@@ -116,16 +118,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     Arg::new("sequence-step")
                         .long("sequence-step")
                         .about("Sequence step")
-                        .takes_value(true),
+                        .takes_value(true)
                 )
 
 
 
-
+                .help_heading("Block extension criteria")
                 .arg(Arg::new("distance")
                     .short('d')
                     .long("distance")
-                    .about("Distance till breaking the block")
+                    .about("Distance till breaking the block [bp]")
                     .takes_value(true)
                     .default_value("10000"))
 
@@ -135,7 +137,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     Arg::new("output")
                         .short('o')
                         .long("output")
-                        .about("Output prefix for the new plink file")
+                        .about("Output file name")
                         .takes_value(true)
                         .required(true),
                 )
@@ -151,7 +153,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     Arg::new("blocks")
                         .long("blocks")
                         .short('b')
-                        .about("Output blocks [default: false]")
+                        .about("Output all blocks in a this file")
                 ),
         )
 

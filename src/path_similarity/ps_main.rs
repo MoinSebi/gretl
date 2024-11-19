@@ -20,7 +20,7 @@ pub fn ps_main(matches: &ArgMatches) {
 
         info!("Running 'gretl ps' analysis");
         info!("Graph file: {}", matches.value_of("gfa").unwrap());
-        info!("PanSN: {:?}", pansn);
+        info!("Separator: {}", if pansn == "\n" { "None".to_string() } else { format!("{:?}", pansn) });
         info!("Threads: {}", threads);
         info!("Output file: {}", matches.value_of("output").unwrap());
 

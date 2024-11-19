@@ -9,7 +9,7 @@ use log::{info, warn};
 use std::sync::atomic::{AtomicU32, Ordering};
 use std::sync::{Arc, Mutex};
 use chrono::Local;
-use hashbrown::HashSet;
+use hashbrown::{HashMap, HashSet};
 use crate::helpers::helper::{get_writer, mean};
 
 /// Block main function
@@ -20,16 +20,15 @@ pub fn block_main(matches: &ArgMatches) -> Result<(), Box<dyn std::error::Error>
     info!("Running 'gretl block' analysis");
     // Input
     let graph_file = matches.value_of("gfa").unwrap();
-    let sep = matches.value_of("PanSN").unwrap_or(" ");
+    let mut sep = matches.value_of("PanSN").unwrap_or(" ");
 
     // Block parameters
     // Based on nodes
     let node_window: usize = matches
         .value_of("node-window")
-        .unwrap()
-        .parse::<usize>()
-        .unwrap();
-    let node_step: usize = matches.value_of("node-step").unwrap().parse().unwrap();
+        .unwrap_or("1000")
+        .parse::<usize>().expect("Error: node-window must be an integer");
+    let node_step: usize = matches.value_of("node-step").unwrap_or("1000").parse().expect("Error: node-step must be an integer");
 
     // This does not work
     if node_step > node_window {
@@ -42,28 +41,37 @@ pub fn block_main(matches: &ArgMatches) -> Result<(), Box<dyn std::error::Error>
 
     let cutoff_distance: usize = matches.value_of("distance").unwrap().parse().unwrap();
 
+
     // Output
     let output_prefix = matches.value_of("output").unwrap();
     let threads: usize = matches.value_of("threads").unwrap().parse().unwrap();
 
-    info!("Block subcommand");
     info!("Graph file: {}", graph_file);
-    info!("Separator: {:?}", sep);
+    info!("Separator: {}", if sep == "\n" { "None".to_string() } else { format!("{:?}", sep) });
     info!("Node window.md size: {}", node_window);
     info!("Node step size: {}", node_step);
     info!("Sequence window.md size: {:?}", sequence_window);
     info!("Sequence step size: {:?}", sequence_step);
     info!("Distance: {}", cutoff_distance);
-    info!("Output prefix: {}\n", output_prefix);
+    info!("Output file: {}\n", if output_prefix == "-" { "stdout" } else { output_prefix });
+
+
 
     info!("Reading graph file");
     let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file_multi(graph_file, threads);
+    if graph.paths.is_empty() && sep == "\n" {
+        sep = "#"
+    }
     graph.walk_to_path(sep);
+
     info!("Number of paths: {}", graph.paths.len());
     let (min1, max1) = get_min_max(&graph);
     let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, sep);
 
-    info!("Indexing graph");
+    info!("Block generation");
+    if !matches.is_present("sequence-window") && !matches.is_present("sequence-step") &&  !matches.is_present("node-window") && !matches.is_present("node-step") {
+        warn!("Running on default values for block generation. Node-step: 1000 and Node-window: 1000");
+    }
     let blocks = block_wrapper(
         &graph,
         node_step,
@@ -123,10 +131,10 @@ pub fn block_wrapper(
     } else if node_step > node_window {
         panic!("Step size can't be larger than window size");
     } else if sequence_step.is_some() && sequence_window.is_none() {
-        warn!("You need to provide a sequence if you provide a sequence window");
+        warn!("You need to provide a sequence if you provide a sequence window. Now Define blocks on node-step and node-window instead");
         blocks = blocks_node(graph, node_step, node_window);
     } else if sequence_window.is_some() && sequence_step.is_none() {
-        warn!("You need to provide a sequence step if you provide a sequence");
+        warn!("You need to provide a sequence step if you provide a sequence. Now Define blocks on node-step and node-window instead");
         blocks = blocks_node(graph, node_step, node_window);
     } else {
         blocks = blocks_node(graph, node_step, node_window);
@@ -235,7 +243,7 @@ pub fn wrapper_blocks(
             atomic_count.fetch_add(1, Ordering::Relaxed);
             std::io::stderr().flush().unwrap();
             eprint!(
-                "\r{}          {:?}/{}",
+                "\r{}          Path {:?}/{}",
                 Local::now().format("%d/%m/%Y %H:%M:%S %p"),
                 atomic_count.load(Ordering::Relaxed),
                 paths_number
@@ -314,8 +322,8 @@ pub fn wrapper_blocks(
     assert_eq!(block.len(), _o.len());
     let combined: Vec<_> = _o.iter().zip(block.iter()).collect();
     let mut writer = get_writer(_out_prefix)?;
-    writeln!(writer, "{}", "Block\t#Traversals\t#Paths\t#Nodes\t#Nodes (average)\tSequence [bp] (average)").unwrap();
-
+    writeln!(writer, "{}", "Block\t#Traversals\t#Paths\t#Samples\t#Nodes\t#Nodes (average)\tSequence [bp] (average)").unwrap();
+    let hm1 = pansn2id(_graph2, graph);
 
     for traversal in combined.iter() {
         let mut s = String::new();
@@ -323,13 +331,14 @@ pub fn wrapper_blocks(
         let trav = traversal.0.iter().len();
         let paths = traversal.0.iter().map(|y| y[2]).collect::<HashSet<usize>>().len();
         let trav1 = traversal.0.iter().map(|y| &graph.paths[y[2]].nodes[y[0]..y[1]]).collect::<Vec<_>>();
-
+        let samples = traversal.0.iter().map(|y| hm1.get(&y[2]).unwrap()).collect::<HashSet<&usize>>().len();
         let len1 = trav1.iter().map(|y| y.len() as u32).collect::<Vec<u32>>();
         let total_len = trav1.iter().map(|y| y.iter().map(|z| graph.get_sequence_by_id(&z).len() as f64).sum::<f64>()).collect::<Vec<f64>>();
 
         s.push_str(&block_name);
         s.push_str(&format!("{:?}\t", trav).as_str());
         s.push_str(&format!("{:?}\t", paths).as_str());
+        s.push_str(&format!("{:?}\t", samples).as_str());
         s.push_str(&format!("{:?}\t", len1.len()).as_str());
         s.push_str(&format!("{:?}\t", mean(&len1)).as_str());
         s.push_str(&format!("{:?}", mean(&total_len)).as_str());
@@ -338,4 +347,21 @@ pub fn wrapper_blocks(
     }
 
     Ok(())
+}
+
+pub fn pansn2id(pansn: &Pansn<u32, (), ()>, graph: &Gfa<u32, (), ()>) -> HashMap<usize, usize> {
+    let mut hm1 = HashMap::new();
+    for (id, x) in graph.paths.iter().enumerate(){
+        hm1.insert(&x.name, id);
+    }
+    let mut hm2 = HashMap::new();
+    for (id, x) in pansn.genomes.iter().enumerate(){
+        for y in x.get_haplo_path(){
+            hm2.insert(*hm1.get(&y.name).unwrap(), id);
+        }
+    }
+    hm2
+
+
+
 }
