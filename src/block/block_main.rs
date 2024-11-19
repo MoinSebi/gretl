@@ -1,7 +1,7 @@
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use clap::ArgMatches;
-use gfa_reader::{Gfa, Pansn};
+use gfa_reader::{check_numeric_gfafile, Gfa, Pansn};
 use rayon::prelude::*;
 
 use log::{info, warn};
@@ -56,44 +56,48 @@ pub fn block_main(matches: &ArgMatches) -> Result<(), Box<dyn std::error::Error>
     info!("Output file: {}\n", if output_prefix == "-" { "stdout" } else { output_prefix });
 
 
+    if check_numeric_gfafile(matches.value_of("gfa").unwrap()) {
+        info!("Reading graph file");
+        let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file_multi(graph_file, threads);
+        if graph.paths.is_empty() && sep == "\n" {
+            sep = "#"
+        }
+        graph.walk_to_path(sep);
 
-    info!("Reading graph file");
-    let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file_multi(graph_file, threads);
-    if graph.paths.is_empty() && sep == "\n" {
-        sep = "#"
+        info!("Number of paths: {}", graph.paths.len());
+        let (min1, max1) = get_min_max(&graph);
+        let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, sep);
+
+        info!("Block generation");
+        if !matches.is_present("sequence-window") && !matches.is_present("sequence-step") && !matches.is_present("node-window") && !matches.is_present("node-step") {
+            warn!("Running on default values for block generation. Node-step: 1000 and Node-window: 1000");
+        }
+        let blocks = block_wrapper(
+            &graph,
+            node_step,
+            node_window,
+            sequence_window,
+            sequence_step,
+        )?;
+        info!("Number of blocks: {}", blocks.len());
+
+        let node_sizes = node_size(&graph, min1, max1);
+
+        info!("Extracting blocks");
+        wrapper_blocks(
+            &wrapper,
+            node_sizes,
+            blocks,
+            cutoff_distance,
+            true,
+            output_prefix,
+            threads,
+            &graph,
+        )?;
     }
-    graph.walk_to_path(sep);
-
-    info!("Number of paths: {}", graph.paths.len());
-    let (min1, max1) = get_min_max(&graph);
-    let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, sep);
-
-    info!("Block generation");
-    if !matches.is_present("sequence-window") && !matches.is_present("sequence-step") &&  !matches.is_present("node-window") && !matches.is_present("node-step") {
-        warn!("Running on default values for block generation. Node-step: 1000 and Node-window: 1000");
+    else {
+        panic!("Error: GFA file is not numeric");
     }
-    let blocks = block_wrapper(
-        &graph,
-        node_step,
-        node_window,
-        sequence_window,
-        sequence_step,
-    )?;
-    info!("Number of blocks: {}", blocks.len());
-
-    let node_sizes = node_size(&graph, min1, max1);
-
-    info!("Extracting blocks");
-    wrapper_blocks(
-        &wrapper,
-        node_sizes,
-        blocks,
-        cutoff_distance,
-        true,
-        output_prefix,
-        threads,
-        &graph,
-    )?;
     Ok(())
 }
 

@@ -17,12 +17,13 @@ pub fn ps_main(matches: &ArgMatches) {
             .unwrap();
 
         let mut pansn = matches.value_of("PanSN").unwrap();
+        let output = matches.value_of("output").unwrap();
 
         info!("Running 'gretl ps' analysis");
         info!("Graph file: {}", matches.value_of("gfa").unwrap());
         info!("Separator: {}", if pansn == "\n" { "None".to_string() } else { format!("{:?}", pansn) });
         info!("Threads: {}", threads);
-        info!("Output file: {}", matches.value_of("output").unwrap());
+        info!("Output file: {}", if output == "-" { "stdout".to_string() } else { output.to_string() });
 
         if pansn == "\n"{
             let message = r"No PanSN provided, using default PanSN '\n'. Every path will be its own sample!";
@@ -30,22 +31,23 @@ pub fn ps_main(matches: &ArgMatches) {
         }
 
         info!("Reading graph file");
-        let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file_multi(matches.value_of("gfa").unwrap(), threads);
 
-        if graph.paths.is_empty() && pansn == "\n" {
-            pansn = "#";
+            let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file_multi(matches.value_of("gfa").unwrap(), threads);
 
+            if graph.paths.is_empty() && pansn == "\n" {
+                pansn = "#";
+
+            }
+            // Convert walk to path
+            graph.walk_to_path(pansn);
+
+            // Check if paths are found (path are needed for this analysis)
+            let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, pansn);
+            let data = accession2level(&graph, &wrapper, threads);
+
+            write_ps(&data, output);
+        } else {
+            panic!("Error: GFA file is not numeric");
         }
-        // Convert walk to path
-        graph.walk_to_path(pansn);
 
-        // Check if paths are found (path are needed for this analysis)
-        let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, pansn);
-        let data = accession2level(&graph, &wrapper, threads);
-        let output = matches.value_of("output").unwrap();
-
-        write_ps(&data, output);
-    } else {
-        panic!("Error: GFA file is not numeric");
-    }
 }
