@@ -83,7 +83,7 @@ In general the `stats` command has two possible options:
 
 ---
 ### id2int
-Convert any string-based node identifier to numeric values. Afterwards, use ```odgi sort -Y``` to sort the graph in pan-genomic order, which will create more meaningful statistics in ```gretl stats``` and is needed in ````block´´´ subcommand (see above). Nevertheless, numerical node IDs a required by any ```gretl``` command. 
+Convert any string-based node identifier to numeric values. Afterward, use ```odgi sort -Y``` to sort the graph in pan-genomic order, which will create more meaningful statistics in ```gretl stats``` and is required in ````block´´´ subcommand (see above). Nevertheless, numerical node IDs are required by any ```gretl``` command. The new node identifiers will start at 1 and end at the number of nodes +1. More information can be found [here](./doc/gretl.explained.md). 
 
 Available options:
 - ```-d, --dict <dict>``` Write a dictionary with the new and old IDs to a plain text file. 

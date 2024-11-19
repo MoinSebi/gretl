@@ -25,8 +25,11 @@ Step 3: Now each block has a set of paths. For each block, summarize the amount 
 
 
 ## id2int
-Creates a **new** graph file with the node IDs replaced by integers. IT DOES NOT SORT THE GRAPH.
-Internally, the graph is read once, storing all nodes together and their "number" in a hashmap (memory-efficient). Then the graphs is read again, converting all "old" node IDs to the new integer IDs.
+Creates a **new** graph file with the node IDs replaced by integers. 
+Internally, the graph is read once, extracting all nodes and assigning numeric ids, stored in a hashmap (memory-efficient). The new identifiers are consecutive and in the read-order of the nodes in the initial input file. 
+In a second step, the graph is read again, converting all "old" node IDs to the new integer IDs. This is done on the fly, with very little memory overhead, and directly written in a new graph file.
+
+**Note**: The new graph file is not sorted.
 
 
 ## Stats

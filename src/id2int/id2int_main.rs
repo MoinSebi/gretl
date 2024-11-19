@@ -13,19 +13,21 @@ use crate::helpers::helper::get_writer;
 /// This returns numeric, compact graph (starting node = 1)
 pub fn id2int_main(matches: &ArgMatches) -> Result<(), Box<dyn std::error::Error>> {
     info!("Running 'gretl id2int'");
-    info!("Read nodes + index");
+    info!("Read nodes from file and extract index");
     let (s, index, count) = node_reader(matches.value_of("gfa").unwrap());
     let index2 = create_strvec(index, &s);
 
     let version = get_version(matches.value_of("gfa").unwrap());
-    info!("Version is {}", version);
-    info!("Create converting hashmap");
+    info!("GFA format version is {}", version);
+    info!("Create a converting hashmap (old id -> new id)");
     let hm = create_hashmap(&index2);
     let output = matches.value_of("output").unwrap();
-    info!("Read, convert and write");
+    info!("Convert string ID to integer ID and write to a new file");
     read_write(matches.value_of("gfa").unwrap(), output, &hm, &count);
 
+
     if matches.is_present("dict") {
+        info!("Write the hashmap to a file (tab separated)");
         write_hm(&hm, matches.value_of("dict").unwrap());
     }
     Ok(())
@@ -46,12 +48,12 @@ pub fn node_reader(filename: &str) -> (String, Vec<usize>, usize) {
     let mut c = 0;
     for line in reader.lines() {
         let line = line.unwrap();
-        let fields: Vec<_> = line.split_whitespace().collect();
-        if fields[0] == "S" {
+        if line.starts_with( "S") {
+            let fields: Vec<_> = line.split_whitespace().collect();
             s += fields[1];
             index.push(fields[1].len());
         }
-        c += 1;
+        c += line.len() + 1;
     }
     (s, index, c)
 }
@@ -265,7 +267,7 @@ pub fn read_write(
 
             _ => writeln!(writer, "{}", line).expect("Error writing to file"),
         }
-        c += 1;
+        c += line.len() + 1;
         if (c as f64 / *count as f64) * 100.0 - lastpro > 0.2 {
             lastpro = (c as f64 / *count as f64) * 100.0;
             eprint!(
@@ -313,7 +315,6 @@ pub fn get_version(filename: &str) -> f32 {
 /// Write a hashmap to a file
 ///
 /// Return:
-///     - ()
 ///     - Tab separated file with key and value
 pub fn write_hm(hashmap_old_new: &HashMap<&str, usize>, filename: &str) {
     let file = File::create(filename).unwrap();
