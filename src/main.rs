@@ -251,23 +251,39 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         // Subcommand for detailed similarity
         .subcommand(App::new("ps")
-            .about("Detailed similarity information for each path")
+            .about("How much core, soft and private genome is in each sample?")
+            .help_heading("Input options")
             .arg(Arg::new("gfa")
                 .short('g')
                 .long("gfa")
                 .about("Input GFA file")
                 .takes_value(true)
                 .required(true))
-            .arg(Arg::new("output")
+
+            .arg(Arg::new("PanSN")
+                .long("pansn")
+                .about("Separate by first entry in Pan-SN spec")
+                .takes_value(true)
+                .default_value("\n"))
+
+        .help_heading("Performance options")
+        .arg(Arg::new("threads")
+            .short('t')
+            .long("threads")
+            .about("Number of threads to use")
+            .takes_value(true)
+            .default_value("1"))
+
+        .help_heading("Output options")
+        .arg(Arg::new("output")
                 .short('o')
                 .long("output")
                 .about("Output")
                 .takes_value(true)
-                .required(true))
-            .arg(Arg::new("PanSN")
-                .long("pansn")
-                .about("Separate by first entry in Pan-SN spec")
-                .takes_value(true)))
+                .required(true)))
+
+
+
 
         // Subcommand to convert string graph to numeric
         .subcommand(App::new("id2int")

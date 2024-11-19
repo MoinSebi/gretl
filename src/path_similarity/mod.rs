@@ -1,3 +1,3 @@
 pub mod ps_main;
-pub mod stats;
+pub mod ps_stats;
 mod writer_test;

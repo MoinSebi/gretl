@@ -151,13 +151,14 @@ Calculate for each path the number of nodes and the amount of sequence at each s
 ```
 
 **Example output**
+Core sequence/nodes are those which are traversed by all other samples as well (here: 5). Since nodes can be traversed multiple times, the amount of sequence and the number of nodes can be different in each path. 
 
 | Accession  | Node:0 | Node:1 | Node:2 | Node:3 | Node:4 | Node:5 | Seq:0 | Seq:1  | Seq:2 | Seq:3 | Seq:4 | Seq:5  |
 |------------|--------|--------|--------|--------|--------|--------|-------|--------|-------|-------|-------|--------|
 | ABQ_6.ChrX | 0      | 336    | 891    | 1785   | 6630   | 7655   | 0     | 47050  | 3792  | 12833 | 73540 | 597805 |
 | BIH_4.ChrX | 0      | 278    | 764    | 1753   | 6592   | 7655   | 0     | 26389  | 2445  | 12195 | 73030 | 597805 |
-| ABF_6.ChrX | 0      | 2180   | 1092   | 1204   | 5213   | 7655   | 0     | 33119  | 5968  | 12122 | 71557 | 597805 |
-| BPN_2.ChrX | 0      | 1246   | 687    | 916    | 5163   | 7655   | 0     | 104349 | 5349  | 1650  | 9887  | 597805 |
+| ABF_6.ChrX | 0      | 2181   | 1093   | 1206   | 5216   | 7655   | 0     | 33120  | 5969  | 12142 | 71593 | 597805 |
+| BPN_2.ChrX | 0      | 1250   | 690    | 916    | 5170   | 7672   | 0     | 104353 | 5352  | 1650  | 9894  | 598957 |
 | BCK_8.ChrX | 0      | 3275   | 948    | 1062   | 3734   | 7655   | 0     | 53334  | 4054  | 2600  | 67558 | 597805 |
 
 ---

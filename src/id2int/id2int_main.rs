@@ -12,7 +12,7 @@ use crate::helpers::helper::get_writer;
 ///
 /// This returns numeric, compact graph (starting node = 1)
 pub fn id2int_main(matches: &ArgMatches) -> Result<(), Box<dyn std::error::Error>> {
-    info!("Starting id2int_main");
+    info!("Running 'gretl id2int'");
     info!("Read nodes + index");
     let (s, index, count) = node_reader(matches.value_of("gfa").unwrap());
     let index2 = create_strvec(index, &s);

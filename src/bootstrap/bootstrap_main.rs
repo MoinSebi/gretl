@@ -12,7 +12,7 @@ use std::collections::HashSet;
 
 /// Main function for bootstrapping
 pub fn bootstrap_main(matches: &ArgMatches) {
-    info!("Running bootstrap");
+    info!("Running 'gretl bootstrap' analysis");
     let mut sep = " ";
     if matches.is_present("Pan-SN") {
         sep = matches.value_of("Pan-SN").unwrap();

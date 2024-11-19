@@ -135,6 +135,8 @@ Alternative questions:
 **Plotting script: [ps.py](../scripts/ps.py)**   
 **Example: [ExampleS8](../plots/test.ps.node.pdf) (s. Figure S6)**
 
+
+Comment: Core: Common to all samples. Soft: Common to some, but not all samples (and also not private). Private: Unique to one sample.
 ```bash
 INPUT="path/to/your/graph.gfa"
 OUTPUT="path/to/your/output.prefix"

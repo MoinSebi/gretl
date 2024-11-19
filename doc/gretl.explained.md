@@ -38,3 +38,6 @@ Calculate the several statistics of the graph. It can be run in two "modes":
 
 ## Bootstrap
 Bootstrapping different combinations of samples from the graph. These sub-sets create a smaller graph, which can be interpreted as a "sample" of the original graph. We sample from one sample to n samples, where n is the number of samples in the graph. Multiple times for each level (n), multiple different (random) samples are selected. We calculate similarity statistics on these sub-graphs, and note the amount of nodes and sequence in each similarity level.
+
+## PS (Path similarity)
+We count the number of path traversing each node. Then, this method iterates over each path, and summarizes the amount of sequence and nodes in each similarity category.

@@ -17,6 +17,7 @@ use crate::helpers::helper::{get_writer, mean};
 /// Easy block function
 /// Extract the subpath from a graph for each node
 pub fn block_main(matches: &ArgMatches) -> Result<(), Box<dyn std::error::Error>> {
+    info!("Running 'gretl block' analysis");
     // Input
     let graph_file = matches.value_of("gfa").unwrap();
     let sep = matches.value_of("PanSN").unwrap_or(" ");
