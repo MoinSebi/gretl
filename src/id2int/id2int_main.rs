@@ -1,3 +1,4 @@
+use crate::helpers::helper::get_writer;
 use chrono::Local;
 use clap::ArgMatches;
 use log::info;
@@ -6,7 +7,6 @@ use std::fs::File;
 use std::io;
 use std::io::Write;
 use std::io::{BufRead, BufReader};
-use crate::helpers::helper::get_writer;
 
 /// Main function for converting string ID to integer ID
 ///
@@ -24,7 +24,6 @@ pub fn id2int_main(matches: &ArgMatches) -> Result<(), Box<dyn std::error::Error
     let output = matches.value_of("output").unwrap();
     info!("Convert string ID to integer ID and write to a new file");
     read_write(matches.value_of("gfa").unwrap(), output, &hm, &count);
-
 
     if matches.is_present("dict") {
         info!("Write the hashmap to a file (tab separated)");
@@ -48,7 +47,7 @@ pub fn node_reader(filename: &str) -> (String, Vec<usize>, usize) {
     let mut c = 0;
     for line in reader.lines() {
         let line = line.unwrap();
-        if line.starts_with( "S") {
+        if line.starts_with('S') {
             let fields: Vec<_> = line.split_whitespace().collect();
             s += fields[1];
             index.push(fields[1].len());
@@ -128,7 +127,8 @@ pub fn convert_string(
         for x in delim.split(',') {
             dirs.push(x.chars().last().ok_or("Error converting ID").unwrap());
             values.push(
-                hashmap_old_new.get(&x.to_string()[0..x.len() - 1])
+                hashmap_old_new
+                    .get(&x.to_string()[0..x.len() - 1])
                     .ok_or("Error converting ID")
                     .unwrap()
                     .to_string(),
@@ -148,7 +148,8 @@ pub fn convert_string(
             if x.to_string() == ">" || x.to_string() == "<" {
                 dirs.push(x);
                 values.push(
-                    hashmap_old_new.get(oo.as_str())
+                    hashmap_old_new
+                        .get(oo.as_str())
                         .ok_or("Error converting ID")
                         .unwrap()
                         .to_string(),
@@ -193,7 +194,6 @@ pub fn read_write(
         let mut fields: Vec<&str> = line.split_whitespace().collect();
         match fields[0] {
             "S" => {
-
                 let a = convert_string(fields[1], hm, DelEnum::Space)?;
                 fields[1] = &a;
                 writeln!(writer, "{}", fields.join("\t")).expect("Error writing to file");

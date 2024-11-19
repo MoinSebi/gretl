@@ -17,16 +17,35 @@ pub fn core_main(matches: &ArgMatches) -> Result<(), Box<dyn std::error::Error>>
         // Check for panSN separator
         let mut sep = matches.value_of("Pan-SN").unwrap();
         let output = matches.value_of("output").unwrap();
-        let threads = matches.value_of("threads").unwrap().parse::<usize>().unwrap();
+        let threads = matches
+            .value_of("threads")
+            .unwrap()
+            .parse::<usize>()
+            .unwrap();
 
         info!("Graph file: {}", matches.value_of("gfa").unwrap());
-        info!("Separator: {}", if sep == "\n" { "None".to_string() } else { format!("{:?}", sep) });
-        info!("Output file: {}", if output == "-" { "stdout".to_string() } else { output.to_string() });
+        info!(
+            "Separator: {}",
+            if sep == "\n" {
+                "None".to_string()
+            } else {
+                format!("{:?}", sep)
+            }
+        );
+        info!(
+            "Output file: {}",
+            if output == "-" {
+                "stdout".to_string()
+            } else {
+                output.to_string()
+            }
+        );
         info!("Threads: {}", threads);
 
         // Read graph and parser
         info!("Reading graph file");
-        let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file_multi(matches.value_of("gfa").unwrap(), threads);
+        let mut graph: Gfa<u32, (), ()> =
+            Gfa::parse_gfa_file_multi(matches.value_of("gfa").unwrap(), threads);
         if graph.paths.is_empty() && sep == "\n" {
             sep = "#";
         }
@@ -42,8 +61,6 @@ pub fn core_main(matches: &ArgMatches) -> Result<(), Box<dyn std::error::Error>>
             let kind = matches.value_of("statistics").unwrap();
             let stats = get_stats(&wrapper, &graph, kind);
 
-
-
             // Get the data
             // similarity level: amount of nodes for each level
             // private_only: amount of private nodes for accession
@@ -57,7 +74,6 @@ pub fn core_main(matches: &ArgMatches) -> Result<(), Box<dyn std::error::Error>>
             panic!("Error: No path found in graph file");
         }
     } else {
-
         panic!("Error: Graph file is not numeric");
     }
     Ok(())

@@ -30,7 +30,15 @@ pub fn nodelist_main(matches: &ArgMatches) {
         info!("Pan-SN: {:?}", sep);
         info!("Graph file: {}", matches.value_of("gfa").unwrap());
         info!("Output file: {}", output);
-        info!("Features: {:?}\n", features.iter().zip(bit_feature.iter()).filter(|(_, &x)| x).map(|(x, _)| *x).collect::<Vec<&str>>());
+        info!(
+            "Features: {:?}\n",
+            features
+                .iter()
+                .zip(bit_feature.iter())
+                .filter(|(_, &x)| x)
+                .map(|(x, _)| *x)
+                .collect::<Vec<&str>>()
+        );
 
         info!("Starting node list analysis");
         // This wrapper also writes data to a file
@@ -41,7 +49,6 @@ pub fn nodelist_main(matches: &ArgMatches) {
     }
 }
 
-
 /// Which features is needed
 pub fn get_features(matches: &ArgMatches, features: &Vec<&str>) -> Vec<bool> {
     let splits = features;
@@ -51,8 +58,8 @@ pub fn get_features(matches: &ArgMatches, features: &Vec<&str>) -> Vec<bool> {
     }
 
     let mut result_vec = Vec::new();
-    if split_vec.is_empty(){
-        return splits.iter().map(|x| true).collect();
+    if split_vec.is_empty() {
+        return splits.iter().map(|_x| true).collect();
     }
     for x in splits.iter() {
         if split_vec.contains(x) {

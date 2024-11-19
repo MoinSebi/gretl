@@ -110,7 +110,9 @@ fn stats_path_yaml() {
 fn analysis_test_core_no_pansn_similarity() {
     let mut cmd = Command::cargo_bin("gretl").unwrap();
     let tmp_dir = tempdir().expect("Failed to create temp dir");
-    let output = tmp_dir.path().join(OUTPUT.to_string() + ".core.pansnno.sim.txt");
+    let output = tmp_dir
+        .path()
+        .join(OUTPUT.to_string() + ".core.pansnno.sim.txt");
     cmd.arg("core")
         .arg("--gfa")
         .arg(FILENAME)
@@ -142,7 +144,9 @@ fn analysis_test_core_pansn_similarity() {
 fn analysis_test_core_pansn_similarity2() {
     let mut cmd = Command::cargo_bin("gretl").unwrap();
     let tmp_dir = tempdir().expect("Failed to create temp dir");
-    let output = tmp_dir.path().join(OUTPUT.to_string() + ".core.pansn.sim.txt");
+    let output = tmp_dir
+        .path()
+        .join(OUTPUT.to_string() + ".core.pansn.sim.txt");
     cmd.arg("core")
         .arg("--gfa")
         .arg(FILENAME)
@@ -158,7 +162,9 @@ fn analysis_test_core_pansn_similarity2() {
 fn analysis_test_core_pansn_depth() {
     let mut cmd = Command::cargo_bin("gretl").unwrap();
     let tmp_dir = tempdir().expect("Failed to create temp dir");
-    let output = tmp_dir.path().join(OUTPUT.to_string() + ".core.pansn.depth.txt");
+    let output = tmp_dir
+        .path()
+        .join(OUTPUT.to_string() + ".core.pansn.depth.txt");
     cmd.arg("core")
         .arg("--gfa")
         .arg(FILENAME)
@@ -266,7 +272,6 @@ fn analysis_find_tg() {
     cmd.assert().success();
 }
 
-
 //---
 // Bootstrap
 #[test]
@@ -300,7 +305,6 @@ fn node_bootstrap2() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
-
 
 #[test]
 fn node_bootstrap3() -> Result<(), Box<dyn std::error::Error>> {

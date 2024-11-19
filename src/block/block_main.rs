@@ -1,16 +1,16 @@
-use std::fs::File;
-use std::io::{BufWriter, Write};
 use clap::ArgMatches;
 use gfa_reader::{check_numeric_gfafile, Gfa, Pansn};
 use rayon::prelude::*;
 
+use std::io::{Write};
+
 use log::{info, warn};
 
-use std::sync::atomic::{AtomicU32, Ordering};
-use std::sync::{Arc, Mutex};
+use crate::helpers::helper::{get_writer, mean};
 use chrono::Local;
 use hashbrown::{HashMap, HashSet};
-use crate::helpers::helper::{get_writer, mean};
+use std::sync::atomic::{AtomicU32, Ordering};
+use std::sync::{Arc, Mutex};
 
 /// Block main function
 ///
@@ -27,8 +27,13 @@ pub fn block_main(matches: &ArgMatches) -> Result<(), Box<dyn std::error::Error>
     let node_window: usize = matches
         .value_of("node-window")
         .unwrap_or("1000")
-        .parse::<usize>().expect("Error: node-window must be an integer");
-    let node_step: usize = matches.value_of("node-step").unwrap_or("1000").parse().expect("Error: node-step must be an integer");
+        .parse::<usize>()
+        .expect("Error: node-window must be an integer");
+    let node_step: usize = matches
+        .value_of("node-step")
+        .unwrap_or("1000")
+        .parse()
+        .expect("Error: node-step must be an integer");
 
     // This does not work
     if node_step > node_window {
@@ -41,20 +46,32 @@ pub fn block_main(matches: &ArgMatches) -> Result<(), Box<dyn std::error::Error>
 
     let cutoff_distance: usize = matches.value_of("distance").unwrap().parse().unwrap();
 
-
     // Output
     let output_prefix = matches.value_of("output").unwrap();
     let threads: usize = matches.value_of("threads").unwrap().parse().unwrap();
 
     info!("Graph file: {}", graph_file);
-    info!("Separator: {}", if sep == "\n" { "None".to_string() } else { format!("{:?}", sep) });
+    info!(
+        "Separator: {}",
+        if sep == "\n" {
+            "None".to_string()
+        } else {
+            format!("{:?}", sep)
+        }
+    );
     info!("Node window.md size: {}", node_window);
     info!("Node step size: {}", node_step);
     info!("Sequence window.md size: {:?}", sequence_window);
     info!("Sequence step size: {:?}", sequence_step);
     info!("Distance: {}", cutoff_distance);
-    info!("Output file: {}\n", if output_prefix == "-" { "stdout" } else { output_prefix });
-
+    info!(
+        "Output file: {}\n",
+        if output_prefix == "-" {
+            "stdout"
+        } else {
+            output_prefix
+        }
+    );
 
     if check_numeric_gfafile(matches.value_of("gfa").unwrap()) {
         info!("Reading graph file");
@@ -69,7 +86,11 @@ pub fn block_main(matches: &ArgMatches) -> Result<(), Box<dyn std::error::Error>
         let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, sep);
 
         info!("Block generation");
-        if !matches.is_present("sequence-window") && !matches.is_present("sequence-step") && !matches.is_present("node-window") && !matches.is_present("node-step") {
+        if !matches.is_present("sequence-window")
+            && !matches.is_present("sequence-step")
+            && !matches.is_present("node-window")
+            && !matches.is_present("node-step")
+        {
             warn!("Running on default values for block generation. Node-step: 1000 and Node-window: 1000");
         }
         let blocks = block_wrapper(
@@ -94,8 +115,7 @@ pub fn block_main(matches: &ArgMatches) -> Result<(), Box<dyn std::error::Error>
             threads,
             &graph,
         )?;
-    }
-    else {
+    } else {
         panic!("Error: GFA file is not numeric");
     }
     Ok(())
@@ -242,110 +262,142 @@ pub fn wrapper_blocks(
 
     let atomic_count = AtomicU32::new(0);
     let paths_number = graph.paths.len();
-    graph.paths.par_chunks(path_per_chunk).enumerate().for_each(|(index, chunk)| {
-        for (genome_id, path) in chunk.iter().enumerate() {
-            atomic_count.fetch_add(1, Ordering::Relaxed);
-            std::io::stderr().flush().unwrap();
-            eprint!(
-                "\r{}          Path {:?}/{}",
-                Local::now().format("%d/%m/%Y %H:%M:%S %p"),
-                atomic_count.load(Ordering::Relaxed),
-                paths_number
-            );
+    graph
+        .paths
+        .par_chunks(path_per_chunk)
+        .enumerate()
+        .for_each(|(index, chunk)| {
+            for (genome_id, path) in chunk.iter().enumerate() {
+                atomic_count.fetch_add(1, Ordering::Relaxed);
+                std::io::stderr().flush().unwrap();
+                eprint!(
+                    "\r{}          Path {:?}/{}",
+                    Local::now().format("%d/%m/%Y %H:%M:%S %p"),
+                    atomic_count.load(Ordering::Relaxed),
+                    paths_number
+                );
 
-            let mut cumulative_length = 0; // Variable to track the cumulative length
-            let genome_id = genome_id + index * path_per_chunk;
-            let mut block_index_cumulative: Vec<(usize, usize, u32)> = path
-                .nodes
-                .iter()
-                .enumerate()
-                .map(|(i, node_id)| {
-                    let node = graph.get_sequence_by_id(node_id).len() as u32; // Return None if the node isn't found
-                    let block_value = block_index[(*node_id - min1) as usize];
-                    cumulative_length += node; // Update cumulative length
-                                               // Get the block value
-                    (block_value, i, cumulative_length - node) // Return the block value and cumulative length
-                })
-                .collect();
-            block_index_cumulative.sort_by(|comp1, b| comp1.0.cmp(&b.0));
+                let mut cumulative_length = 0; // Variable to track the cumulative length
+                let genome_id = genome_id + index * path_per_chunk;
+                let mut block_index_cumulative: Vec<(usize, usize, u32)> = path
+                    .nodes
+                    .iter()
+                    .enumerate()
+                    .map(|(i, node_id)| {
+                        let node = graph.get_sequence_by_id(node_id).len() as u32; // Return None if the node isn't found
+                        let block_value = block_index[(*node_id - min1) as usize];
+                        cumulative_length += node; // Update cumulative length
+                                                   // Get the block value
+                        (block_value, i, cumulative_length - node) // Return the block value and cumulative length
+                    })
+                    .collect();
+                block_index_cumulative.sort_by(|comp1, b| comp1.0.cmp(&b.0));
 
-            // Start index, end index, genome id
-            let mut p: Vec<Vec<[usize; 3]>> = vec![Vec::new(); block.len()];
-            //info!("{:?}", [block_index_cumulative[0], block_index_cumulative[1], block_index_cumulative[2]]);
-            let mut prev_block = block_index_cumulative[0].0;
-            let mut prev_pos = block_index_cumulative[0].2;
-            let mut start_index = block_index_cumulative[0].1;
-            for index in 1..block_index_cumulative.len() {
-                let (block_value, i, pos) = &block_index_cumulative[index];
-                if *block_value != prev_block {
-                    //println!("hit2 {} {} {}", start_index, i, prev_pos);
-                    if !p.is_empty() {
-                        p[prev_block].push([
-                            start_index,
-                            block_index_cumulative[index - 1].1,
-                            genome_id,
-                        ]);
-                    }
-                    prev_block = *block_value;
-                    prev_pos = *pos;
-                    start_index = *i;
-                } else {
-                    //println!("dsakjdsa {} {} {}", *pos as usize, prev_pos as usize , graph.get_node_by_id(&(path.nodes[aa[index-1].1 as usize])).length as usize);
-
-                    let pp = *pos as usize
-                        - prev_pos as usize
-                        - graph
-                            .get_sequence_by_id(&(path.nodes[block_index_cumulative[index - 1].1])).len();
-                    //println!("hit");
-                    if pp > max_distance {
-                        //println!("dsakjdsa {} {} {} {} {} {}", *pos as usize, prev_pos as usize , aa[index].1, aa[index-1].1, graph.get_node_by_id(&(path.nodes[aa[index].1 as usize])).length as usize, graph.get_node_by_id(&(path.nodes[aa[index-1].1 as usize])).length as usize);
-                        p[prev_block].push([
-                            start_index,
-                            block_index_cumulative[index - 1].1,
-                            genome_id,
-                        ]);
+                // Start index, end index, genome id
+                let mut p: Vec<Vec<[usize; 3]>> = vec![Vec::new(); block.len()];
+                //info!("{:?}", [block_index_cumulative[0], block_index_cumulative[1], block_index_cumulative[2]]);
+                let mut prev_block = block_index_cumulative[0].0;
+                let mut prev_pos = block_index_cumulative[0].2;
+                let mut start_index = block_index_cumulative[0].1;
+                for index in 1..block_index_cumulative.len() {
+                    let (block_value, i, pos) = &block_index_cumulative[index];
+                    if *block_value != prev_block {
+                        //println!("hit2 {} {} {}", start_index, i, prev_pos);
+                        if !p.is_empty() {
+                            p[prev_block].push([
+                                start_index,
+                                block_index_cumulative[index - 1].1,
+                                genome_id,
+                            ]);
+                        }
+                        prev_block = *block_value;
                         prev_pos = *pos;
                         start_index = *i;
-                    }
+                    } else {
+                        //println!("dsakjdsa {} {} {}", *pos as usize, prev_pos as usize , graph.get_node_by_id(&(path.nodes[aa[index-1].1 as usize])).length as usize);
 
-                    prev_pos = *pos;
-                    prev_block = *block_value;
+                        let pp = *pos as usize
+                            - prev_pos as usize
+                            - graph
+                                .get_sequence_by_id(
+                                    &(path.nodes[block_index_cumulative[index - 1].1]),
+                                )
+                                .len();
+                        //println!("hit");
+                        if pp > max_distance {
+                            //println!("dsakjdsa {} {} {} {} {} {}", *pos as usize, prev_pos as usize , aa[index].1, aa[index-1].1, graph.get_node_by_id(&(path.nodes[aa[index].1 as usize])).length as usize, graph.get_node_by_id(&(path.nodes[aa[index-1].1 as usize])).length as usize);
+                            p[prev_block].push([
+                                start_index,
+                                block_index_cumulative[index - 1].1,
+                                genome_id,
+                            ]);
+                            prev_pos = *pos;
+                            start_index = *i;
+                        }
+
+                        prev_pos = *pos;
+                        prev_block = *block_value;
+                    }
+                }
+                let p1 = Arc::clone(&p1); // Clone the Arc to share the Mutex across threads
+
+                let mut shared_p1 = p1.lock().unwrap();
+                for (i, x) in p.iter_mut().enumerate() {
+                    shared_p1[i].append(x)
                 }
             }
-            let p1 = Arc::clone(&p1); // Clone the Arc to share the Mutex across threads
-
-            let mut shared_p1 = p1.lock().unwrap();
-            for (i, x) in p.iter_mut().enumerate() {
-                shared_p1[i].append(x)
-            }
-        }
-    });
+        });
     eprintln!();
     info!("Writing output");
     let _o = p1.lock().unwrap();
     assert_eq!(block.len(), _o.len());
     let combined: Vec<_> = _o.iter().zip(block.iter()).collect();
     let mut writer = get_writer(_out_prefix)?;
-    writeln!(writer, "{}", "Block\t#Traversals\t#Paths\t#Samples\t#Nodes\t#Nodes (average)\tSequence [bp] (average)").unwrap();
+    writeln!(
+        writer,
+        "Block\t#Traversals\t#Paths\t#Samples\t#Nodes\t#Nodes (average)\tSequence [bp] (average)"
+    )
+    .unwrap();
     let hm1 = pansn2id(_graph2, graph);
 
     for traversal in combined.iter() {
         let mut s = String::new();
         let block_name = format!("{}-{}\t", traversal.1[0], traversal.1[1]);
         let trav = traversal.0.iter().len();
-        let paths = traversal.0.iter().map(|y| y[2]).collect::<HashSet<usize>>().len();
-        let trav1 = traversal.0.iter().map(|y| &graph.paths[y[2]].nodes[y[0]..y[1]]).collect::<Vec<_>>();
-        let samples = traversal.0.iter().map(|y| hm1.get(&y[2]).unwrap()).collect::<HashSet<&usize>>().len();
+        let paths = traversal
+            .0
+            .iter()
+            .map(|y| y[2])
+            .collect::<HashSet<usize>>()
+            .len();
+        let trav1 = traversal
+            .0
+            .iter()
+            .map(|y| &graph.paths[y[2]].nodes[y[0]..y[1]])
+            .collect::<Vec<_>>();
+        let samples = traversal
+            .0
+            .iter()
+            .map(|y| hm1.get(&y[2]).unwrap())
+            .collect::<HashSet<&usize>>()
+            .len();
         let len1 = trav1.iter().map(|y| y.len() as u32).collect::<Vec<u32>>();
-        let total_len = trav1.iter().map(|y| y.iter().map(|z| graph.get_sequence_by_id(&z).len() as f64).sum::<f64>()).collect::<Vec<f64>>();
+        let total_len = trav1
+            .iter()
+            .map(|y| {
+                y.iter()
+                    .map(|z| graph.get_sequence_by_id(z).len() as f64)
+                    .sum::<f64>()
+            })
+            .collect::<Vec<f64>>();
 
         s.push_str(&block_name);
-        s.push_str(&format!("{:?}\t", trav).as_str());
-        s.push_str(&format!("{:?}\t", paths).as_str());
-        s.push_str(&format!("{:?}\t", samples).as_str());
-        s.push_str(&format!("{:?}\t", len1.len()).as_str());
-        s.push_str(&format!("{:?}\t", mean(&len1)).as_str());
-        s.push_str(&format!("{:?}", mean(&total_len)).as_str());
+        s.push_str(format!("{:?}\t", trav).as_str());
+        s.push_str(format!("{:?}\t", paths).as_str());
+        s.push_str(format!("{:?}\t", samples).as_str());
+        s.push_str(format!("{:?}\t", len1.len()).as_str());
+        s.push_str(format!("{:?}\t", mean(&len1)).as_str());
+        s.push_str(format!("{:?}", mean(&total_len)).as_str());
 
         writeln!(writer, "{}", &s);
     }
@@ -355,17 +407,14 @@ pub fn wrapper_blocks(
 
 pub fn pansn2id(pansn: &Pansn<u32, (), ()>, graph: &Gfa<u32, (), ()>) -> HashMap<usize, usize> {
     let mut hm1 = HashMap::new();
-    for (id, x) in graph.paths.iter().enumerate(){
+    for (id, x) in graph.paths.iter().enumerate() {
         hm1.insert(&x.name, id);
     }
     let mut hm2 = HashMap::new();
-    for (id, x) in pansn.genomes.iter().enumerate(){
-        for y in x.get_haplo_path(){
+    for (id, x) in pansn.genomes.iter().enumerate() {
+        for y in x.get_haplo_path() {
             hm2.insert(*hm1.get(&y.name).unwrap(), id);
         }
     }
     hm2
-
-
-
 }

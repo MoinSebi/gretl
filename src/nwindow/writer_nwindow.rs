@@ -1,8 +1,7 @@
-use gfa_reader::Segment;
-use std::fs::File;
-use std::io::{BufWriter, Write};
 use crate::helpers::helper::get_writer;
+use gfa_reader::Segment;
 
+use std::io::{Write};
 
 /// Write
 pub fn write_list(data: &Vec<[u128; 3]>, filename: &str, nodes: &Vec<Segment<u32, ()>>) {

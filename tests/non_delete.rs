@@ -5,7 +5,7 @@ use std::fs::File;
 use std::io::Read;
 use std::path::Path;
 use std::process::Command;
-use tempfile::tempdir;
+
 
 // Filename for all tests
 const FILENAME: &str = "./data/example_data/chr5.yeast.gfa";
@@ -299,7 +299,6 @@ fn analysis_find_tg() {
     cmd.assert().success();
 }
 
-
 //---
 // Bootstrap
 #[test]
@@ -337,7 +336,6 @@ fn node_bootstrap2() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
-
 
 #[test]
 fn node_bootstrap3() -> Result<(), Box<dyn std::error::Error>> {

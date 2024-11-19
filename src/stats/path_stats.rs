@@ -309,10 +309,7 @@ pub fn path_unique2(path: &Vec<&Path<u32, (), ()>>, graph: &Gfa<u32, (), ()>) ->
     hp.sort();
     hp.dedup();
 
-    let unique_seq = hp
-        .iter()
-        .map(|x| graph.get_sequence_by_id(x).len())
-        .sum();
+    let unique_seq = hp.iter().map(|x| graph.get_sequence_by_id(x).len()).sum();
     (hp.len(), unique_seq)
 }
 

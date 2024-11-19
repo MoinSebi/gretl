@@ -1,7 +1,6 @@
 
-use crate::node_list::writer::{write_wrapper};
+use crate::node_list::writer::write_wrapper;
 use gfa_reader::{Gfa, Pansn};
-use crate::helpers::helper::calc_node_degree;
 
 /// Wrapper function for node list analysis
 ///
@@ -11,7 +10,7 @@ pub fn wrapper_node_list(
     filename: &str,
     feature_bitvec: &Vec<bool>,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    let paths = wrapper.get_path_genome();
+    let _paths = wrapper.get_path_genome();
     let (mask, offset) = off_setter(graph);
     let mut result_vec = vec![[0; 4]; mask.len()];
 
@@ -32,13 +31,18 @@ pub fn wrapper_node_list(
         merge_vec(&mut result_vec, &node_len, 3);
     }
 
-
-    write_wrapper(&result_vec, feature_bitvec, &mask, vec!["Length", "Similarity", "Depth", "ND"], filename, graph)?;
+    write_wrapper(
+        &result_vec,
+        feature_bitvec,
+        &mask,
+        vec!["Length", "Similarity", "Depth", "ND"],
+        filename,
+        graph,
+    )?;
     Ok(())
 }
 
-
-pub fn merge_vec(vec1: &mut Vec<[u32; 4]>, vec2: &Vec<u32>, c: usize){
+pub fn merge_vec(vec1: &mut Vec<[u32; 4]>, vec2: &Vec<u32>, c: usize) {
     for (i, x) in vec2.iter().enumerate() {
         vec1[i][c] = *x;
     }
@@ -48,7 +52,6 @@ pub fn merge_vec(vec1: &mut Vec<[u32; 4]>, vec2: &Vec<u32>, c: usize){
 ///
 /// Return a vector
 pub fn calc_node_len2(graph: &Gfa<u32, (), ()>, len: usize, offset: usize) -> Vec<u32> {
-
     let mut result = vec![0; len];
 
     for node in graph.segments.iter() {
@@ -63,7 +66,6 @@ pub fn calc_node_len2(graph: &Gfa<u32, (), ()>, len: usize, offset: usize) -> Ve
 pub fn depth_mask(graph: &Gfa<u32, (), ()>, len: usize, offset: usize) -> Vec<u32> {
     let mut result = vec![0; len];
 
-
     for x in graph.paths.iter() {
         for y in x.nodes.iter() {
             result[*y as usize - offset] += 1;
@@ -77,7 +79,6 @@ pub fn depth_mask(graph: &Gfa<u32, (), ()>, len: usize, offset: usize) -> Vec<u3
 /// Return a vector
 pub fn similarity_mask(graph: &Gfa<u32, (), ()>, len: usize, offset: usize) -> Vec<u32> {
     let mut result = vec![0; len];
-
 
     for x in graph.paths.iter() {
         let mut oo: Vec<u32> = x.nodes.clone();
@@ -104,8 +105,8 @@ pub fn node_degree_max(graph: &Gfa<u32, (), ()>, len: usize, offset: usize) -> V
 
 pub fn off_setter(graph: &Gfa<u32, (), ()>) -> (Vec<bool>, usize) {
     let offset = graph.segments[0].id as usize;
-    let maxx = graph.segments[graph.segments.len()-1].id as usize;
-    let mut result = vec![false; maxx  - offset + 1];
+    let maxx = graph.segments[graph.segments.len() - 1].id as usize;
+    let mut result = vec![false; maxx - offset + 1];
 
     for node in graph.segments.iter() {
         result[node.id as usize - offset] = true;

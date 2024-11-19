@@ -1,6 +1,6 @@
-use std::fs::File;
-use std::io::{BufWriter, Write};
 use crate::helpers::helper::get_writer;
+
+use std::io::{Write};
 
 /// Write output of window command
 ///
