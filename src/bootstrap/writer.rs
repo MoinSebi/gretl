@@ -6,7 +6,10 @@ use std::io;
 use std::io::Write;
 
 /// Write the meta file
-pub fn write_meta(data: Vec<(usize, usize, HashSet<usize>)>, filename: &str) -> io::Result<()> {
+pub fn write_meta(
+    data: &Vec<(usize, usize, &HashSet<usize>, (Vec<usize>, Vec<usize>))>,
+    filename: &str,
+) -> io::Result<()> {
     info!("Writing meta");
 
     let mut writer = get_writer(filename)?;
@@ -32,17 +35,17 @@ pub fn write_meta(data: Vec<(usize, usize, HashSet<usize>)>, filename: &str) -> 
 
 /// Write output file
 pub fn write_output(
-    data: Vec<(usize, usize, (Vec<usize>, Vec<usize>))>,
+    data: &Vec<(usize, usize, &HashSet<usize>, (Vec<usize>, Vec<usize>))>,
     filename: &str,
 ) -> io::Result<()> {
     info!("Writing output");
-    let max_len = data.iter().map(|n| n.2 .1.len()).max().unwrap();
+    let max_len = data.iter().map(|n| n.3 .1.len()).max().unwrap();
 
     let mut f = get_writer(filename)?;
 
     let header = make_header(max_len);
     writeln!(f, "{}", header).expect("Not able to write");
-    for (size, run, data) in data.iter() {
+    for (size, run, _ha, data) in data.iter() {
         let mut y = data
             .0
             .iter()

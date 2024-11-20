@@ -6,7 +6,6 @@ use std::io::Read;
 use std::path::Path;
 use std::process::Command;
 
-
 // Filename for all tests
 const FILENAME: &str = "./data/example_data/chr5.yeast.gfa";
 const OUTPUT: &str = "non_delete";

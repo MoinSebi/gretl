@@ -16,7 +16,7 @@ pub fn random_numbers(size: &usize, number: &usize) -> Vec<usize> {
     sample
 }
 
-pub fn read_positive_integers_from_file(filename: &str) -> Vec<u32> {
+pub fn read_values_from_file(filename: &str) -> Vec<u32> {
     let file = File::open(filename).expect("Failed to open file");
     let reader = io::BufReader::new(file);
 

@@ -3,7 +3,6 @@ use gfa_reader::{Gfa, Pansn};
 use log::info;
 use rayon::prelude::*;
 
-
 /// Compute the amount of sequence in each similarity level
 pub fn accession2level(
     graph: &Gfa<u32, (), ()>,

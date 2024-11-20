@@ -2,10 +2,9 @@ use crate::helpers::helper::calc_node_len;
 
 use gfa_reader::Gfa;
 use log::info;
+use rayon::prelude::*;
 use std::cmp::{max, min};
 use std::collections::{HashMap, HashSet};
-use std::thread::Thread;
-use rayon::prelude::*;
 
 /// Shows edges
 /// Node to node connection
@@ -30,7 +29,7 @@ pub fn nwindow_wrapper(
     max_steps: u32,
     max_seq: u32,
     max_jumps: u128,
-    return_type: &str,
+    _return_type: &str,
     threads: usize,
 ) -> Vec<[u128; 4]> {
     // Init the node->hs
@@ -46,47 +45,48 @@ pub fn nwindow_wrapper(
     let ss = calc_node_len(graph);
 
     // Result collector
-    let chunk_size = (nn.len() + threads - 1)/ threads ;
+    let chunk_size = (nn.len() + threads - 1) / threads;
 
     info!("Start the parallel computation");
-    let result2: Vec<[u128; 4]> = nn.par_chunks(chunk_size).flat_map(|chunk| {
-        let mut result = Vec::new();
-        for node in chunk {
-            let mut seen = HashSet::new();
-            let mut res = Vec::new();
-            let mut next_next: HashSet<_>;
-            let mut nexts = nns[node].clone();
-            res.push(**node);
+    let result2: Vec<[u128; 4]> = nn
+        .par_chunks(chunk_size)
+        .flat_map(|chunk| {
+            let mut result = Vec::new();
+            for node in chunk {
+                let mut seen = HashSet::new();
+                let mut res = Vec::new();
+                let mut next_next: HashSet<_>;
+                let mut nexts = nns[node].clone();
+                res.push(**node);
 
-            let mut sum_sequence = 0;
-            let mut steps = 0;
-            let mut sum_jumps = 0;
-            while steps < max_steps && sum_sequence < max_seq && sum_jumps < max_jumps {
-                next_next = iterator(
-                    &mut seen,
-                    &nns,
-                    &mut nexts,
-                    &mut res,
-                    &ss,
-                    &mut sum_sequence,
-                    node,
-                    &mut sum_jumps,
-                );
-                nexts = next_next;
-                steps += 1;
+                let mut sum_sequence = 0;
+                let mut steps = 0;
+                let mut sum_jumps = 0;
+                while steps < max_steps && sum_sequence < max_seq && sum_jumps < max_jumps {
+                    next_next = iterator(
+                        &mut seen,
+                        &nns,
+                        &mut nexts,
+                        &mut res,
+                        &ss,
+                        &mut sum_sequence,
+                        node,
+                        &mut sum_jumps,
+                    );
+                    nexts = next_next;
+                    steps += 1;
+                }
+                let network_stats = [
+                    get_nodes(**node, &res) as u128,
+                    get_sequence(**node, &res, &ss) as u128,
+                    get_jumps(**node, &res),
+                    **node as u128,
+                ];
+                result.push(network_stats);
             }
-            let network_stats = [
-                get_nodes(**node, &res) as u128,
-                get_sequence(**node, &res, &ss) as u128,
-                get_jumps(**node, &res),
-                **node as u128,
-            ];
-            result.push(network_stats);
-        }
-        result
-    }).collect();
-
-
+            result
+        })
+        .collect();
 
     result2
 }

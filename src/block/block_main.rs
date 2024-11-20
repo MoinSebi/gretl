@@ -2,7 +2,7 @@ use clap::ArgMatches;
 use gfa_reader::{check_numeric_gfafile, Gfa, Pansn};
 use rayon::prelude::*;
 
-use std::io::{Write};
+use std::io::Write;
 
 use log::{info, warn};
 

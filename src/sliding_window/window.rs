@@ -1,12 +1,12 @@
 use crate::helpers::helper::{calc_depth, calc_node_len, calc_similarity};
 use crate::sliding_window::sliding_window_main::Metric;
+use chrono::Local;
 use gfa_reader::{Gfa, Pansn, Path};
+
+use rayon::prelude::*;
 use std::fmt::Debug;
 use std::io::Write;
 use std::sync::atomic::{AtomicU32, Ordering};
-use chrono::Local;
-use log::info;
-use rayon::prelude::*;
 
 /// Wrapper for sliding window
 pub fn sliding_window_wrapper(
@@ -18,8 +18,6 @@ pub fn sliding_window_wrapper(
     node: bool,
     threads: usize,
 ) -> Vec<(String, Vec<f64>)> {
-
-
     let paths = wrapper.get_path_genome();
 
     // Calculate the metric
@@ -36,23 +34,29 @@ pub fn sliding_window_wrapper(
 
     let atomic_count = AtomicU32::new(0);
 
-    let result = graph.paths.par_chunks(chunk_size).flat_map(|chunk| {
-        chunk.iter().map(|path| {
-            let vector = path2metric_vector(path, &node_len, &core, &node);
-            let sww = sliding_window(vector, binsize, step_size);
-            atomic_count.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-            std::io::stderr().flush().unwrap();
-            eprint!(
-                "\r{}          Path {:?}/{}",
-                Local::now().format("%d/%m/%Y %H:%M:%S %p"),
-                atomic_count.load(Ordering::Relaxed),
-                graph.paths.len()
-            );
-            (path.name.clone(), sww)
-        }).collect::<Vec<_>>()
-    }).collect();
+    let result = graph
+        .paths
+        .par_chunks(chunk_size)
+        .flat_map(|chunk| {
+            chunk
+                .iter()
+                .map(|path| {
+                    let vector = path2metric_vector(path, &node_len, &core, &node);
+                    let sww = sliding_window(vector, binsize, step_size);
+                    atomic_count.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                    std::io::stderr().flush().unwrap();
+                    eprint!(
+                        "\r{}          Path {:?}/{}",
+                        Local::now().format("%d/%m/%Y %H:%M:%S %p"),
+                        atomic_count.load(Ordering::Relaxed),
+                        graph.paths.len()
+                    );
+                    (path.name.clone(), sww)
+                })
+                .collect::<Vec<_>>()
+        })
+        .collect();
     eprintln!();
-
 
     result
 }

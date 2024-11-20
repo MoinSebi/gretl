@@ -1,5 +1,8 @@
 use crate::bootstrap::helper::random_numbers;
 use gfa_reader::{Gfa, Pansn, Path};
+
+
+use rayon::prelude::*;
 use std::collections::HashSet;
 
 /// Wrapper for combinations
@@ -62,30 +65,33 @@ pub fn reduce_meta(meta: &mut Vec<(usize, usize, HashSet<usize>)>, line: i32, co
 ///
 /// Take core and then remove stuff from it
 pub fn one_iteration(
-    gw: &Pansn<u32, (), ()>,
+    graph_wrapper: &Pansn<u32, (), ()>,
     graph: &Gfa<u32, (), ()>,
     combination: &[usize],
-    _metric: &str,
-    information: &Vec<u32>,
+    _information: &Vec<u32>,
     nodes: &HashSet<u32>,
+    max_val: usize,
+    max_sim: usize,
+    index: &Vec<Vec<u32>>,
 ) -> (Vec<usize>, Vec<usize>) {
-    let paths = gw.get_path_genome();
-    let info2 = test1(&paths, graph, information, combination);
-    let max_value = *info2.iter().max().unwrap();
+    // Get the paths
+    let _paths = graph_wrapper.get_path_genome();
 
-    let mut result: Vec<usize> = vec![0; max_value as usize + 1]; // NODES
-    let mut result2 = vec![0; max_value as usize + 1]; // Sequence
+    let remove_vec = remove_values_vec(combination, index, max_val);
+
+    let mut result: Vec<usize> = vec![0; max_sim + 1]; // Nodes
+    let mut result2 = vec![0; max_sim + 1]; // Sequence
 
     // Add amount and sequence
     if nodes.len() == graph.segments.len() {
-        for (i, x) in info2.iter().enumerate() {
+        for (i, x) in remove_vec.iter().enumerate() {
             if *x != 0 {
                 result[*x as usize] += 1;
                 result2[*x as usize] += graph.get_sequence_by_id(&(i as u32)).len();
             }
         }
     } else {
-        for (i, x) in info2.iter().enumerate() {
+        for (i, x) in remove_vec.iter().enumerate() {
             if nodes.contains(&(i as u32 + 1)) && *x != 0 {
                 result[*x as usize] += 1;
                 result2[*x as usize] += graph.get_sequence_by_id(&(i as u32)).len();
@@ -94,7 +100,6 @@ pub fn one_iteration(
     }
     result2.remove(0);
     result.remove(0);
-
     (result, result2)
 }
 
@@ -102,43 +107,54 @@ pub fn one_iteration(
 /// - Iterate over the genome with one combination
 /// - Check if the genome is in the combination
 /// - If not, remove it from the vector
-pub fn test1(
-    wrapper: &Vec<(String, Vec<&Path<u32, (), ()>>)>,
-    graph: &Gfa<u32, (), ()>,
-    info: &Vec<u32>,
-    comb: &[usize],
-) -> Vec<u32> {
-    let mut info2 = info.clone();
-    for (i, x) in wrapper.iter().enumerate() {
-        if !comb.contains(&i) {
-            let a = make_vec(&x.1, graph.segments.iter().max().unwrap().id as usize);
-            remove_from_vec(&mut info2, &a);
+pub fn remove_values_vec(comb: &[usize], index: &Vec<Vec<u32>>, len: usize) -> Vec<u32> {
+    let mut info_removed = vec![0; len];
+    for x in comb.iter() {
+        for x1 in index[*x].iter() {
+            info_removed[*x1 as usize] += 1;
         }
     }
-    info2
+    info_removed
 }
 
-/// For the subset of path get all vectors covered
-///
-/// Create a vector of node_length with only contains 1 if the node is in one of the paths
-pub fn make_vec(t: &Vec<&Path<u32, (), ()>>, length: usize) -> Vec<u32> {
-    let mut vec1 = vec![0; length + 1];
-    for a in t.iter() {
-        a.nodes.iter().for_each(|x| vec1[*x as usize] = 1);
-    }
-    vec1
-}
+pub fn index1(wrapper: &Vec<(String, Vec<&Path<u32, (), ()>>)>, threads: usize) -> Vec<Vec<u32>> {
+    let chunk_size = (wrapper.len() + threads) / threads;
 
-/// Remove one vector from the other
-/// Req:
-///     - Vectors must be of same size
-///     - Inplace operation
-pub fn remove_from_vec(origin: &mut Vec<u32>, sub: &Vec<u32>) {
-    if origin.len() != sub.len() {
-        panic!("Vectors must be of same size")
+    let info_removed2: Vec<Vec<_>> = wrapper
+        .par_chunks(chunk_size)
+        .flat_map(|chunk| {
+            chunk
+                .iter()
+                .map(|(_i, x312)| {
+                    let mut ll: HashSet<u32> = HashSet::new();
+                    for x in x312.iter() {
+                        ll.extend(x.nodes.iter());
+                    }
+                    let mut a: Vec<_> = ll.iter().cloned().collect();
+                    a.sort();
+                    a
+                })
+                .collect::<Vec<_>>()
+        })
+        .collect();
+
+    info_removed2
+}
+pub fn index2(wrapper: &Vec<(String, Vec<&Path<u32, (), ()>>)>) -> Vec<Vec<u32>> {
+    let mut info_removed2 = Vec::new();
+
+    let threads = 1;
+    let _chunk_size = (wrapper.len() + threads) / threads;
+
+    for (_i, x312) in wrapper.iter().enumerate() {
+        let mut ll: HashSet<u32> = HashSet::new();
+        for x in x312.1.iter() {
+            ll.extend(x.nodes.iter());
+        }
+        let mut a: Vec<_> = ll.iter().cloned().collect();
+        a.sort();
+        info_removed2.push(a)
     }
-    origin
-        .iter_mut()
-        .zip(sub.iter())
-        .for_each(|(o, s)| *o -= *s);
+
+    info_removed2
 }

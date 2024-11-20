@@ -27,7 +27,6 @@ pub fn stats_main(matches: &ArgMatches) {
         }
         graph.walk_to_path(sep);
 
-
         if graph.paths.is_empty() {
             panic!("Error: No path found in graph file")
         }

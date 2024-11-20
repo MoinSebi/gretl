@@ -1,6 +1,6 @@
 use crate::helpers::helper::get_writer;
 
-use std::io::{Write};
+use std::io::Write;
 
 /// Write statistics in a YAML file
 ///

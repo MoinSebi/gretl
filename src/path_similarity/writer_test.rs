@@ -1,7 +1,7 @@
 use crate::helpers::helper::get_writer;
 use log::info;
 
-use std::io::{Write};
+use std::io::Write;
 
 /// Write path similarity data to a file
 pub fn write_ps(data: &Vec<(String, Vec<(u32, u32)>)>, filename: &str) {

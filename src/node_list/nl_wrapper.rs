@@ -1,4 +1,3 @@
-
 use crate::node_list::writer::write_wrapper;
 use gfa_reader::{Gfa, Pansn};
 

@@ -1,4 +1,4 @@
-use crate::nwindow::n_windows::{nwindow_wrapper};
+use crate::nwindow::n_windows::nwindow_wrapper;
 use crate::nwindow::writer_nwindow::write_list;
 use clap::ArgMatches;
 use gfa_reader::{check_numeric_compact_gfafile, Gfa};
@@ -29,10 +29,34 @@ pub fn nwindow_main(matches: &ArgMatches) {
     let output = matches.value_of("output").unwrap();
 
     info!("Gfa file: {}", matches.value_of("gfa").unwrap());
-    info!("Output file: {}", if output == "-" { "stdout" } else { output });
-    info!("Window nodes: {}", if window_nodes == u32::MAX { "None".to_string() } else { window_nodes.to_string() });
-    info!("Window size: {}", if window_size == u32::MAX { "None".to_string() } else { window_size.to_string() });
-    info!("Window jump: {}", if window_jumps == u32::MAX { "None".to_string() } else { window_jumps.to_string() });
+    info!(
+        "Output file: {}",
+        if output == "-" { "stdout" } else { output }
+    );
+    info!(
+        "Window nodes: {}",
+        if window_nodes == u32::MAX {
+            "None".to_string()
+        } else {
+            window_nodes.to_string()
+        }
+    );
+    info!(
+        "Window size: {}",
+        if window_size == u32::MAX {
+            "None".to_string()
+        } else {
+            window_size.to_string()
+        }
+    );
+    info!(
+        "Window jump: {}",
+        if window_jumps == u32::MAX {
+            "None".to_string()
+        } else {
+            window_jumps.to_string()
+        }
+    );
     info!("Threads: {}", threads);
 
     let (numeric, sorted) = check_numeric_compact_gfafile(matches.value_of("gfa").unwrap());
@@ -43,10 +67,13 @@ pub fn nwindow_main(matches: &ArgMatches) {
         // Read the graph
 
         info!("Reading GFA file");
-        let graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file_multi(matches.value_of("gfa").unwrap(), threads);
+        let graph: Gfa<u32, (), ()> =
+            Gfa::parse_gfa_file_multi(matches.value_of("gfa").unwrap(), threads);
 
         if window_nodes == u32::MAX && window_size == u32::MAX && window_jumps == u32::MAX {
-            warn!("No window size, step or jump defined. Using default value - node window size: 10");
+            warn!(
+                "No window size, step or jump defined. Using default value - node window size: 10"
+            );
         }
 
         info!("Run nwindow core algorithm");
@@ -59,7 +86,10 @@ pub fn nwindow_main(matches: &ArgMatches) {
             threads,
         );
 
-        info!("Writing to file: {}", if output == "-" { "stdout" } else { output });
+        info!(
+            "Writing to file: {}",
+            if output == "-" { "stdout" } else { output }
+        );
         write_list(&a, output, &graph.segments);
     } else {
         eprintln!("GFA file is not numeric");
