@@ -151,16 +151,21 @@ Calculate for each path the number of nodes and the amount of sequence at each s
 ```
 
 **Example output**
-Core sequence/nodes are those which are traversed by all other samples as well (here: 5). Since nodes can be traversed multiple times, the amount of sequence and the number of nodes can be different in each path. 
+Core sequence/nodes are those which are traversed by all other samples as well (here: 5). Since nodes can be traversed multiple times, the amount of sequence and the number of nodes can be different in each path.  
+*Type: N = Number of nodes, S = Amount of sequence [bp]*
 
-| Accession  | Node:0 | Node:1 | Node:2 | Node:3 | Node:4 | Node:5 | Seq:0 | Seq:1  | Seq:2 | Seq:3 | Seq:4 | Seq:5  |
-|------------|--------|--------|--------|--------|--------|--------|-------|--------|-------|-------|-------|--------|
-| ABQ_6.ChrX | 0      | 336    | 891    | 1785   | 6630   | 7655   | 0     | 47050  | 3792  | 12833 | 73540 | 597805 |
-| BIH_4.ChrX | 0      | 278    | 764    | 1753   | 6592   | 7655   | 0     | 26389  | 2445  | 12195 | 73030 | 597805 |
-| ABF_6.ChrX | 0      | 2181   | 1093   | 1206   | 5216   | 7655   | 0     | 33120  | 5969  | 12142 | 71593 | 597805 |
-| BPN_2.ChrX | 0      | 1250   | 690    | 916    | 5170   | 7672   | 0     | 104353 | 5352  | 1650  | 9894  | 598957 |
-| BCK_8.ChrX | 0      | 3275   | 948    | 1062   | 3734   | 7655   | 0     | 53334  | 4054  | 2600  | 67558 | 597805 |
-
+| Accession  | Type | 0 | 1      | 2    | 3     | 4     | 5      |
+|------------|------|---|--------|------|-------|-------|--------|
+| ABQ_6.ChrX | N    | 0 | 336    | 891  | 1785  | 6630  | 7655   |
+| BIH_4.ChrX | N    | 0 | 278    | 764  | 1753  | 6592  | 7655   |
+| ABF_6.ChrX | N    | 0 | 2181   | 1093 | 1206  | 5216  | 7655   |
+| BPN_2.ChrX | N    | 0 | 1250   | 690  | 916   | 5170  | 7672   |
+| BCK_8.ChrX | N    | 0 | 3275   | 948  | 1062  | 3734  | 7655   |
+| ABQ_6.ChrX | S    | 0 | 47050  | 3792 | 12833 | 73540 | 597805 |
+| BIH_4.ChrX | S    | 0 | 26389  | 2445 | 12195 | 73030 | 597805 |
+| ABF_6.ChrX | S    | 0 | 33120  | 5969 | 12142 | 71593 | 597805 |
+| BPN_2.ChrX | S    | 0 | 104353 | 5352 | 1650  | 9894  | 598957 |
+| BCK_8.ChrX | S    | 0 | 53334  | 4054 | 2600  | 67558 | 597805 |
 ---
 ### Bootstrap
 We bootstrap different samples of the graph. We iterate from one sample to the maximum number of samples, each time bootstrapping n different combinations. At each iteration, we calculate the number of nodes and the amount of sequence in each similarity level. If you want to exclude speicifc nodes, you can use the ```--nodes``` option. The most important parameter is the number of bootstraps, which is defined by the ```--number``` option. 
