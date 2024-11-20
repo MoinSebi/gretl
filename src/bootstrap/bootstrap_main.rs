@@ -1,5 +1,5 @@
 use crate::bootstrap::helper::read_values_from_file;
-use crate::bootstrap::meta::{combinations_maker_wrapper, index1, index2, one_iteration};
+use crate::bootstrap::meta::{combinations_maker_wrapper, index1, one_iteration};
 
 use crate::bootstrap::writer::{write_meta, write_output};
 use crate::helpers::helper::calc_similarity;
@@ -76,10 +76,6 @@ pub fn bootstrap_main(matches: &ArgMatches) {
         info!("Number of runs: {:?}", combinations.len());
         let o = wrapper.get_path_genome();
         let index = index1(&o, threads);
-        info!("Number of runs: {:?}", combinations.len());
-
-        let index2 = index2(&o);
-        assert_eq!(index, index2);
 
         let chunk_size = (combinations.len() + threads - 1) / threads;
         let counter = AtomicU32::new(0);

@@ -140,21 +140,3 @@ pub fn index1(wrapper: &Vec<(String, Vec<&Path<u32, (), ()>>)>, threads: usize) 
 
     info_removed2
 }
-pub fn index2(wrapper: &Vec<(String, Vec<&Path<u32, (), ()>>)>) -> Vec<Vec<u32>> {
-    let mut info_removed2 = Vec::new();
-
-    let threads = 1;
-    let _chunk_size = (wrapper.len() + threads) / threads;
-
-    for (_i, x312) in wrapper.iter().enumerate() {
-        let mut ll: HashSet<u32> = HashSet::new();
-        for x in x312.1.iter() {
-            ll.extend(x.nodes.iter());
-        }
-        let mut a: Vec<_> = ll.iter().cloned().collect();
-        a.sort();
-        info_removed2.push(a)
-    }
-
-    info_removed2
-}
