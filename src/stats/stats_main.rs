@@ -15,13 +15,38 @@ pub fn stats_main(matches: &ArgMatches) {
     info!("Running 'gretl stats'");
     let mut sep = matches.value_of("PanSN").unwrap();
     let haplo = matches.is_present("haplo");
+    let gfafile = matches.value_of("gfa").unwrap();
+    let mut bins: Vec<u32> = vec![1, 50, 100, 1000];
+    if matches.is_present("bins") {
+        let bins_str = matches.value_of("bins").unwrap();
+        bins = bins_str
+            .split(',')
+            .map(|x| x.parse::<u32>().unwrap())
+            .collect();
+    }
+    let want_path = matches.is_present("path");
+    let output = matches.value_of("output").unwrap();
+    let threads = matches.value_of("threads").unwrap().parse().unwrap();
+
+    info!("Gfa file: {}", gfafile);
+    info!("PanSN separator: {:?}", sep);
+    info!("Bins: {:?}", bins);
+    info!("Haplo: {}", haplo);
+    info!("Path statistics: {}", want_path);
+    info!("Threads: {}", threads);
+    info!("Output format: {}", if matches.is_present("YAML") { "YAML" } else { "TSV" });
+    info!("Output file: {}\n", output);
+
+
     let num_com = check_numeric_compact_gfafile(matches.value_of("gfa").unwrap());
+
+
     if num_com.0 {
         if !num_com.1 {
             eprintln!("Error: The GFA file is not sorted. All 'jump' stats might be without sense.")
         }
         info!("Reading graph");
-        let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(matches.value_of("gfa").unwrap());
+        let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file_multi(gfafile, threads);
         if graph.paths.is_empty() && sep == "\n" {
             sep = "#";
         }
@@ -33,18 +58,10 @@ pub fn stats_main(matches: &ArgMatches) {
 
         info!("Creating wrapper");
         let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, sep);
-        let output = matches.value_of("output").unwrap();
 
-        let mut bins: Vec<u32> = vec![1, 50, 100, 1000];
-        if matches.is_present("bins") {
-            let bins_str = matches.value_of("bins").unwrap();
-            bins = bins_str
-                .split(',')
-                .map(|x| x.parse::<u32>().unwrap())
-                .collect();
-        }
 
-        if matches.is_present("path") {
+
+        if want_path {
             info!("Calculating path stats");
             let mut data = path_stats_wrapper(&graph, &wrapper, haplo);
             let mut data = convert_data(&mut data);
