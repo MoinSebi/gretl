@@ -13,11 +13,7 @@ use log::info;
 /// This command should return statistics for total graph or path + write everything to a file
 pub fn stats_main(matches: &ArgMatches) {
     info!("Running 'gretl stats'");
-    let mut sep = " ";
-    if matches.is_present("PanSN") {
-        sep = matches.value_of("PanSN").unwrap();
-        sep = sep.trim();
-    }
+    let mut sep = matches.value_of("PanSN").unwrap();
     let haplo = matches.is_present("haplo");
     let num_com = check_numeric_compact_gfafile(matches.value_of("gfa").unwrap());
     if num_com.0 {
@@ -26,7 +22,12 @@ pub fn stats_main(matches: &ArgMatches) {
         }
         info!("Reading graph");
         let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(matches.value_of("gfa").unwrap());
+        if graph.paths.is_empty() && sep == "\n" {
+            sep = "#";
+        }
         graph.walk_to_path(sep);
+
+
         if graph.paths.is_empty() {
             panic!("Error: No path found in graph file")
         }

@@ -2,57 +2,64 @@ use crate::sliding_window::window::sliding_window_wrapper;
 use crate::sliding_window::writer::write_window;
 use clap::ArgMatches;
 use gfa_reader::{check_numeric_gfafile, Gfa, Pansn};
-use log::info;
+use log::{info, warn};
 
 /// Main function for node id to integer function
 pub fn window_main(matches: &ArgMatches) {
     info!("Running 'gretl window'");
 
     if check_numeric_gfafile(matches.value_of("gfa").unwrap()) {
-        let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(matches.value_of("gfa").unwrap());
-        graph.walk_to_path("#");
-        if graph.paths.is_empty() {
-            panic!("Error: No path found in graph file")
-        }
-        let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, " ");
-
+        let graph = matches.value_of("gfa").unwrap();
+        let mut pansn = matches.value_of("Pan-SN").unwrap();
         let output = matches.value_of("output").unwrap();
-        let mut size: u32 = 100000;
-        if matches.is_present("window-size") {
-            size = matches.value_of("window-size").unwrap().parse().unwrap();
-        }
+        let window_size = matches.value_of("window-size").unwrap_or("100000").parse().unwrap();
+        let step_size = matches.value_of("step-size").unwrap_or("100000").parse().unwrap();
+        let node = matches.is_present("node");
+        let threads = matches.value_of("threads").unwrap().parse().unwrap();
 
-        let mut step: u32 = size;
-        if matches.is_present("moving-size") {
-            step = matches.value_of("moving-size").unwrap().parse().unwrap();
-        }
 
-        let mut node = false;
-        if matches.is_present("node") {
-            node = true;
-        }
-
-        // similarity
         let mut metric = Metric::Similarity;
         if matches.is_present("metric") {
             match matches.value_of("metric").unwrap() {
-                "similarity" => metric = Metric::Nodesizem,
-                "nodesize" => metric = Metric::Similarity,
+                "similarity" => metric = Metric::Similarity,
+                "nodesize" => metric = Metric::Nodesizem,
                 "depth" => metric = Metric::Depth,
                 _ => metric = Metric::Similarity,
             }
         }
+
         info!("Gfa file: {}", matches.value_of("gfa").unwrap());
-        info!("Output file: {}", output);
-        info!("Window size: {}", size);
-        info!("Moving size: {}", step);
+        info!("Output file: {}", if output == "-" { "stdout" } else { output });
+        info!("Window size: {}", window_size);
+        info!("Moving size: {}", step_size);
         info!("Node: {}", node);
-        info!("Metric: {:?}", "Similarity");
+        info!("Metric: {:?}\n", metric.to_string());
+
+        info!("Reading GFA file");
+        let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file_multi(matches.value_of("gfa").unwrap(), threads);
+
+        if graph.paths.is_empty() && pansn == "\n"{
+            pansn = "#";
+        }
+        graph.walk_to_path(pansn);
+
+
+        if graph.paths.is_empty() {
+            panic!("Error: No path found in graph file")
+        }
+        let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, "\n");
+
+        if !matches.is_present("window-size")
+            && !matches.is_present("step-size")
+        {
+            warn!("Running on default values for window site and step size. Window-size: 100000 and step-size: 100000");
+        }
+
 
         info!("Sliding window analysis");
-        let f = sliding_window_wrapper(&graph, &wrapper, size, step, metric, node);
+        let f = sliding_window_wrapper(&graph, &wrapper, window_size, step_size, metric, node, threads);
         info!("Writing to file");
-        write_window(f, output);
+        write_window(f, output, node, window_size, step_size);
     } else {
         panic!("Error: GFA file is not numeric");
     }
@@ -62,4 +69,14 @@ pub enum Metric {
     Similarity,
     Nodesizem,
     Depth,
+}
+
+impl Metric {
+    pub fn to_string(&self) -> String {
+        match self {
+            Metric::Similarity => "Similarity".to_string(),
+            Metric::Nodesizem => "Node size".to_string(),
+            Metric::Depth => "Depth".to_string(),
+        }
+    }
 }

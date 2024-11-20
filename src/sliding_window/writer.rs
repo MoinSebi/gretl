@@ -10,9 +10,10 @@ use std::io::{Write};
 ///
 /// Comment: All rows have the same length. If vector is smaller then max_size (longest vector in the data set), add NaN
 ///
-pub fn write_window(data: Vec<(String, Vec<f64>)>, filename: &str) {
+pub fn write_window(data: Vec<(String, Vec<f64>)>, filename: &str, node: bool, window_size: u32, step_size: u32) {
     let mut f = get_writer(filename).expect("Not able to write");
     let maxsize: usize = data.iter().map(|n| n.1.len()).max().unwrap();
+    writeln!(f, "#Windows on {}, window-size {}, window-step {}", if node {"node"} else {"sequence"}, window_size, step_size).expect("Not able to write");
     for dat in data.iter() {
         let mut vec_s: Vec<String> = dat.1.iter().map(|n| n.to_string()).collect();
         filler(&mut vec_s, maxsize);

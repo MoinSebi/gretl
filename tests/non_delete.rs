@@ -258,7 +258,9 @@ fn analysis_test_sliding_window_2s() {
         .arg("--output")
         .arg(output.to_str().unwrap())
         .arg("-w")
-        .arg("2");
+        .arg("1000")
+        .arg("-s")
+        .arg("1000");
 
     cmd.assert().success();
 }
