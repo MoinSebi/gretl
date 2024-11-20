@@ -63,7 +63,9 @@ pub fn reduce_meta(meta: &mut Vec<(usize, usize, HashSet<usize>)>, line: i32, co
 
 /// Calculation for one iteration
 ///
-/// Take core and then remove stuff from it
+/// Return:
+///     - Amount of nodes
+///    - Amount of sequence
 pub fn one_iteration(
     graph_wrapper: &Pansn<u32, (), ()>,
     graph: &Gfa<u32, (), ()>,
@@ -79,28 +81,28 @@ pub fn one_iteration(
 
     let remove_vec = remove_values_vec(combination, index, max_val);
 
-    let mut result: Vec<usize> = vec![0; max_sim + 1]; // Nodes
-    let mut result2 = vec![0; max_sim + 1]; // Sequence
+    let mut result_node: Vec<usize> = vec![0; max_sim + 1]; // Nodes
+    let mut result_seq = vec![0; max_sim + 1]; // Sequence
 
     // Add amount and sequence
     if nodes.len() == graph.segments.len() {
         for (i, x) in remove_vec.iter().enumerate() {
             if *x != 0 {
-                result[*x as usize] += 1;
-                result2[*x as usize] += graph.get_sequence_by_id(&(i as u32)).len();
+                result_node[*x as usize] += 1;
+                result_seq[*x as usize] += graph.get_sequence_by_id(&(i as u32)).len();
             }
         }
     } else {
         for (i, x) in remove_vec.iter().enumerate() {
             if nodes.contains(&(i as u32 + 1)) && *x != 0 {
-                result[*x as usize] += 1;
-                result2[*x as usize] += graph.get_sequence_by_id(&(i as u32)).len();
+                result_node[*x as usize] += 1;
+                result_seq[*x as usize] += graph.get_sequence_by_id(&(i as u32)).len();
             }
         }
     }
-    result2.remove(0);
-    result.remove(0);
-    (result, result2)
+    result_seq.remove(0);
+    result_node.remove(0);
+    (result_node, result_seq)
 }
 
 /// Reduce vector wrapper

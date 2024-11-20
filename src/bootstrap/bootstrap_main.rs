@@ -13,6 +13,8 @@ use chrono::Local;
 use std::collections::HashSet;
 use std::io::Write;
 use std::sync::atomic::{AtomicU32, Ordering};
+use rand::Rng;
+use rand::prelude::SliceRandom;
 
 /// Main function for bootstrapping
 pub fn bootstrap_main(matches: &ArgMatches) {
@@ -61,9 +63,10 @@ pub fn bootstrap_main(matches: &ArgMatches) {
 
         info!("Create all the combinations");
         // Combination: {number of genomes, number of iteration, combination (HashSet)}
-        let combinations: Vec<(usize, usize, HashSet<usize>)> =
+        let mut combinations: Vec<(usize, usize, HashSet<usize>)> =
             combinations_maker_wrapper(&wrapper.genomes.len(), &amount);
 
+        combinations.shuffle(&mut rand::thread_rng());
         let paths = wrapper.get_path_genome();
 
         // We use the similarity measure
@@ -78,10 +81,11 @@ pub fn bootstrap_main(matches: &ArgMatches) {
         let index = index1(&o, threads);
 
         let chunk_size = (combinations.len() + threads - 1) / threads;
+
         let counter = AtomicU32::new(0);
 
         info!("Start the parallel computation");
-        let results: Vec<_> = combinations
+        let mut results: Vec<_> = combinations
             .par_chunks(chunk_size) // Process in chunks of 5 elements (you can adjust the chunk size).
             .flat_map(|chunk| {
                 chunk
@@ -119,6 +123,7 @@ pub fn bootstrap_main(matches: &ArgMatches) {
             })
             .collect();
         eprintln!();
+        results.sort_by(|a, b| a.0.cmp(&b.0).then(a.1.cmp(&b.1)));
 
         // Write the meta data if wanted
         if matches.is_present("meta-output") {

@@ -53,6 +53,17 @@ pub fn write_output(
             .iter()
             .map(|n| n.to_string())
             .collect::<Vec<String>>();
+        writeln!(
+            f,
+            "{}\t{}\tN\t{}",
+            size,
+            run,
+            fillerback(&mut y, max_len),
+        )
+        .expect("Not able to write");
+    }
+
+    for (size, run, _ha, data) in data.iter() {
         let mut y2 = data
             .1
             .iter()
@@ -62,26 +73,21 @@ pub fn write_output(
             .collect::<Vec<String>>();
         writeln!(
             f,
-            "{}\t{}\t{}\t{}",
+            "{}\t{}\tS\t{}",
             size,
             run,
-            fillerback(&mut y, max_len),
             fillerback(&mut y2, max_len)
         )
-        .expect("Not able to write");
+            .expect("Not able to write");
     }
+
     Ok(())
 }
 
 /// Create header for normal bootstrap output
 pub fn make_header(max_len: usize) -> String {
-    let mut a = String::from("Size\tRun\t");
-    for x in 0..max_len {
-        a = a + &format!("Node:{}\t", x + 1);
-    }
-    for x in 0..max_len {
-        a = a + &format!("Seq:{}\t", x + 1);
-    }
+    let mut a = String::from("Size\tRun\tType\t");
+    a += (1..max_len + 1).into_iter().map(| a| a.to_string()).collect::<Vec<String>>().join("\t").as_str();
     a
 }
 
