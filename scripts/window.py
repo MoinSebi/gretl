@@ -16,14 +16,13 @@ def read_data(filename: str) -> pd.DataFrame:
     :return: Data in pandas DataFrame
     """
     if filename == "-": # Read from stdin
-        df = pd.read_csv(sys.stdin, sep = "\t", header = None)
+        df = pd.read_csv(sys.stdin, sep = "\t", header = None, skiprows= 1)
         df.set_index(0, inplace=True)
 
         return df
     else:
-        df = pd.read_csv(filename, sep = "\t", header = None)
+        df = pd.read_csv(filename, sep = "\t", header = None, skiprows=1)
         df.set_index(0, inplace=True)
-
         return df
 
 def plotter_window(df: pd.DataFrame, output: str) -> None:

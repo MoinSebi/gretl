@@ -3,7 +3,6 @@
 import argparse
 import pandas as pd
 import matplotlib.pyplot as plt
-import numpy as np
 import sys
 
 
@@ -32,8 +31,6 @@ def plot_node_stats(df: pd.DataFrame, outfile: str, label1: str, what: str) -> N
     Plot the saturation/bootstrapping statistics for the nodes (scatterplot)
 
     :param df: Gretl bootstrap output in pandas DataFrame
-    :param seq_index: Index of start of sequence
-    :param start_index: Index of start of nodes
     :param outfile: Output file name
     :return: Plot (PDF)
     """
@@ -41,7 +38,6 @@ def plot_node_stats(df: pd.DataFrame, outfile: str, label1: str, what: str) -> N
     collen = len(df.columns)
 
     node_soft = df.apply(lambda x: sum([x for x in x.iloc[3:]][1:-1]), axis = 1)
-    print(df.apply(lambda x: sum([x for x in x.iloc[3:2+x["Size"]].values[1:-1]]), axis= 1))
     node_core = df.apply(lambda x: x.iloc[2+x["Size"]], axis = 1)
     node_private = df.apply(lambda x: x.iloc[3], axis = 1)
     node_pan = df.apply(lambda x: sum(x.iloc[3:]), axis = 1)

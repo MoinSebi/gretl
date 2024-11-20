@@ -23,7 +23,7 @@ pub fn window_main(matches: &ArgMatches) {
             .parse()
             .unwrap();
         let node = matches.is_present("node");
-        let threads = matches.value_of("threads").unwrap().parse().unwrap();
+        let threads = matches.value_of("threads").unwrap().parse().expect("Error: Threads must be a number");
 
         let mut metric = Metric::Similarity;
         if matches.is_present("metric") {

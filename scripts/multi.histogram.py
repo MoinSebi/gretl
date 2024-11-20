@@ -33,7 +33,6 @@ def read_data(files: list) -> pd.DataFrame:
         df = pd.read_csv(x[1], sep = "\t")
         combined = pd.concat([combined, df], ignore_index= True, axis = 0)
     combined.index = [x[0] for x in files]
-    print(combined)
     return combined
 
 def plot_histo(df: pd.DataFrame, output: str) -> None :

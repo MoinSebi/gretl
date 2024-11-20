@@ -3,7 +3,6 @@
 #Import
 import pandas as pd
 import matplotlib.pyplot as plt
-import numpy as np
 import sys
 import argparse
 
@@ -31,8 +30,6 @@ def plot_node_stats(df: pd.DataFrame, outfile: str, label1: str, what: str) -> N
     Plot the saturation/bootstrapping statistics for the nodes (scatterplot)
 
     :param df: Gretl bootstrap output in pandas DataFrame
-    :param seq_index: Index of start of sequence
-    :param start_index: Index of start of nodes
     :param outfile: Output file name
     :return: Plot (PDF)
     """
@@ -43,9 +40,7 @@ def plot_node_stats(df: pd.DataFrame, outfile: str, label1: str, what: str) -> N
     node_private = df.apply(lambda x: x.iloc[3], axis = 1)
     df2 = pd.DataFrame([node_core, node_soft, node_private]).T
     df2.columns = ["Core", "Soft", "Private"]
-    print(df2)
     df2.index = df["Accession"]
-
     (df2).plot(kind = "barh", stacked = True, figsize = (6,5), width = 0.75, legend = True,
                     edgecolor = "black",
                     linewidth = 0.5,
@@ -62,7 +57,6 @@ if __name__ == "__main__":
     parser.add_argument('-o', '--output', type=str, help='Path to the output PDF file', required=True)
     args = parser.parse_args()
 
-    df = read_data(args.input)
     data = read_data(args.input)
     df_node = table_sep(data, "N")
     df_seq = table_sep(data, "S")

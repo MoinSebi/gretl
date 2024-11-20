@@ -29,13 +29,13 @@ pub fn stats_main(matches: &ArgMatches) {
     let threads = matches.value_of("threads").unwrap().parse().unwrap();
 
     info!("Gfa file: {}", gfafile);
-    info!("PanSN separator: {:?}", sep);
+    info!("PanSN separator: {:?}", if sep == "\n" { "None" } else { sep });
     info!("Bins: {:?}", bins);
     info!("Haplo: {}", haplo);
     info!("Path statistics: {}", want_path);
     info!("Threads: {}", threads);
     info!("Output format: {}", if matches.is_present("YAML") { "YAML" } else { "TSV" });
-    info!("Output file: {}\n", output);
+    info!("Output file: {}\n", if output == "-" { "stdout" } else { output });
 
 
     let num_com = check_numeric_compact_gfafile(matches.value_of("gfa").unwrap());
