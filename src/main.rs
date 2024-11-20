@@ -382,7 +382,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 
         .subcommand(App::new("nwindow")
-            .about("Sliding window along the nodes")
+            .about("Extending from a single node")
             .help_heading("Input options")
             .arg(Arg::new("gfa")
                 .short('g')
@@ -390,15 +390,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .about("Input GFA file")
                 .takes_value(true)
                 .required(true))
-            .arg(Arg::new("Pan-SN")
-                .long("pansn")
-                .about("Seperate by first entry in Pan-SN spec")
-                .takes_value(true))
 
-            .help_heading("Window criteria options")
+            .help_heading("Stop criteria")
             .arg(Arg::new("step")
                 .long("step")
-                .about("Number of steps away from the starting node")
+                .about("Number of steps away from the starting node [default: 10]")
                 .takes_value(true))
             .arg(Arg::new("sequence")
                 .long("sequence")
@@ -408,14 +404,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .long("jumps")
                 .about("Sum of 'id jumps' away from the starting node"))
 
-
-            .help_heading("Window summary options")
-            .arg(Arg::new("number of nodes")
-                .long("node-number"))
-            .arg(Arg::new("sequence length")
-                .long("sequence-length"))
-            .arg(Arg::new("sum-of-jumps")
-                .long("jumps-summary"))
+            .help_heading("Performance options")
+            .arg(Arg::new("threads")
+                .short('t')
+                .long("threads")
+                .about("Number of threads")
+                .takes_value(true)
+                .default_value("1"))
 
             .help_heading("Output option")
             .arg(Arg::new("output")

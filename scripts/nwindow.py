@@ -82,7 +82,7 @@ def plot_scatter(df: pd.DataFrame, pos_list: list, output: str, ylabel: str, xla
         x = np.array(pos_list)/1000
     else:
         cor1 = "no_correction"
-        x = df["nodeid"]
+        x = df["Node_id"]
 
 
     plt.scatter(x, df[df_col], color = "black", s = 2)
@@ -101,12 +101,12 @@ if __name__ == "__main__":
     node2len = read_gfa(args.graph)
     df = read_nwindow_tsv(args.input)
     pos_list = get_poslist(df, node2len)
-    plot_scatter(df, pos_list, args.output, "#Nodes (in one window)", "Node ID (length corrected) [x10³]", "node")
-    plot_scatter(df, pos_list, args.output, "Sequence (in one window) [kbp]", "Node ID (length corrected) [x10³]", "sequence")
-    plot_scatter(df, pos_list, args.output, "Sum of Jumps (in one window) [x10⁶]", "Node ID (length corrected) [x10³]", "jumps")
-    plot_scatter(df, pos_list, args.output, "#Nodes (in one window)", "Node ID (length corrected) [x10³]", "node", correction=False)
-    plot_scatter(df, pos_list, args.output, "Sequence (in one window) [kbp]", "Node ID (length corrected) [x10³]", "sequence", correction=False)
-    plot_scatter(df, pos_list, args.output, "Sum of Jumps (in one window) [x10⁶]", "Node ID (length corrected) [x10³]", "jumps", correction=False)
+    plot_scatter(df, pos_list, args.output, "#Nodes (in one window)", "Node ID (length corrected) [x10³]", "Nodes")
+    plot_scatter(df, pos_list, args.output, "Sequence (in one window) [kbp]", "Node ID (length corrected) [x10³]", "Sequences")
+    plot_scatter(df, pos_list, args.output, "Sum of Jumps (in one window) [x10⁶]", "Node ID (length corrected) [x10³]", "Jumps")
+    plot_scatter(df, pos_list, args.output, "#Nodes (in one window)", "Node ID (length corrected) [x10³]", "Nodes", correction=False)
+    plot_scatter(df, pos_list, args.output, "Sequence (in one window) [kbp]", "Node ID (length corrected) [x10³]", "Sequences", correction=False)
+    plot_scatter(df, pos_list, args.output, "Sum of Jumps (in one window) [x10⁶]", "Node ID (length corrected) [x10³]", "Jumps", correction=False)
 
 
 

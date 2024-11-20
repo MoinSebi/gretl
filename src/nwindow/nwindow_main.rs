@@ -1,8 +1,8 @@
-use crate::nwindow::n_windows::stats2;
+use crate::nwindow::n_windows::{nwindow_wrapper};
 use crate::nwindow::writer_nwindow::write_list;
 use clap::ArgMatches;
 use gfa_reader::{check_numeric_compact_gfafile, Gfa};
-use log::info;
+use log::{info, warn};
 use std::process;
 
 pub fn nwindow_main(matches: &ArgMatches) {
@@ -10,7 +10,7 @@ pub fn nwindow_main(matches: &ArgMatches) {
 
     let mut window_nodes = u32::MAX;
     let mut window_size = u32::MAX;
-    let mut window_metric = u32::MAX;
+    let mut window_jumps = u32::MAX;
 
     if matches.is_present("step") {
         window_nodes = matches.value_of("step").unwrap().parse().unwrap();
@@ -19,39 +19,21 @@ pub fn nwindow_main(matches: &ArgMatches) {
         window_size = matches.value_of("sequence").unwrap().parse().unwrap();
     }
     if matches.is_present("jump") {
-        window_metric = matches.value_of("jump").unwrap().parse().unwrap();
+        window_jumps = matches.value_of("jump").unwrap().parse().unwrap();
     }
-    if window_nodes == u32::MAX && window_size == u32::MAX && window_metric == u32::MAX {
-        eprintln!("No window criteria provided. Default node: 10");
+    if window_nodes == u32::MAX && window_size == u32::MAX && window_jumps == u32::MAX {
         window_nodes = 10;
     }
 
-    let sum_nodes = matches.is_present("number of nodes");
-    let sum_length = matches.is_present("sequence length");
-    let sum_jumps = matches.is_present("sum-of-jumps");
-    let mut rtype = "all";
-
-    if sum_nodes || sum_length || sum_jumps {
-        if sum_nodes {
-            rtype = "nodes";
-        }
-        if sum_length {
-            rtype = "sequence";
-        }
-        if sum_jumps {
-            rtype = "jumps";
-        }
-    }
+    let threads = matches.value_of("threads").unwrap().parse().unwrap();
+    let output = matches.value_of("output").unwrap();
 
     info!("Gfa file: {}", matches.value_of("gfa").unwrap());
-    info!("Output file: {}", matches.value_of("output").unwrap());
-    info!("Window nodes: {}", window_nodes);
-    info!("Window size: {}", window_size);
-    info!("Window metric: {}", window_metric);
-    info!("Sum nodes: {}", sum_nodes);
-    info!("Sum length: {}", sum_length);
-    info!("Sum jumps: {}", sum_jumps);
-    info!("Return type: {}", rtype);
+    info!("Output file: {}", if output == "-" { "stdout" } else { output });
+    info!("Window nodes: {}", if window_nodes == u32::MAX { "None".to_string() } else { window_nodes.to_string() });
+    info!("Window size: {}", if window_size == u32::MAX { "None".to_string() } else { window_size.to_string() });
+    info!("Window jump: {}", if window_jumps == u32::MAX { "None".to_string() } else { window_jumps.to_string() });
+    info!("Threads: {}", threads);
 
     let (numeric, sorted) = check_numeric_compact_gfafile(matches.value_of("gfa").unwrap());
     if numeric {
@@ -59,18 +41,25 @@ pub fn nwindow_main(matches: &ArgMatches) {
             eprintln!("Error: The GFA file is not sorted. All 'jump' stats might be without sense.")
         }
         // Read the graph
-        let graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(matches.value_of("gfa").unwrap());
-        let output = matches.value_of("output").unwrap();
 
-        let a = stats2(
+        info!("Reading GFA file");
+        let graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file_multi(matches.value_of("gfa").unwrap(), threads);
+
+        if window_nodes == u32::MAX && window_size == u32::MAX && window_jumps == u32::MAX {
+            warn!("No window size, step or jump defined. Using default value - node window size: 10");
+        }
+
+        info!("Run nwindow core algorithm");
+        let a = nwindow_wrapper(
             &graph,
             window_nodes,
             window_size,
-            window_metric as u128,
-            rtype,
+            window_jumps as u128,
+            "all",
+            threads,
         );
 
-        info!("Writing to file: {}", output);
+        info!("Writing to file: {}", if output == "-" { "stdout" } else { output });
         write_list(&a, output, &graph.segments);
     } else {
         eprintln!("GFA file is not numeric");
