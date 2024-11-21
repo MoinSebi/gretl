@@ -55,6 +55,10 @@ We provide a small test suite to test the basic functionality of the tool.
 ```
 cargo test
 ```
+---
+## Performance
+We tried to optimize the code as much as possible. Most steps are dependent on the number of nodes and the length of the paths. Runtime should be linear in most cases. All commands can be multithreaded, which can be controlled by the ```-t``` option. 
+
 
 ---
 ## Usage
