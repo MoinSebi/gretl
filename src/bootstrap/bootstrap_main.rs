@@ -10,11 +10,11 @@ use log::info;
 use rayon::prelude::*;
 
 use chrono::Local;
+use rand::prelude::SliceRandom;
+use rand::Rng;
 use std::collections::HashSet;
 use std::io::Write;
 use std::sync::atomic::{AtomicU32, Ordering};
-use rand::Rng;
-use rand::prelude::SliceRandom;
 
 /// Main function for bootstrapping
 pub fn bootstrap_main(matches: &ArgMatches) {
@@ -34,17 +34,25 @@ pub fn bootstrap_main(matches: &ArgMatches) {
         .parse::<usize>()
         .unwrap();
 
-    info!("Gfa file: {}", matches.value_of("gfa").unwrap());
-    info!("Pan-SN: {}", if sep == "\n" { "None" } else { sep });
+    info!("GFA file: {}", matches.value_of("gfa").unwrap());
+    info!(
+        "Pan-SN: {}",
+        if sep == "\n" {
+            "None".to_string()
+        } else {
+            format!("{:?}", sep)
+        }
+    );
     info!(
         "Output file: {}",
         if output == "-" { "stdout" } else { output }
     );
     info!("Threads: {}", threads);
 
+    info!("Numeric check");
     if check_numeric_gfafile(matches.value_of("gfa").unwrap()) {
         // Read the graph
-        info!("Read the graph");
+        info!("Reading GFA file");
         let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file_multi(gfa_file, threads);
         if graph.paths.is_empty() && sep == "\n" {
             sep = "#"

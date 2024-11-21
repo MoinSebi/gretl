@@ -8,43 +8,48 @@ use log::{info, warn};
 pub fn window_main(matches: &ArgMatches) {
     info!("Running 'gretl window'");
 
-    if check_numeric_gfafile(matches.value_of("gfa").unwrap()) {
-        let _graph = matches.value_of("gfa").unwrap();
-        let mut pansn = matches.value_of("Pan-SN").unwrap();
-        let output = matches.value_of("output").unwrap();
-        let window_size = matches
-            .value_of("window-size")
-            .unwrap_or("100000")
-            .parse()
-            .unwrap();
-        let step_size = matches
-            .value_of("step-size")
-            .unwrap_or("100000")
-            .parse()
-            .unwrap();
-        let node = matches.is_present("node");
-        let threads = matches.value_of("threads").unwrap().parse().expect("Error: Threads must be a number");
+    let _graph = matches.value_of("gfa").unwrap();
+    let mut pansn = matches.value_of("Pan-SN").unwrap();
+    let output = matches.value_of("output").unwrap();
+    let window_size = matches
+        .value_of("window-size")
+        .unwrap_or("100000")
+        .parse()
+        .unwrap();
+    let step_size = matches
+        .value_of("step-size")
+        .unwrap_or("100000")
+        .parse()
+        .unwrap();
+    let node = matches.is_present("node");
+    let threads = matches
+        .value_of("threads")
+        .unwrap()
+        .parse()
+        .expect("Error: Threads must be a number");
 
-        let mut metric = Metric::Similarity;
-        if matches.is_present("metric") {
-            match matches.value_of("metric").unwrap() {
-                "similarity" => metric = Metric::Similarity,
-                "nodesize" => metric = Metric::Nodesizem,
-                "depth" => metric = Metric::Depth,
-                _ => metric = Metric::Similarity,
-            }
+    let mut metric = Metric::Similarity;
+    if matches.is_present("metric") {
+        match matches.value_of("metric").unwrap() {
+            "similarity" => metric = Metric::Similarity,
+            "nodesize" => metric = Metric::Nodesizem,
+            "depth" => metric = Metric::Depth,
+            _ => metric = Metric::Similarity,
         }
+    }
 
-        info!("Gfa file: {}", matches.value_of("gfa").unwrap());
-        info!(
-            "Output file: {}",
-            if output == "-" { "stdout" } else { output }
-        );
-        info!("Window size: {}", window_size);
-        info!("Moving size: {}", step_size);
-        info!("Node: {}", node);
-        info!("Metric: {:?}\n", metric.to_string());
+    info!("GFA file: {}", matches.value_of("gfa").unwrap());
+    info!("Window size: {}", window_size);
+    info!("Step size: {}", step_size);
+    info!("Node: {}", node);
+    info!("Metric: {:?}\n", metric.to_string());
+    info!(
+        "Output file: {}",
+        if output == "-" { "stdout" } else { output }
+    );
 
+    info!("Numeric check");
+    if check_numeric_gfafile(matches.value_of("gfa").unwrap()) {
         info!("Reading GFA file");
         let mut graph: Gfa<u32, (), ()> =
             Gfa::parse_gfa_file_multi(matches.value_of("gfa").unwrap(), threads);
@@ -75,6 +80,7 @@ pub fn window_main(matches: &ArgMatches) {
         );
         info!("Writing to file");
         write_window(f, output, node, window_size, step_size);
+        info!("Done")
     } else {
         panic!("Error: GFA file is not numeric");
     }

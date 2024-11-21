@@ -11,6 +11,7 @@ pub fn graph_stats_wrapper(
     wrapper: &Pansn<u32, (), ()>,
     bins: Vec<u32>,
     haplo: bool,
+    threads: usize,
 ) -> Vec<(String, String)> {
     let mut result: Vec<(String, String)> = Vec::new();
 
@@ -158,7 +159,7 @@ pub fn graph_stats_wrapper(
     ));
 
     info!("Calculating hybrid stats");
-    let hybrid_stats = path_stats_wrapper2(graph, wrapper, haplo);
+    let hybrid_stats = path_stats_wrapper2(graph, wrapper, haplo, threads);
     for x in hybrid_stats.iter() {
         result.push((x.0.to_string(), x.1.to_string()));
     }

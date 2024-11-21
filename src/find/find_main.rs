@@ -1,6 +1,6 @@
 use clap::ArgMatches;
 
-use crate::helpers::helper::calc_node_len;
+use crate::helpers::helper::{calc_node_len, get_writer};
 use gfa_reader::{check_numeric_gfafile, Gfa};
 use log::info;
 use std::cmp::max;
@@ -12,13 +12,22 @@ use std::io::{BufRead, BufReader, Write};
 /// Main function of find subcommand
 pub fn find_main(matches: &ArgMatches) {
     info!("Running 'gretl find'");
-    if check_numeric_gfafile(matches.value_of("gfa").unwrap()) {
-        // Inputs
-        let graph_file = matches.value_of("gfa").unwrap();
-        let feature_file = matches.value_of("features").unwrap();
-        let output = matches.value_of("output").unwrap();
-        let length = matches.value_of("length").unwrap().parse::<i128>().unwrap();
+    // Inputs
+    let graph_file = matches.value_of("gfa").unwrap();
+    let feature_file = matches.value_of("features").unwrap();
+    let output = matches.value_of("output").unwrap();
+    let length = matches.value_of("length").unwrap().parse::<i128>().unwrap();
 
+    info!("GFA file: {}", graph_file);
+    info!("Feature file: {}", feature_file);
+    info!("Length: {}", length);
+    info!(
+        "Output file: {}",
+        if output == "-" { "stdout" } else { output }
+    );
+
+    info!("Numeric check");
+    if check_numeric_gfafile(matches.value_of("gfa").unwrap()) {
         // read the feature file
         let data = FileData::from_file(feature_file);
         // Hashset of the data
@@ -26,6 +35,8 @@ pub fn find_main(matches: &ArgMatches) {
 
         let feature = data.feature;
         // Read the graph
+
+        info!("Reading GFA file");
         let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(graph_file);
         graph.walk_to_path("#");
         let paths = &graph.paths;
@@ -42,6 +53,7 @@ pub fn find_main(matches: &ArgMatches) {
         // Node, edge or dirnode stored as u64
         let mut vec_res_u64 = Vec::new();
 
+        info!("Calculating positions");
         for path in paths.iter() {
             let mut vec_u64 = Vec::new();
             let mut index = Vec::new();
@@ -70,9 +82,9 @@ pub fn find_main(matches: &ArgMatches) {
             position_nodesize.push(index)
         }
 
-        /// Check the path if it contains the data
-        let file = File::create(output).unwrap();
-        let mut writer = std::io::BufWriter::new(file);
+        info!("Writing to file");
+        // Check the path if it contains the data
+        let mut writer = get_writer(output).expect("Error opening file");
         let data_hs = data.data.iter().collect::<HashSet<&u64>>();
         for (i, x) in vec_res_u64.iter().enumerate() {
             for (i2, y) in x.iter().enumerate() {
@@ -94,6 +106,7 @@ pub fn find_main(matches: &ArgMatches) {
                 }
             }
         }
+        info!("Done");
     } else {
         panic!("Error: GFA file is not numeric");
     }

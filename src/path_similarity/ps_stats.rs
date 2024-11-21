@@ -9,7 +9,6 @@ pub fn accession2level(
     wrapper: &Pansn<u32, (), ()>,
     threads: usize,
 ) -> Vec<(String, Vec<(u32, u32)>)> {
-    info!("Accession2level");
     let paths = wrapper.get_path_genome();
     let cores = calc_similarity(&paths, graph);
     let metric_maxval = cores.iter().max().unwrap();

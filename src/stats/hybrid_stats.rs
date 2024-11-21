@@ -7,8 +7,9 @@ pub fn path_stats_wrapper2(
     graph: &Gfa<u32, (), ()>,
     gw: &Pansn<u32, (), ()>,
     haplo: bool,
+    threads: usize,
 ) -> Vec<(String, f64)> {
-    let path_stats = path_stats_wrapper(graph, gw, haplo);
+    let path_stats = path_stats_wrapper(graph, gw, haplo, threads);
 
     let mut tmp_res = Vec::new();
     let mut tmp_names = Vec::new();

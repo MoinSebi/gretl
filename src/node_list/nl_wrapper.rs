@@ -37,7 +37,8 @@ pub fn wrapper_node_list(
         vec!["Length", "Similarity", "Depth", "ND"],
         filename,
         graph,
-    )?;
+    )
+    .expect("Error: Writing to file failed");
     Ok(())
 }
 

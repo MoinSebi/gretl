@@ -28,11 +28,7 @@ pub fn nwindow_main(matches: &ArgMatches) {
     let threads = matches.value_of("threads").unwrap().parse().unwrap();
     let output = matches.value_of("output").unwrap();
 
-    info!("Gfa file: {}", matches.value_of("gfa").unwrap());
-    info!(
-        "Output file: {}",
-        if output == "-" { "stdout" } else { output }
-    );
+    info!("GFA file: {}", matches.value_of("gfa").unwrap());
     info!(
         "Window nodes: {}",
         if window_nodes == u32::MAX {
@@ -57,8 +53,13 @@ pub fn nwindow_main(matches: &ArgMatches) {
             window_jumps.to_string()
         }
     );
+    info!(
+        "Output file: {}",
+        if output == "-" { "stdout" } else { output }
+    );
     info!("Threads: {}", threads);
 
+    info!("Numeric check");
     let (numeric, sorted) = check_numeric_compact_gfafile(matches.value_of("gfa").unwrap());
     if numeric {
         if !sorted {
@@ -91,6 +92,7 @@ pub fn nwindow_main(matches: &ArgMatches) {
             if output == "-" { "stdout" } else { output }
         );
         write_list(&a, output, &graph.segments);
+        info!("Done");
     } else {
         eprintln!("GFA file is not numeric");
         process::exit(1);

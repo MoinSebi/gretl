@@ -314,6 +314,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .about("Input GFA file")
                 .takes_value(true)
                 .required(true))
+            .arg(Arg::new("threads")
+                .short('t')
+                .long("threads")
+                .about("Number of threads")
+                .takes_value(true)
+                .default_value("1"))
 
             .help_heading("Output options")
             .arg(Arg::new("output")
@@ -427,29 +433,47 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 
         .subcommand(App::new("node-list")
+            .about("Statistics for each node")
+
+            .help_heading("Input options")
             .arg(Arg::new("gfa")
                 .short('g')
                 .long("gfa")
                 .about("Input GFA file")
                 .takes_value(true)
                 .required(true))
+            .arg(Arg::new("Pan-SN")
+                .short('s')
+                .long("pansn")
+                .about("Separate by first entry in Pan-SN spec")
+                .default_value("\n")
+                .takes_value(true))
+
+            .help_heading("Restrict your output parameters")
+            .arg(Arg::new("Features")
+                .short('f')
+                .long("feature")
+                .takes_value(true)
+                .about("Name the features you need. If nothing is used, report everything. Example -f 'Length,Core'"))
+
+            .help_heading("Performance options")
+            .arg(Arg::new("threads")
+                .short('t')
+                .long("threads")
+                .about("Number of threads")
+                .takes_value(true)
+                .default_value("1"))
+
+            .help_heading("Output options")
             .arg(Arg::new("output")
                 .short('o')
                 .long("output")
                 .about("Output")
                 .takes_value(true)
                 .required(true))
-            .arg(Arg::new("Pan-SN")
-                .short('s')
-                .long("pansn")
-                .about("Separate by first entry in Pan-SN spec")
-                .takes_value(true))
-            .about("Some information about each node")
-            .arg(Arg::new("Features")
-                .short('f')
-                .long("feature")
-                .takes_value(true)
-                .about("Name the features you need. If nothing is used, report everything. Example -f Length, Core")))
+
+        )
+
 
 
 

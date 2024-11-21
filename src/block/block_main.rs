@@ -50,9 +50,9 @@ pub fn block_main(matches: &ArgMatches) -> Result<(), Box<dyn std::error::Error>
     let output_prefix = matches.value_of("output").unwrap();
     let threads: usize = matches.value_of("threads").unwrap().parse().unwrap();
 
-    info!("Graph file: {}", graph_file);
+    info!("GFA file: {}", graph_file);
     info!(
-        "Separator: {}",
+        "Pan-SN: {}",
         if sep == "\n" {
             "None".to_string()
         } else {
@@ -73,8 +73,9 @@ pub fn block_main(matches: &ArgMatches) -> Result<(), Box<dyn std::error::Error>
         }
     );
 
+    info!("Numeric check");
     if check_numeric_gfafile(matches.value_of("gfa").unwrap()) {
-        info!("Reading graph file");
+        info!("Reading GFA file");
         let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file_multi(graph_file, threads);
         if graph.paths.is_empty() && sep == "\n" {
             sep = "#"
@@ -115,6 +116,7 @@ pub fn block_main(matches: &ArgMatches) -> Result<(), Box<dyn std::error::Error>
             threads,
             &graph,
         )?;
+        info!("Done");
     } else {
         panic!("Error: GFA file is not numeric");
     }

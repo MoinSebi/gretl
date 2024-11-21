@@ -29,17 +29,28 @@ pub fn stats_main(matches: &ArgMatches) {
     let threads = matches.value_of("threads").unwrap().parse().unwrap();
 
     info!("Gfa file: {}", gfafile);
-    info!("PanSN separator: {:?}", if sep == "\n" { "None" } else { sep });
+    info!(
+        "PanSN separator: {:?}",
+        if sep == "\n" { "None" } else { sep }
+    );
     info!("Bins: {:?}", bins);
     info!("Haplo: {}", haplo);
     info!("Path statistics: {}", want_path);
     info!("Threads: {}", threads);
-    info!("Output format: {}", if matches.is_present("YAML") { "YAML" } else { "TSV" });
-    info!("Output file: {}\n", if output == "-" { "stdout" } else { output });
-
+    info!(
+        "Output format: {}",
+        if matches.is_present("YAML") {
+            "YAML"
+        } else {
+            "TSV"
+        }
+    );
+    info!(
+        "Output file: {}\n",
+        if output == "-" { "stdout" } else { output }
+    );
 
     let num_com = check_numeric_compact_gfafile(matches.value_of("gfa").unwrap());
-
 
     if num_com.0 {
         if !num_com.1 {
@@ -59,11 +70,9 @@ pub fn stats_main(matches: &ArgMatches) {
         info!("Creating wrapper");
         let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, sep);
 
-
-
         if want_path {
             info!("Calculating path stats");
-            let mut data = path_stats_wrapper(&graph, &wrapper, haplo);
+            let mut data = path_stats_wrapper(&graph, &wrapper, haplo, threads);
             let mut data = convert_data(&mut data);
             remove_unsorted(&mut data, &graph);
 
@@ -74,7 +83,7 @@ pub fn stats_main(matches: &ArgMatches) {
             }
         } else {
             info!("Calculating graph stats");
-            let data = graph_stats_wrapper(&graph, &wrapper, bins, haplo);
+            let data = graph_stats_wrapper(&graph, &wrapper, bins, haplo, threads);
 
             info!("Writing to file");
             if matches.is_present("YAML") {
@@ -83,6 +92,7 @@ pub fn stats_main(matches: &ArgMatches) {
                 write_yaml_graph(&data, output);
             }
         }
+        info!("Done");
     } else {
         panic!("Error: The GFA file is not numeric")
     }

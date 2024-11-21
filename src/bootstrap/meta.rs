@@ -1,7 +1,6 @@
 use crate::bootstrap::helper::random_numbers;
 use gfa_reader::{Gfa, Pansn, Path};
 
-
 use rayon::prelude::*;
 use std::collections::HashSet;
 

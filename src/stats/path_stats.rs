@@ -2,6 +2,8 @@ use crate::helpers::helper::{
     average_median_std, calc_depth, calc_node_degree, calc_node_len, calc_similarity,
 };
 use gfa_reader::{Gfa, Pansn, Path};
+use rand::prelude::SliceRandom;
+use rayon::prelude::*;
 
 /// Wrapper for path statistics
 ///
@@ -10,15 +12,16 @@ pub fn path_stats_wrapper(
     graph: &Gfa<u32, (), ()>,
     wrapper: &Pansn<u32, (), ()>,
     haplo: bool,
+    threads: usize,
 ) -> Vec<(String, Vec<(String, f64)>)> {
     // Total results
-    let mut res = Vec::new();
-    let paths;
+    let mut paths;
     if haplo {
         paths = wrapper.get_haplo_path();
     } else {
         paths = wrapper.get_path_genome();
     }
+    paths.shuffle(&mut rand::thread_rng());
     let _number_samples = wrapper.genomes.len();
 
     // Calculate similarity
@@ -36,137 +39,219 @@ pub fn path_stats_wrapper(
         .map(|n| n.length as usize)
         .sum::<usize>() as f64;
 
+    let chunk_size = (paths.len() + threads - 1) / threads;
+
+    let res: Vec<_> = paths
+        .par_chunks(chunk_size)
+        .flat_map(|a| {
+            let mut o = Vec::new();
+            for path in a.iter() {
+                // We normalize everything by node number and node length
+                let mut result_temp: Vec<(String, f64)> = Vec::new();
+                let path_seq = path_seq_len(&path.1, graph) as f64;
+                let path_nodes = path_node_len(&path.1) as f64;
+                let dir_nodes = dir_node(&path.1) as f64;
+                let edges = edges_num(&path.1);
+                let edges_total_numb = path_nodes;
+                //
+                // Amount of sequence and number of nodes in the path + number of unique nodes
+                result_temp.push(("Sequence [bp]".to_string(), path_seq));
+                result_temp.push(("Covered sequence [%]".to_string(), path_seq / sum_graph));
+                result_temp.push(("Nodes".to_string(), path_nodes));
+                result_temp.push(("Unique edges".to_string(), dir_nodes));
+                // Dumb info, but well
+                result_temp.push(("Directed nodes".to_string(), dir_nodes));
+
+                result_temp.push(("Edges".to_string(), edges.0));
+                result_temp.push(("Unique Edges".to_string(), edges.1));
+
+                let path_unique_val = path_unique2(&path.1, graph);
+                result_temp.push(("Unique nodes".to_string(), path_unique_val.0 as f64));
+                result_temp.push(("Unique nodes [bp]".to_string(), path_unique_val.1 as f64));
+
+                result_temp.push((
+                    "Unique nodes (normalized)".to_string(),
+                    path_unique_val.0 as f64 / path_nodes,
+                ));
+                result_temp.push((
+                    "Unique nodes [bp] (normalized)".to_string(),
+                    path_unique_val.1 as f64 / path_seq,
+                ));
+
+                result_temp.push((
+                    "Unique edges (normalized)".to_string(),
+                    dir_nodes / edges_total_numb,
+                ));
+
+                let inverted = path_seq_inverted(&path.1, graph);
+
+                result_temp.push(("Inverted nodes".to_string(), inverted.0 as f64));
+                result_temp.push(("Inverted nodes [bp]".to_string(), inverted.1 as f64));
+
+                result_temp.push((
+                    "Inverted nodes (normalized)".to_string(),
+                    inverted.0 as f64 / path_nodes,
+                ));
+                result_temp.push((
+                    "Inverted nodes [bp] (normalized)".to_string(),
+                    inverted.1 as f64 / path_seq,
+                ));
+
+                // Number of jumps - normalized + bigger than x
+                let jumps_total = path_jumps(&path.1);
+                result_temp.push(("Jumps total".to_string(), jumps_total as f64));
+                result_temp.push((
+                    "Jumps_total (normalized)".to_string(),
+                    jumps_total as f64 / edges_total_numb,
+                ));
+
+                let jumps_bigger_than_x = path_jumps_bigger(&path.1, None);
+                result_temp.push((
+                    "Jumps bigger than 50".to_string(),
+                    jumps_bigger_than_x as f64,
+                ));
+                result_temp.push((
+                    "Jumps bigger than 50 (normalized)".to_string(),
+                    jumps_bigger_than_x as f64 / edges_total_numb,
+                ));
+
+                let (node_sizes_avg, node_size_median, node_size_std) =
+                    node_size_cal(&path.1, &node_size);
+                result_temp.push(("Node size average [bp]".to_string(), node_sizes_avg));
+                result_temp.push(("Node size median [bp]".to_string(), node_size_median));
+                result_temp.push(("Node size std [bp]".to_string(), node_size_std));
+
+                let (depth_avg, depth_median, depth_std) = node_size_cal(&path.1, &depth);
+                result_temp.push((
+                    "Depth average".to_string(),
+                    depth_avg / wrapper.genomes.len() as f64,
+                ));
+                result_temp.push((
+                    "Depth median".to_string(),
+                    depth_median / wrapper.genomes.len() as f64,
+                ));
+                result_temp.push((
+                    "Depth std".to_string(),
+                    depth_std / wrapper.genomes.len() as f64,
+                ));
+
+                result_temp.push((
+                    "Depth average (normalized)".to_string(),
+                    depth_avg / wrapper.genomes.len() as f64,
+                ));
+                result_temp.push((
+                    "Depth median (normalized)".to_string(),
+                    depth_median / wrapper.genomes.len() as f64,
+                ));
+                result_temp.push((
+                    "Depth std (normalized)".to_string(),
+                    depth_std / wrapper.genomes.len() as f64,
+                ));
+
+                let (sim_avg, sim_median, sim_std) = node_size_cal(&path.1, &core);
+                result_temp.push(("Similarity average".to_string(), sim_avg));
+                result_temp.push(("Similarity median".to_string(), sim_median));
+                result_temp.push(("Similarity std".to_string(), sim_std));
+
+                result_temp.push((
+                    "Similarity average (normalized)".to_string(),
+                    sim_avg / wrapper.genomes.len() as f64,
+                ));
+                result_temp.push((
+                    "Similarity median (normalized)".to_string(),
+                    sim_median / wrapper.genomes.len() as f64,
+                ));
+                result_temp.push((
+                    "Similarity std (normalized)".to_string(),
+                    sim_std / wrapper.genomes.len() as f64,
+                ));
+
+                let (degree_avg, degree_median, degree_std) =
+                    node_size_cal(&path.1, &node_degree.2);
+                result_temp.push(("Degree average".to_string(), degree_avg));
+                result_temp.push(("Degree median".to_string(), degree_median));
+                result_temp.push(("Degree std".to_string(), degree_std));
+
+                o.push((path.0.to_string(), result_temp))
+            }
+            o
+        })
+        .collect();
+
     // Iterate over all paths and calculate statistics
-    for path in paths.iter() {
-        // We normalize everything by node number and node length
-        let mut result_temp: Vec<(String, f64)> = Vec::new();
-        let path_seq = path_seq_len(&path.1, graph) as f64;
-        let path_nodes = path_node_len(&path.1) as f64;
-        let dir_nodes = dir_node(&path.1) as f64;
-        let edges = edges_num(&path.1);
-        let edges_total_numb = path_nodes;
-        //
-        // Amount of sequence and number of nodes in the path + number of unique nodes
-        result_temp.push(("Sequence [bp]".to_string(), path_seq));
-        result_temp.push(("Covered sequence [%]".to_string(), path_seq / sum_graph));
-        result_temp.push(("Nodes".to_string(), path_nodes));
-        result_temp.push(("Unique edges".to_string(), dir_nodes));
-        // Dumb info, but well
-        result_temp.push(("Directed nodes".to_string(), dir_nodes));
-
-        result_temp.push(("Edges".to_string(), edges.0));
-        result_temp.push(("Unique Edges".to_string(), edges.1));
-
-        let path_unique_val = path_unique2(&path.1, graph);
-        result_temp.push(("Unique nodes".to_string(), path_unique_val.0 as f64));
-        result_temp.push(("Unique nodes [bp]".to_string(), path_unique_val.1 as f64));
-
-        result_temp.push((
-            "Unique nodes (normalized)".to_string(),
-            path_unique_val.0 as f64 / path_nodes,
-        ));
-        result_temp.push((
-            "Unique nodes [bp] (normalized)".to_string(),
-            path_unique_val.1 as f64 / path_seq,
-        ));
-
-        result_temp.push((
-            "Unique edges (normalized)".to_string(),
-            dir_nodes / edges_total_numb,
-        ));
-
-        let inverted = path_seq_inverted(&path.1, graph);
-
-        result_temp.push(("Inverted nodes".to_string(), inverted.0 as f64));
-        result_temp.push(("Inverted nodes [bp]".to_string(), inverted.1 as f64));
-
-        result_temp.push((
-            "Inverted nodes (normalized)".to_string(),
-            inverted.0 as f64 / path_nodes,
-        ));
-        result_temp.push((
-            "Inverted nodes [bp] (normalized)".to_string(),
-            inverted.1 as f64 / path_seq,
-        ));
-
-        // Number of jumps - normalized + bigger than x
-        let jumps_total = path_jumps(&path.1);
-        result_temp.push(("Jumps total".to_string(), jumps_total as f64));
-        result_temp.push((
-            "Jumps_total (normalized)".to_string(),
-            jumps_total as f64 / edges_total_numb,
-        ));
-
-        let jumps_bigger_than_x = path_jumps_bigger(&path.1, None);
-        result_temp.push((
-            "Jumps bigger than X".to_string(),
-            jumps_bigger_than_x as f64,
-        ));
-        result_temp.push((
-            "Jumps bigger than X (normalized)".to_string(),
-            jumps_bigger_than_x as f64 / edges_total_numb,
-        ));
-
-        let (node_sizes_avg, node_size_median, node_size_std) = node_size_cal(&path.1, &node_size);
-        result_temp.push(("Node size average [bp]".to_string(), node_sizes_avg));
-        result_temp.push(("Node size median [bp]".to_string(), node_size_median));
-        result_temp.push(("Node size std [bp]".to_string(), node_size_std));
-
-        let (depth_avg, depth_median, depth_std) = node_size_cal(&path.1, &depth);
-        result_temp.push((
-            "Depth average".to_string(),
-            depth_avg / wrapper.genomes.len() as f64,
-        ));
-        result_temp.push((
-            "Depth median".to_string(),
-            depth_median / wrapper.genomes.len() as f64,
-        ));
-        result_temp.push((
-            "Depth std".to_string(),
-            depth_std / wrapper.genomes.len() as f64,
-        ));
-
-        result_temp.push((
-            "Depth average (normalized)".to_string(),
-            depth_avg / wrapper.genomes.len() as f64,
-        ));
-        result_temp.push((
-            "Depth median (normalized)".to_string(),
-            depth_median / wrapper.genomes.len() as f64,
-        ));
-        result_temp.push((
-            "Depth std (normalized)".to_string(),
-            depth_std / wrapper.genomes.len() as f64,
-        ));
-
-        let (sim_avg, sim_median, sim_std) = node_size_cal(&path.1, &core);
-        result_temp.push(("Similarity average".to_string(), sim_avg));
-        result_temp.push(("Similarity median".to_string(), sim_median));
-        result_temp.push(("Similarity std".to_string(), sim_std));
-
-        result_temp.push((
-            "Similarity average (normalized)".to_string(),
-            sim_avg / wrapper.genomes.len() as f64,
-        ));
-        result_temp.push((
-            "Similarity median (normalized)".to_string(),
-            sim_median / wrapper.genomes.len() as f64,
-        ));
-        result_temp.push((
-            "Similarity std (normalized)".to_string(),
-            sim_std / wrapper.genomes.len() as f64,
-        ));
-
-        let (degree_avg, degree_median, degree_std) = node_size_cal(&path.1, &node_degree.2);
-        result_temp.push(("Degree average".to_string(), degree_avg));
-        result_temp.push(("Degree median".to_string(), degree_median));
-        result_temp.push(("Degree std".to_string(), degree_std));
-
-        res.push((path.0.to_string(), result_temp))
-    }
 
     res
 }
+
+// pub fn all_path_stats(paths: &Vec<&Path<u32, (), ()>>, graph: &Gfa<u32, (), ()>, depth: &Vec<u32>, core: &Vec<u32>) {
+//
+//
+//     let mut path_total_seq: f64 = 0.0;
+//     let mut path_total_nodes: f64 = 0.0;
+//
+//
+//     let mut inverted: f64 = 0.0;
+//     let mut inverted_seq: f64 = 0.0;
+//
+//
+//     let mut path_jumps: f64 = 0.0;
+//     let mut path_jumps_bigger: f64 = 0.0;
+//
+//
+//
+//     let mut nodes_only_vec = Vec::new();
+//
+//     let mut core_vec = Vec::new();
+//     let mut depth_vec = Vec::new();
+//     let mut node_sizes = Vec::new();
+//
+//     for path in paths.iter(){
+//
+//         let mut last: i64 = path.nodes[0] as i64;
+//         path_total_nodes += path.nodes.len() as f64;
+//
+//         for (i, (node, dir)) in path.nodes.iter().zip(path.dir.iter()).enumerate() {
+//
+//
+//             path_total_seq += graph.get_segment_by_id(node).length as f64;
+//
+//
+//             if !dir {
+//                 inverted += 1.0;
+//                 inverted_seq += graph.get_segment_by_id(node).length as f64;
+//             }
+//
+//             node_sizes.push(graph.get_segment_by_id(node).length as u32);
+//             nodes_only_vec.push(node);
+//             if i > 0 {
+//                 let jumps = (*node as i64 - last as i64).abs();
+//                 path_jumps += jumps as f64;
+//                 if jumps > 50 {
+//                     path_jumps_bigger += 1.0;
+//                 }
+//                 last = *node as i64;
+//             }
+//
+//             core_vec.push(core[*node as usize]);
+//             depth_vec.push(depth[*node as usize]);
+//
+//         }
+//
+//
+//
+//     }
+//     nodes_only_vec.sort();
+//     nodes_only_vec.dedup();
+//     let (depth_mean, depth_median, depth_std) = average_median_std(&core_vec);
+//     let (core_mean, core_median, core_std) = average_median_std(&depth_vec);
+//     let (node_size_mean, node_size_median, node_size_std) = average_median_std(&node_sizes);
+//
+//     let mut unique_seq = nodes_only_vec.iter().map(|x| graph.get_segment_by_id(x).length as u64).sum::<u64>() as f64;
+//     let mut unique_nodes = nodes_only_vec.len() as f64;
+//
+//
+//
+// }
 
 pub fn remove_unsorted(input: &mut Vec<(String, Vec<(String, String)>)>, graph: &Gfa<u32, (), ()>) {
     if !graph.is_compact() {
