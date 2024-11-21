@@ -76,7 +76,6 @@ pub fn write_output(
 pub fn make_header(max_len: usize) -> String {
     let mut a = String::from("Size\tRun\tType\t");
     a += (1..max_len + 1)
-        .into_iter()
         .map(|a| a.to_string())
         .collect::<Vec<String>>()
         .join("\t")

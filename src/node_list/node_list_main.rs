@@ -6,7 +6,7 @@ use log::info;
 /// Main function for node list (nl) subcommand
 pub fn nodelist_main(matches: &ArgMatches) {
     info!("Running 'gretl node-list'");
-    let mut pansn = matches.value_of("Pan-SN").unwrap();
+    let pansn = matches.value_of("Pan-SN").unwrap();
     // Other inputs
     let output = matches.value_of("output").unwrap();
     let features = vec!["Length", "Similarity", "Depth", "ND"];

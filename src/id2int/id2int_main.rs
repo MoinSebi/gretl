@@ -1,20 +1,20 @@
-use crate::helpers::helper::get_writer;
+
 use chrono::Local;
 use clap::ArgMatches;
 use gfa_reader::index_file;
 use log::info;
-use rand::Rng;
 use rand::prelude::*;
+use rand::Rng;
 use rayon::iter::ParallelIterator;
 use rayon::slice::*;
 use std::collections::HashMap;
-use std::fmt::format;
+
 use std::fs::File;
-use std::io;
+
 use std::io::{BufRead, BufReader};
 use std::io::{BufWriter, Seek, SeekFrom, Write};
+use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::{Arc, Mutex};
-use std::sync::atomic::{AtomicU32, AtomicUsize, Ordering};
 
 /// Main function for converting string ID to integer ID
 ///
@@ -24,7 +24,11 @@ pub fn id2int_main(matches: &ArgMatches) -> Result<(), Box<dyn std::error::Error
     let gfafile = matches.value_of("gfa").unwrap();
     let output = matches.value_of("output").unwrap();
     let dict = matches.is_present("dict");
-    let threads = matches.value_of("threads").unwrap().parse().expect("Error: Threads must be a number");
+    let threads = matches
+        .value_of("threads")
+        .unwrap()
+        .parse()
+        .expect("Error: Threads must be a number");
 
     info!("GFA file: {}", gfafile);
     info!("Report dictionary: {}", dict);
@@ -209,17 +213,16 @@ pub fn read_write(
     hm: &HashMap<&str, usize>,
     threads: usize,
 ) -> Result<(), Box<dyn std::error::Error>> {
-
     let index = index_file(f1);
     let last = index[index.len() - 1];
     let mut byte_index = pair_with_next(&index);
     byte_index.shuffle(&mut rand::thread_rng());
     let chunk_size = (byte_index.len() + threads - 1) / threads;
 
-    let file_new = File::create(f2).expect(format!("Error opening file: {}", f1).as_str());
+    let file_new = File::create(f2).unwrap_or_else(|_| panic!("Error opening file: {}", f1));
     let writer = BufWriter::new(file_new);
 
-    let mut cc = AtomicUsize::new(0);
+    let cc = AtomicUsize::new(0);
 
     info!("Start converting ID");
     let aa = Arc::new(Mutex::new(writer));
@@ -240,64 +243,79 @@ pub fn read_write(
                 let mut fields: Vec<&str> = l.split_whitespace().collect();
                 match fields[0] {
                     "S" => {
-                        let a = convert_string(fields[1], hm, DelEnum::Space).expect("Error converting ID");
+                        let a = convert_string(fields[1], hm, DelEnum::Space)
+                            .expect("Error converting ID");
                         fields[1] = &a;
                         string_vec.push(format!("{}\n", fields.join("\t")))
                     }
                     "L" => {
-                        let a = convert_string(fields[1], hm, DelEnum::Space).expect("Error converting ID");
+                        let a = convert_string(fields[1], hm, DelEnum::Space)
+                            .expect("Error converting ID");
                         fields[1] = &a;
-                        let b = convert_string(fields[3], hm, DelEnum::Space).expect("Error converting ID");
+                        let b = convert_string(fields[3], hm, DelEnum::Space)
+                            .expect("Error converting ID");
                         fields[3] = &b;
                         string_vec.push(format!("{}\n", fields.join("\t")))
                     }
                     "P" => {
-                        let a = convert_string(fields[2], hm, DelEnum::Comma).expect("Error converting ID");
+                        let a = convert_string(fields[2], hm, DelEnum::Comma)
+                            .expect("Error converting ID");
                         fields[2] = &a;
                         string_vec.push(format!("{}\n", fields.join("\t")))
                     }
                     "J" => {
-                        let a = convert_string(fields[1], hm, DelEnum::Space).expect("Error converting ID");
+                        let a = convert_string(fields[1], hm, DelEnum::Space)
+                            .expect("Error converting ID");
                         fields[1] = &a;
-                        let b = convert_string(fields[3], hm, DelEnum::Space).expect("Error converting ID");
+                        let b = convert_string(fields[3], hm, DelEnum::Space)
+                            .expect("Error converting ID");
                         fields[3] = &b;
                         string_vec.push(format!("{}\n", fields.join("\t")))
                     }
                     "W" => {
-                        let a = convert_string(fields[6], hm, DelEnum::Walk).expect("Error converting ID");
+                        let a = convert_string(fields[6], hm, DelEnum::Walk)
+                            .expect("Error converting ID");
                         fields[6] = &a;
                         string_vec.push(format!("{}\n", fields.join("\t")))
                     }
                     "C" => {
-                        let a = convert_string(fields[1], hm, DelEnum::Space).expect("Error converting ID");
+                        let a = convert_string(fields[1], hm, DelEnum::Space)
+                            .expect("Error converting ID");
                         fields[1] = &a;
-                        let b = convert_string(fields[3], hm, DelEnum::Space).expect("Error converting ID");
+                        let b = convert_string(fields[3], hm, DelEnum::Space)
+                            .expect("Error converting ID");
                         fields[3] = &b;
                         string_vec.push(format!("{}\n", fields.join("\t")))
                     }
                     "F" => {
-                        let a = convert_string(fields[1], hm, DelEnum::Space).expect("Error converting ID");
+                        let a = convert_string(fields[1], hm, DelEnum::Space)
+                            .expect("Error converting ID");
                         fields[1] = &a;
                         string_vec.push(format!("{}\n", fields.join("\t")))
                     }
                     "E" => {
-                        let a = convert_string(fields[2], hm, DelEnum::Space).expect("Error converting ID");
+                        let a = convert_string(fields[2], hm, DelEnum::Space)
+                            .expect("Error converting ID");
                         fields[2] = &a;
-                        let n = convert_string(fields[3], hm, DelEnum::Space).expect("Error converting ID");
+                        let n = convert_string(fields[3], hm, DelEnum::Space)
+                            .expect("Error converting ID");
                         fields[3] = &n;
                         string_vec.push(format!("{}\n", fields.join("\t")))
                     }
                     "G" => {
-                        let a = convert_string(fields[2], hm, DelEnum::Space).expect("Error converting ID");
+                        let a = convert_string(fields[2], hm, DelEnum::Space)
+                            .expect("Error converting ID");
                         fields[2] = &a;
-                        let n = convert_string(fields[3], hm, DelEnum::Space).expect("Error converting ID");
+                        let n = convert_string(fields[3], hm, DelEnum::Space)
+                            .expect("Error converting ID");
                         fields[3] = &n;
                         string_vec.push(format!("{}\n", fields.join("\t")))
                     }
                     "U" => {
                         let mut b: Vec<String> = vec![fields[0].to_string(), fields[1].to_string()];
                         for x in fields.iter().skip(2) {
-                            let a = convert_string(x, hm, DelEnum::Space).expect("Error converting ID");
+                            let a =
+                                convert_string(x, hm, DelEnum::Space).expect("Error converting ID");
                             b.push(a);
                         }
                         string_vec.push(format!("{}\n", b.join("\t")))
@@ -305,16 +323,16 @@ pub fn read_write(
                     "O" => {
                         let mut b: Vec<String> = vec![fields[0].to_string(), fields[1].to_string()];
                         for x in fields.iter().skip(2) {
-                            let a = convert_string(x, hm, DelEnum::Space).expect("Error converting ID");
+                            let a =
+                                convert_string(x, hm, DelEnum::Space).expect("Error converting ID");
                             b.push(a);
                         }
                         string_vec.push(format!("{}\n", b.join("\t")))
                     }
-                    "H" => {
-                        string_vec.push(format!("{}\n", l))
-                    }
+                    "H" => string_vec.push(format!("{}\n", l)),
 
-                    _ => panic!(format!("{}", l))                }
+                    _ => panic!("{}", l),
+                }
             }
 
             cc.fetch_add(a.1 - a.0, std::sync::atomic::Ordering::Relaxed);
@@ -322,13 +340,15 @@ pub fn read_write(
             eprint!(
                 "\r{}          Progress {:.2}%",
                 Local::now().format("%d/%m/%Y %H:%M:%S %p"),
-                ((cc.load(Ordering::Relaxed) as f64/last as f64) * 100.0)
+                ((cc.load(Ordering::Relaxed) as f64 / last as f64) * 100.0)
             );
         }
         let mut writer = aa.lock().unwrap();
 
         for x in string_vec.iter() {
-            writer.write_all(x.as_bytes()).expect("Error writing to file");
+            writer
+                .write_all(x.as_bytes())
+                .expect("Error writing to file");
         }
     });
     eprintln!();
@@ -340,7 +360,7 @@ pub fn read_write(
 /// Return:
 ///     - f32: version number
 pub fn get_version(filename: &str) -> f32 {
-    let file = File::open(filename).expect(format!("Error opening file: {}", filename).as_str());
+    let file = File::open(filename).unwrap_or_else(|_| panic!("Error opening file: {}", filename));
     let reader = BufReader::new(file);
     let mut version = 0.0;
     for line in reader.lines() {
