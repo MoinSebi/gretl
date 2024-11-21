@@ -1,5 +1,4 @@
 use crate::helpers::helper::get_writer;
-use log::info;
 
 use std::io::Write;
 

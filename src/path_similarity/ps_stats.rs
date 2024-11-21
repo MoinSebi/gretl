@@ -1,6 +1,5 @@
 use crate::helpers::helper::calc_similarity;
 use gfa_reader::{Gfa, Pansn};
-use log::info;
 use rayon::prelude::*;
 
 /// Compute the amount of sequence in each similarity level

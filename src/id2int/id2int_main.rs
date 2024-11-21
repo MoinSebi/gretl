@@ -37,7 +37,7 @@ pub fn id2int_main(matches: &ArgMatches) -> Result<(), Box<dyn std::error::Error
     );
 
     info!("Read nodes from file and extract index");
-    let (s, index, count) = node_reader(matches.value_of("gfa").unwrap());
+    let (s, index, _count) = node_reader(matches.value_of("gfa").unwrap());
     info!("Create internal index");
     let index2 = create_strvec(index, &s);
 
