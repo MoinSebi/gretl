@@ -63,7 +63,7 @@ pub fn nwindow_main(matches: &ArgMatches) {
     let (numeric, sorted) = check_numeric_compact_gfafile(matches.value_of("gfa").unwrap());
     if numeric {
         if !sorted {
-            eprintln!("Error: The GFA file is not sorted. All 'jump' stats might be without sense.")
+            warn!("The GFA file is not sorted. All 'jump' stats might be without sense.")
         }
         // Read the graph
 

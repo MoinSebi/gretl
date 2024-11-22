@@ -5,6 +5,8 @@ use log::info;
 use rayon::prelude::*;
 use std::cmp::{max, min};
 use std::collections::{HashMap, HashSet};
+use std::io::Write;
+use std::sync::atomic::AtomicUsize;
 
 /// Shows edges
 /// Node to node connection
@@ -44,11 +46,12 @@ pub fn nwindow_wrapper(
     // Get all the nodes
     let ss = calc_node_len(graph);
 
+    let count = AtomicUsize::new(0);
     // Result collector
     let chunk_size = (nn.len() + threads - 1) / threads;
 
     info!("Start the parallel computation");
-    let result2: Vec<[u128; 4]> = nn
+    let result_network: Vec<[u128; 4]> = nn
         .par_chunks(chunk_size)
         .flat_map(|chunk| {
             let mut result = Vec::new();
@@ -83,12 +86,20 @@ pub fn nwindow_wrapper(
                     **node as u128,
                 ];
                 result.push(network_stats);
+                count.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                std::io::stderr().flush().unwrap();
+                eprint!(
+                    "\r{}          Progress {:.2}%",
+                    chrono::Local::now().format("%d/%m/%Y %H:%M:%S %p"),
+                    (count.load(std::sync::atomic::Ordering::Relaxed) as f64 / nn.len() as f64)* 100.0
+                );
             }
             result
         })
         .collect();
+    eprintln!();
 
-    result2
+    result_network
 }
 
 pub fn iterator(
