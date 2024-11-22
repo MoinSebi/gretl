@@ -50,6 +50,7 @@ pub fn stats_main(matches: &ArgMatches) {
         if output == "-" { "stdout" } else { output }
     );
 
+    info!("Numeric check");
     let num_com = check_numeric_compact_gfafile(matches.value_of("gfa").unwrap());
 
     if num_com.0 {
