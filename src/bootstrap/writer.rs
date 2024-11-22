@@ -38,7 +38,6 @@ pub fn write_output(
     data: &Vec<(usize, usize, &HashSet<usize>, (Vec<usize>, Vec<usize>))>,
     filename: &str,
 ) -> io::Result<()> {
-    info!("Writing output");
     let max_len = data.iter().map(|n| n.3 .1.len()).max().unwrap();
 
     let mut f = get_writer(filename)?;
