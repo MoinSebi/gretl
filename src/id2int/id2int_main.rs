@@ -221,11 +221,19 @@ pub fn read_write(
 
     let file_new = File::create(f2).unwrap_or_else(|_| panic!("Error opening file: {}", f1));
     let writer = BufWriter::new(file_new);
-
     let cc = AtomicUsize::new(0);
+    let aa = Arc::new(Mutex::new(writer));
+
+    let first_line = first_line(f1);
+    let is_header = first_line.starts_with("H");
+    if is_header {
+        let mut a1 = aa.lock().unwrap();
+        write!(a1, "{}", first_line).expect("Error writing to file");
+        drop(a1);
+    }
+
 
     info!("Start converting ID");
-    let aa = Arc::new(Mutex::new(writer));
     byte_index.par_chunks(chunk_size).for_each(|x| {
         let mut string_vec: Vec<String> = Vec::new();
         for a in x.iter() {
@@ -329,9 +337,13 @@ pub fn read_write(
                         }
                         string_vec.push(format!("{}\n", b.join("\t")))
                     }
-                    "H" => string_vec.push(format!("{}\n", l)),
+                    "H" => {
+                        if !is_header {
+                            string_vec.push(format!("{}\n", l))
+                        }
+                    },
 
-                    _ => panic!("{}", l),
+                    _ => panic!("This line is not recognized: {}", l),
                 }
             }
 
@@ -392,4 +404,13 @@ fn pair_with_next<T: Copy>(vec: &[T]) -> Vec<(T, T)> {
         .zip(vec.iter().skip(1))
         .map(|(&x, &y)| (x, y))
         .collect()
+}
+
+fn first_line(filename: &str) -> String {
+    let file = File::open(filename).expect("Error opening file");
+    let mut buf_reader = BufReader::new(file);
+
+    let mut first_line = String::new();
+    buf_reader.read_line(&mut first_line).expect("Error reading file");
+    first_line
 }
