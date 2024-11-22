@@ -5,6 +5,14 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import sys
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s    [%(levelname)s] - %(filename)s: %(message)s',
+    datefmt='%d/%m/%Y %H:%M:%S',  # 24-hour format
+    handlers=[logging.StreamHandler(stream=sys.stderr)]
+)
 
 
 def read_stats(filename: str) -> list:
@@ -70,8 +78,15 @@ if __name__ == "__main__":
     parser.add_argument('-o', '--output', type=str, help='Path to the output file', required=True)
     args = parser.parse_args()
 
+    logging.info("Reading data from %s", args.input)
     files = read_stats(args.input)
+
+    logging.info("Really read the data (+combine)")
     df = read_data(files)
+
+    logging.info("Scaling data")
     df = scale(df)
+
+    logging.info("Plotting data to %s", args.output)
     plot_clustermap(df, args.output)
 

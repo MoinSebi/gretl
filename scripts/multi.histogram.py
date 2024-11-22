@@ -4,8 +4,15 @@ import argparse
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
+import logging
+import sys
 
-
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s    [%(levelname)s] - %(filename)s: %(message)s',
+    datefmt='%d/%m/%Y %H:%M:%S',  # 24-hour format
+    handlers=[logging.StreamHandler(stream=sys.stderr)]
+)
 
 def read_stats(filename: str) -> list:
     """
@@ -58,11 +65,17 @@ if __name__ == "__main__":
     parser.add_argument('-o', '--output', type=str, help='Path to the output file', required=True)
     args = parser.parse_args()
 
+
+    logging.info("Reading data from %s", args.input)
     files = read_stats(args.input)
+
+    logging.info("Really read the data (+combine)")
     df = read_data(files)
+
 
     # We create a new folder since it is going to be a lot of new plots
     os.makedirs(args.output, exist_ok=True)
 
+    logging.info("Plotting histograms")
     plot_histo(df, args.output + "/" )
 

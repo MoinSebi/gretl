@@ -4,8 +4,14 @@ import argparse
 import pandas as pd
 import matplotlib.pyplot as plt
 import sys
+import logging
 
-
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s    [%(levelname)s] - %(filename)s: %(message)s',
+    datefmt='%d/%m/%Y %H:%M:%S',  # 24-hour format
+    handlers=[logging.StreamHandler(stream=sys.stderr)]
+)
 
 def read_stats(filename: str) -> list:
     """
@@ -72,7 +78,10 @@ if __name__ == "__main__":
     parser.add_argument('-y', '--y', type=str, help='Y-axis', required=True)
     args = parser.parse_args()
 
+    logging.info("Reading data from %s", args.input)
     files = read_stats(args.input)
+
+    logging.info("Really read the data (+combine)")
     df = read_data(files)
 
     # Check if the cols are present
@@ -85,4 +94,5 @@ if __name__ == "__main__":
         print(args.y)
         sys.exit(1)
 
+    logging.info("Plotting scatter plot")
     plot_scatter(df, args.output, args.x, args.y)

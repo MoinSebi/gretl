@@ -4,7 +4,15 @@ import argparse
 import pandas as pd
 import matplotlib.pyplot as plt
 import sys
+import logging
 
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s    [%(levelname)s] - %(filename)s: %(message)s',
+    datefmt='%d/%m/%Y %H:%M:%S',  # 24-hour format
+    handlers=[logging.StreamHandler(stream=sys.stderr)]
+)
 
 def read_data(filename: str) -> (pd.DataFrame, pd.DataFrame):
     """
@@ -79,5 +87,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Load the CSV file
+    logging.info("Reading data from %s", args.input)
     data_priv, data_pub = read_data(args.input)
+    logging.info("Plotting data to %s", args.output)
     plot_test(data_pub, data_priv, args.output)

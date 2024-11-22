@@ -4,8 +4,14 @@ import argparse
 import pandas as pd
 import matplotlib.pyplot as plt
 import sys
+import logging
 
-
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s    [%(levelname)s] - %(filename)s: %(message)s',
+    datefmt='%d/%m/%Y %H:%M:%S',  # 24-hour format
+    handlers=[logging.StreamHandler(stream=sys.stderr)]
+)
 
 def read_data(filename: str) -> pd.DataFrame:
     """
@@ -62,9 +68,18 @@ if __name__ == "__main__":
     parser.add_argument('-o', '--output', type=str, help='Path to the output PNG file', required=True)
     args = parser.parse_args()
 
+
+
     # Load the CSV file
+    logging.info("Reading data from %s", args.input)
     data = read_data(args.input)
+
+    # Separate the data
+    logging.info("Separate tables")
     df_node = table_sep(data, "N")
     df_seq = table_sep(data, "S")
+
+    # Plot the data
+    logging.info("Plotting data")
     plot_node_stats(df_node, args.output, "#Nodes", "N")
     plot_node_stats(df_seq, args.output, "#Sequence [bp]", "S")

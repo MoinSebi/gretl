@@ -6,7 +6,14 @@ import sys
 import argparse
 import pandas as pd
 import matplotlib.pyplot as plt
+import logging
 
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s    [%(levelname)s] - %(filename)s: %(message)s',
+    datefmt='%d/%m/%Y %H:%M:%S',  # 24-hour format
+    handlers=[logging.StreamHandler(stream=sys.stderr)]
+)
 
 def read_path_stats(filename: str) -> pd.DataFrame:
     """
@@ -65,6 +72,7 @@ if __name__ == "__main__":
     parser.add_argument('-y', '--y', type=str, help='Y-axis', required=True)
     args = parser.parse_args()
 
+    logging.info("Reading data from %s", args.input)
     df = read_path_stats(args.input)
     if not check_col(df, args.x):
         print("Column not found", file = sys.stderr)
@@ -73,4 +81,5 @@ if __name__ == "__main__":
         print("Column not found", file = sys.stderr)
         sys.exit(1)
 
+    logging.info("Plotting the scatter plot")
     plotter(df, args.x, args.y, args.output)

@@ -6,6 +6,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 import argparse
 import sys
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s    [%(levelname)s] - %(filename)s: %(message)s',
+    datefmt='%d/%m/%Y %H:%M:%S',  # 24-hour format
+    handlers=[logging.StreamHandler(stream=sys.stderr)]
+)
 
 
 def read_gfa(filename: str) -> dict:
@@ -98,9 +106,16 @@ if __name__ == "__main__":
     parser.add_argument('-o', '--output', type=str, help='Path to the output PNG file', required=True)
     args = parser.parse_args()
 
+    logging.info("Reading graph from %s", args.graph)
     node2len = read_gfa(args.graph)
+
+    logging.info("Reading data from %s", args.input)
     df = read_nwindow_tsv(args.input)
+
+    logging.info("Positional list")
     pos_list = get_poslist(df, node2len)
+
+    logging.info("Plotting")
     plot_scatter(df, pos_list, args.output, "#Nodes (in one window)", "Node ID (length corrected) [x10³]", "Nodes")
     plot_scatter(df, pos_list, args.output, "Sequence (in one window) [kbp]", "Node ID (length corrected) [x10³]", "Sequences")
     plot_scatter(df, pos_list, args.output, "Sum of Jumps (in one window) [x10⁶]", "Node ID (length corrected) [x10³]", "Jumps")

@@ -7,7 +7,14 @@ import numpy as np
 import os
 import itertools
 import sys
+import logging
 
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s    [%(levelname)s] - %(filename)s: %(message)s',
+    datefmt='%d/%m/%Y %H:%M:%S',  # 24-hour format
+    handlers=[logging.StreamHandler(stream=sys.stderr)]
+)
 
 def read_stats(filename: str) -> list:
     """
@@ -106,10 +113,18 @@ if __name__ == "__main__":
     parser.add_argument('-n', '--number', type=int, help='Number of statistics (scaling is O(n^2))', required=False)
     args = parser.parse_args()
 
+    logging.info("Reading data from %s", args.input)
     files = read_stats(args.input)
+
+    logging.info("Really read the data (+combine)")
     df = read_data(files)
+
+    logging.info("Calculating relative deviation")
     df = cal_dev(df)
+
+    logging.info("Getting top %s values", args.number)
     df = get_topX(df, args.number)
     os.makedirs(args.output, exist_ok=True)
 
+    logging.info("Plotting scatter plots")
     plot_scatter(df, args.output + "/")
