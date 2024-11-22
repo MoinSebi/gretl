@@ -338,8 +338,9 @@ pub fn read_write(
                         string_vec.push(format!("{}\n", b.join("\t")))
                     }
                     "H" => {
+                        let ll = l.trim_end();
                         if !is_header {
-                            string_vec.push(format!("{}\n", l))
+                            string_vec.push(format!("{}\n", ll))
                         }
                     },
 
