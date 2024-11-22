@@ -6,7 +6,7 @@ use crate::stats::stats_writer::{
 };
 use clap::ArgMatches;
 use gfa_reader::{check_numeric_compact_gfafile, Gfa, Pansn};
-use log::info;
+use log::{info, warn};
 
 /// Main function for stats subcommand
 ///
@@ -55,9 +55,9 @@ pub fn stats_main(matches: &ArgMatches) {
 
     if num_com.0 {
         if !num_com.1 {
-            eprintln!("Error: The GFA file is not sorted. All 'jump' stats might be without sense.")
+            warn!("The GFA file is not sorted. All 'jump' stats might be without sense.")
         }
-        info!("Reading graph");
+        info!("Read GFA file");
         let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file_multi(gfafile, threads);
         if graph.paths.is_empty() && sep == "\n" {
             sep = "#";

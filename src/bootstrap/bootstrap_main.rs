@@ -52,7 +52,7 @@ pub fn bootstrap_main(matches: &ArgMatches) {
     info!("Numeric check");
     if check_numeric_gfafile(matches.value_of("gfa").unwrap()) {
         // Read the graph
-        info!("Reading GFA file");
+        info!("Read GFA file");
         let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file_multi(gfa_file, threads);
         if graph.paths.is_empty() && sep == "\n" {
             sep = "#"

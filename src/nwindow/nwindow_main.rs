@@ -67,7 +67,7 @@ pub fn nwindow_main(matches: &ArgMatches) {
         }
         // Read the graph
 
-        info!("Reading GFA file");
+        info!("Read GFA file");
         let graph: Gfa<u32, (), ()> =
             Gfa::parse_gfa_file_multi(matches.value_of("gfa").unwrap(), threads);
 

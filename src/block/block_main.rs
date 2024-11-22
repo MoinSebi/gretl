@@ -1,5 +1,5 @@
 use clap::ArgMatches;
-use gfa_reader::{check_numeric_gfafile, Gfa, Pansn};
+use gfa_reader::{check_numeric_compact_gfafile, check_numeric_gfafile, Gfa, Pansn};
 use rayon::prelude::*;
 
 use std::io::Write;
@@ -74,7 +74,13 @@ pub fn block_main(matches: &ArgMatches) -> Result<(), Box<dyn std::error::Error>
     );
 
     info!("Numeric check");
-    if check_numeric_gfafile(matches.value_of("gfa").unwrap()) {
+    let num_com = check_numeric_compact_gfafile(matches.value_of("gfa").unwrap());
+
+    if num_com.0 {
+        if !num_com.1 {
+            warn!("The GFA file is not sorted.")
+        }
+
         info!("Reading GFA file");
         let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file_multi(graph_file, threads);
         if graph.paths.is_empty() && sep == "\n" {

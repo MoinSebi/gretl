@@ -44,7 +44,7 @@ pub fn core_main(matches: &ArgMatches) -> Result<(), Box<dyn std::error::Error>>
     if check_numeric_gfafile(matches.value_of("gfa").unwrap()) {
         // Check for panSN separator
 
-        info!("Reading GFA file");
+        info!("Read GFA file");
         let mut graph: Gfa<u32, (), ()> =
             Gfa::parse_gfa_file_multi(matches.value_of("gfa").unwrap(), threads);
         if graph.paths.is_empty() && sep == "\n" {

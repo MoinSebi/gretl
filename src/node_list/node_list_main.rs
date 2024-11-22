@@ -38,7 +38,7 @@ pub fn nodelist_main(matches: &ArgMatches) {
     if check_numeric_gfafile(matches.value_of("gfa").unwrap()) {
         // Parse GFA file + Wrapper
 
-        info!("Reading GFA file");
+        info!("Read GFA file");
         let mut graph: Gfa<u32, (), ()> =
             Gfa::parse_gfa_file_multi(matches.value_of("gfa").unwrap(), threads);
         graph.walk_to_path(pansn);

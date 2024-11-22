@@ -36,7 +36,7 @@ pub fn find_main(matches: &ArgMatches) {
         let feature = data.feature;
         // Read the graph
 
-        info!("Reading GFA file");
+        info!("Read GFA file");
         let mut graph: Gfa<u32, (), ()> = Gfa::parse_gfa_file(graph_file);
         graph.walk_to_path("#");
         let paths = &graph.paths;
