@@ -18,7 +18,14 @@ pub fn nodelist_main(matches: &ArgMatches) {
         .expect("Error: Threads must be a number");
 
     info!("GFA file: {}", matches.value_of("gfa").unwrap());
-    info!("Pan-SN: {:?}", if pansn == "\n" { "None" } else { pansn });
+    info!(
+        "Pan-SN: {}",
+        if pansn == "\n" {
+            "None".to_string()
+        } else {
+            format!("{:?}", pansn)
+        }
+    );
     info!(
         "Features: {:?}\n",
         features

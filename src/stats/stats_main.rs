@@ -30,8 +30,12 @@ pub fn stats_main(matches: &ArgMatches) {
 
     info!("Gfa file: {}", gfafile);
     info!(
-        "PanSN separator: {:?}",
-        if sep == "\n" { "None" } else { sep }
+        "Pan-SN: {}",
+        if sep == "\n" {
+            "None".to_string()
+        } else {
+            format!("{:?}", sep)
+        }
     );
     info!("Bins: {:?}", bins);
     info!("Haplo: {}", haplo);
