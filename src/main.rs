@@ -27,7 +27,7 @@ use clap::{App, AppSettings, Arg};
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let matches = App::new("gretl")
         .setting(AppSettings::ArgRequiredElseHelp)
-        .version("0.1.0")
+        .version("0.1.1")
         .author("Sebastian V")
         .about("Graph statistics based on GFA files")
         .setting(AppSettings::SubcommandRequiredElseHelp)
@@ -83,7 +83,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         .subcommand(
             App::new("block")
-                .version("1.0.1")
                 .about("Statistics on pangenome blocks")
 
                 .help_heading("Input parameters")
