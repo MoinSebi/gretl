@@ -48,10 +48,11 @@ A list of all subcommands is at the bottom
 ```
 ./target/release/gretl [subcommand] [options]
 ```
-### From bioconda channel
-You need to install [conda](https://docs.conda.io/en/latest/)/[mamba](https://anaconda.org/conda-forge/mamba) first. We recommend creating a new environment for gretl to avoid conflicts with other packages `conda create -n gretl_env`.
+### From Bioconda channel
+Gretl is available on [Bioconda](https://bioconda.github.io/).
+You need to install [conda](https://docs.conda.io/en/latest/)/[mamba](https://anaconda.org/conda-forge/mamba) first. We recommend creating a new environment for gretl to avoid conflicts with other packages `conda create -n gretl_env && conda activate gretl_env`.
 ```
-mambda install -c conda-forge -c bioconda gretl
+mamba install -c conda-forge -c bioconda gretl
 ``` 
 
 
