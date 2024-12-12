@@ -144,6 +144,5 @@ pub fn bootstrap_main(matches: &ArgMatches) {
         info!("Write the output");
         write_output(&results, output);
     } else {
-        panic!("GFA file is not numeric");
-    }
+        panic!("The node IDs in the GFA file are not numeric");    }
 }

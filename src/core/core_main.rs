@@ -76,7 +76,6 @@ pub fn core_main(matches: &ArgMatches) -> Result<(), Box<dyn std::error::Error>>
             panic!("Error: No path found in graph file");
         }
     } else {
-        panic!("Error: Graph file is not numeric");
-    }
+        panic!("The node IDs in the GFA file are not numeric");    }
     Ok(())
 }

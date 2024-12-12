@@ -82,7 +82,7 @@ pub fn window_main(matches: &ArgMatches) {
         write_window(f, output, node, window_size, step_size);
         info!("Done")
     } else {
-        panic!("Error: GFA file is not numeric");
+        panic!("The node IDs in the GFA file are not numeric");
     }
 }
 

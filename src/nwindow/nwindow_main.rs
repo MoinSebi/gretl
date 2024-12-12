@@ -94,7 +94,6 @@ pub fn nwindow_main(matches: &ArgMatches) {
         write_list(&a, output, &graph.segments);
         info!("Done");
     } else {
-        eprintln!("GFA file is not numeric");
-        process::exit(1);
+        panic!("The node IDs in the GFA file are not numeric");
     }
 }

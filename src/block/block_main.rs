@@ -124,7 +124,7 @@ pub fn block_main(matches: &ArgMatches) -> Result<(), Box<dyn std::error::Error>
         )?;
         info!("Done");
     } else {
-        panic!("Error: GFA file is not numeric");
+        panic!("The node IDs in the GFA file are not numeric");
     }
     Ok(())
 }
