@@ -2,7 +2,7 @@ use crate::helpers::helper::{average_median_std, mean, median};
 use crate::helpers::helper::{calc_depth, calc_node_degree, calc_node_len, calc_similarity};
 use crate::stats::hybrid_stats::path_stats_wrapper2;
 use gfa_reader::{Gfa, Pansn};
-use log::info;
+use log::{info, warn};
 use std::cmp::max;
 
 /// Wrapper for graph statistics
@@ -22,9 +22,6 @@ pub fn graph_stats_wrapper(
         paths = wrapper.get_path_genome();
     }
     let number_samples = wrapper.genomes.len();
-
-    let depth = calc_depth(&paths, graph);
-    let core = calc_similarity(&paths, graph);
 
     // Basic stats
     let path_number = graph_path_number(graph);
@@ -75,6 +72,9 @@ pub fn graph_stats_wrapper(
     for x in nodes1.iter() {
         result.push((x.0.to_string(), x.1.to_string()));
     }
+
+    let depth = calc_depth(&paths, graph);
+    let core = calc_similarity(&paths, graph);
 
     // Depth
     let (a1, a2, a3) = average_median_std(&core);
@@ -158,10 +158,14 @@ pub fn graph_stats_wrapper(
         graph_density(graph).to_string(),
     ));
 
-    info!("Calculating hybrid stats");
-    let hybrid_stats = path_stats_wrapper2(graph, wrapper, haplo, threads);
-    for x in hybrid_stats.iter() {
-        result.push((x.0.to_string(), x.1.to_string()));
+    if graph.paths.is_empty() {
+        warn!("No path or walks found in graph file. No able to run path statistics");
+    } else {
+        info!("Calculating hybrid stats");
+        let hybrid_stats = path_stats_wrapper2(graph, wrapper, haplo, threads);
+        for x in hybrid_stats.iter() {
+            result.push((x.0.to_string(), x.1.to_string()));
+        }
     }
 
     result

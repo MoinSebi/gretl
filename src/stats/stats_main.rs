@@ -68,14 +68,13 @@ pub fn stats_main(matches: &ArgMatches) {
         }
         graph.walk_to_path(sep);
 
-        if graph.paths.is_empty() {
-            panic!("Error: No path found in graph file")
-        }
-
         info!("Creating wrapper");
         let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, sep);
 
         if want_path {
+            if graph.paths.is_empty() {
+                panic!("Error: No path found in graph file")
+            }
             info!("Calculating path stats");
             let mut data = path_stats_wrapper(&graph, &wrapper, haplo, threads);
             let mut data = convert_data(&mut data);
