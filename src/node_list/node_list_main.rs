@@ -10,7 +10,7 @@ pub fn nodelist_main(matches: &ArgMatches) {
     // Other inputs
     let output = matches.value_of("output").unwrap();
     let features = vec!["Length", "Similarity", "Depth", "ND"];
-    let bit_feature = get_features(matches, &features);
+    let mut bit_feature = get_features(matches, &features);
     let threads = matches
         .value_of("threads")
         .unwrap()
@@ -41,6 +41,8 @@ pub fn nodelist_main(matches: &ArgMatches) {
     );
     info!("Threads: {}", threads);
 
+
+
     info!("Numeric check");
     if check_numeric_gfafile(matches.value_of("gfa").unwrap()) {
         // Parse GFA file + Wrapper
@@ -49,16 +51,13 @@ pub fn nodelist_main(matches: &ArgMatches) {
         let mut graph: Gfa<u32, (), ()> =
             Gfa::parse_gfa_file_multi(matches.value_of("gfa").unwrap(), threads);
         graph.walk_to_path(pansn);
-        if graph.paths.is_empty() {
-            panic!("Error: No path found in graph file")
-        }
 
         // PanSN
         let wrapper: Pansn<u32, (), ()> = Pansn::from_graph(&graph.paths, pansn);
 
         info!("Starting node list analysis");
         // This wrapper also writes data to a file
-        wrapper_node_list(&graph, &wrapper, output, &bit_feature);
+        wrapper_node_list(&graph, &wrapper, output, &mut bit_feature);
         info!("Done");
     } else {
         panic!("Error: GFA file is not numeric");

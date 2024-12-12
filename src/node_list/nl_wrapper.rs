@@ -1,5 +1,6 @@
 use crate::node_list::writer::write_wrapper;
 use gfa_reader::{Gfa, Pansn};
+use log::{info, warn};
 
 /// Wrapper function for node list analysis
 ///
@@ -7,29 +8,41 @@ pub fn wrapper_node_list(
     graph: &Gfa<u32, (), ()>,
     wrapper: &Pansn<u32, (), ()>,
     filename: &str,
-    feature_bitvec: &Vec<bool>,
+    feature_bitvec: &mut Vec<bool>,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let _paths = wrapper.get_path_genome();
     let (mask, offset) = off_setter(graph);
     let mut result_vec = vec![[0; 4]; mask.len()];
-
-    if feature_bitvec[0] {
+    if graph.paths.is_empty() {
+        warn!("No path found in graph file. Reporting only node length and node degree.");
+        feature_bitvec.clear();
+        feature_bitvec.extend(vec![true, false, false, true]);
         let node_len = calc_node_len2(graph, mask.len(), offset);
         merge_vec(&mut result_vec, &node_len, 0);
-    }
-    if feature_bitvec[1] {
-        let node_len = similarity_mask(graph, mask.len(), offset);
-        merge_vec(&mut result_vec, &node_len, 1);
-    }
-    if feature_bitvec[2] {
-        let node_len = depth_mask(graph, mask.len(), offset);
-        merge_vec(&mut result_vec, &node_len, 2);
-    }
-    if feature_bitvec[3] {
         let node_len = node_degree_max(graph, mask.len(), offset);
         merge_vec(&mut result_vec, &node_len, 3);
+
+    }
+    else {
+        if feature_bitvec[0] {
+            let node_len = calc_node_len2(graph, mask.len(), offset);
+            merge_vec(&mut result_vec, &node_len, 0);
+        }
+        if feature_bitvec[1] {
+            let node_len = similarity_mask(graph, mask.len(), offset);
+            merge_vec(&mut result_vec, &node_len, 1);
+        }
+        if feature_bitvec[2] {
+            let node_len = depth_mask(graph, mask.len(), offset);
+            merge_vec(&mut result_vec, &node_len, 2);
+        }
+        if feature_bitvec[3] {
+            let node_len = node_degree_max(graph, mask.len(), offset);
+            merge_vec(&mut result_vec, &node_len, 3);
+        }
     }
 
+    info!("Writing to file");
     write_wrapper(
         &result_vec,
         feature_bitvec,

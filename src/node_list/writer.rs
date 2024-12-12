@@ -11,7 +11,11 @@ pub fn write_wrapper(
     filename: &str,
     graph: &Gfa<u32, (), ()>,
 ) -> Result<(), Box<dyn Error>> {
+
+    // Get writer
     let mut writer_test = get_writer(filename)?;
+
+    // Write header
     let mut f1 = vec![String::from("Node_id")];
     f1.extend(
         feature
