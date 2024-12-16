@@ -21,9 +21,7 @@ pub fn wrapper_node_list(
         merge_vec(&mut result_vec, &node_len, 0);
         let node_len = node_degree_max(graph, mask.len(), offset);
         merge_vec(&mut result_vec, &node_len, 3);
-
-    }
-    else {
+    } else {
         if feature_bitvec[0] {
             let node_len = calc_node_len2(graph, mask.len(), offset);
             merge_vec(&mut result_vec, &node_len, 0);

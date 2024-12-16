@@ -91,7 +91,8 @@ pub fn nwindow_wrapper(
                 eprint!(
                     "\r{}          Progress {:.2}%",
                     chrono::Local::now().format("%d/%m/%Y %H:%M:%S %p"),
-                    (count.load(std::sync::atomic::Ordering::Relaxed) as f64 / nn.len() as f64)* 100.0
+                    (count.load(std::sync::atomic::Ordering::Relaxed) as f64 / nn.len() as f64)
+                        * 100.0
                 );
             }
             result

@@ -11,7 +11,6 @@ pub fn write_wrapper(
     filename: &str,
     graph: &Gfa<u32, (), ()>,
 ) -> Result<(), Box<dyn Error>> {
-
     // Get writer
     let mut writer_test = get_writer(filename)?;
 

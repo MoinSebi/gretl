@@ -1,4 +1,3 @@
-
 use chrono::Local;
 use clap::ArgMatches;
 use gfa_reader::index_file;
@@ -225,13 +224,12 @@ pub fn read_write(
     let aa = Arc::new(Mutex::new(writer));
 
     let first_line = first_line(f1);
-    let is_header = first_line.starts_with("H");
+    let is_header = first_line.starts_with('H');
     if is_header {
         let mut a1 = aa.lock().unwrap();
         write!(a1, "{}", first_line).expect("Error writing to file");
         drop(a1);
     }
-
 
     info!("Start converting ID");
     byte_index.par_chunks(chunk_size).for_each(|x| {
@@ -342,7 +340,7 @@ pub fn read_write(
                         if !is_header {
                             string_vec.push(format!("{}\n", ll))
                         }
-                    },
+                    }
 
                     _ => panic!("This line is not recognized: {}", l),
                 }
@@ -412,6 +410,8 @@ fn first_line(filename: &str) -> String {
     let mut buf_reader = BufReader::new(file);
 
     let mut first_line = String::new();
-    buf_reader.read_line(&mut first_line).expect("Error reading file");
+    buf_reader
+        .read_line(&mut first_line)
+        .expect("Error reading file");
     first_line
 }

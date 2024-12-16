@@ -9,7 +9,7 @@ In addition, we added some commands, using graph-based statistics, but represent
 - Numerical node ID
 
 **Comment**:
-- Sorted node IDs (in 1D SGD) are not required, but all *"jump"* related statistics and the *block* subcommand will be based on the order of the nodes in the GFA file. Check this [paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10542513/) for more information. 
+- Sorted node IDs (in 1D SGD) are not required, but all *"jump"* related statistics, the *block* and *nwindow* subcommand will be based on the order of the nodes in the GFA file. Check this [paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10542513/) for more information. 
   - Run `odgi sort -Y` to sort the graph in pan-genomic order.
 - We recommend dense node ID, starting at 1 and end at the number of nodes +1. Memory efficient on multiple levels.
 
@@ -310,9 +310,9 @@ BCK_8.ChrX	0	15731	ID:3+;NS:15530;NB:0
 
 ## Citation 
 If you use gretl in your work, please cite:  
-Gretl - Variation GRaph Evaluation TooLkit
-Sebastian Vorbrugg, Ilja Bezrukov, Zhigui Bao, Detlef Weigel
-doi: [https://doi.org/10.1101/2024.03.04.580974](https://doi.org/10.1101/2024.03.04.580974)
+**Gretl - Variation GRaph Evaluation TooLkit  
+Sebastian Vorbrugg, Ilja Bezrukov, Zhigui Bao, Detlef Weigel  
+doi: [https://doi.org/10.1101/2024.03.04.580974](https://doi.org/10.1101/2024.03.04.580974)**
 
 
 

@@ -41,8 +41,6 @@ pub fn nodelist_main(matches: &ArgMatches) {
     );
     info!("Threads: {}", threads);
 
-
-
     info!("Numeric check");
     if check_numeric_gfafile(matches.value_of("gfa").unwrap()) {
         // Parse GFA file + Wrapper
@@ -60,7 +58,7 @@ pub fn nodelist_main(matches: &ArgMatches) {
         wrapper_node_list(&graph, &wrapper, output, &mut bit_feature);
         info!("Done");
     } else {
-        panic!("Error: GFA file is not numeric");
+        panic!("The node IDs in the GFA file are not numeric");
     }
 }
 
