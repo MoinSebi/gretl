@@ -40,7 +40,7 @@ def plotter(df: pd.DataFrame, output: str, what: str) -> None:
     :return:
     """
 
-    plt.figure(figsize = (5,4))
+    plt.figure(figsize = (7,4))
     plt.scatter(df.index, df[what], edgecolor = "black", color = "royalblue")
     plt.xlabel("Block number")
     plt.ylabel(what)

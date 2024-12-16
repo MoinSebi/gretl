@@ -22,7 +22,7 @@ Alternative questions:
 
 **Gretl subcommand: bootstrap**  
 **Plotting script: [saturation_plotter.py](../scripts/saturation_plotter.py)**   
-**Example: [ExampleS1](../plots/test.bootstrap.seq.pdf) (s. Fig S1)** 
+**Example: ![ExampleS1](../plots/test.bootstrap.seq.png) (s. Fig S1)** 
 
 ```bash
 INPUT="path/to/your/graph.gfa"
@@ -37,7 +37,7 @@ Alternative questions:
 
 **Gretl subcommand: nwindow**  
 **Plotting script: [nwindow.py](../scripts/nwindow.py)**  
-**Example: [ExampleS2](../plots/test.nwindow.jumps.no_correction.pdf) (s. Figure S8)**
+**Example: ![ExampleS2](../plots/test.nwindow.jumps.no_correction.png) (s. Figure S8)**
 
 ```bash
 INPUT="path/to/your/graph.gfa"
@@ -54,7 +54,7 @@ Alternative questions:
 
 **Gretl subcommand: window**  
 **Plotting script: [window.py](../scripts/window.py)**   
-**Example: [ExampleS3](../plots/test.window.pdf) (s. Figure 1C (left))**
+**Example: ![ExampleS3](../plots/test.window.png) (s. Figure 1C (left))**
 
 
 ```bash
@@ -70,7 +70,7 @@ Alternative questions:
 
 **Gretl subcommand: core**  
 **Plotting script: [core.py](../scripts/core.py)**   
-**Example: [ExampleS4](../plots/test.core.node.pdf) (s. Figure 1C (right))**
+**Example: ![ExampleS4](../plots/test.core.node.png) (s. Figure 1C (right))**
 
 
 
@@ -86,7 +86,7 @@ Alternative questions:
 
 **Gretl subcommand: block**  
 **Plotting script: [block.py](../scripts/block.py)**   
-**Example: [ExampleS5](../plots/test.block.%23Nodes(average).pdf)**
+**Example: ![ExampleS5](../plots/test.block.Nodes(average).png)**
 
 ```bash
 INPUT="path/to/your/graph.gfa"
@@ -102,7 +102,7 @@ Alternative questions:
 
 **Gretl subcommand: path**  
 **Plotting script: [path.py](../scripts/path.py)**   
-**Example: [ExampleS6](../plots/test.path.heatmap.pdf)**
+**Example: ![ExampleS6](../plots/test.path.heatmap.png)**
 
 
 ```bash
@@ -117,7 +117,7 @@ Alternative questions:
 
 **Gretl subcommand: path**  
 **Plotting script: [stats_path.py](../scripts/stats_path.py)**   
-**Example: [ExampleS7](../plots/test.path.scatter.pdf) (s. Figure 4)**
+**Example: ![ExampleS7](../plots/test.path.scatter.png) (s. Figure 4)**
 
 
 ```bash
@@ -133,7 +133,7 @@ Alternative questions:
 
 **Gretl subcommand: path**  
 **Plotting script: [ps.py](../scripts/ps.py)**   
-**Example: [ExampleS8](../plots/test.ps.node.pdf) (s. Figure S6)**
+**Example: ![ExampleS8](../plots/test.ps.node.png) (s. Figure S6)**
 
 
 Comment: Core: Common to all samples. Soft: Common to some, but not all samples (and also not private). Private: Unique to one sample.
@@ -184,9 +184,9 @@ Alternative questions/ideas:
 - Show me the distribution of the differences between the graphs. 
 
 **Plotting script: [multi.histogram.py](../scripts/multi.histogram.py)**   
-**Example: [ExampleM1](../plots/multi.histogram.Compression.histo.pdf)**
+**Example: ![ExampleM1](../plots/multi.histogram.Compression.histo.png)**
 
-The followig snippet creates a histogram for each statistic in the provided list. This results in over 100 plots in the OUTPUT directory.
+The following snippet creates a histogram for each statistic in the provided list. This results in over 100 plots in the OUTPUT directory.
 ```bash
 INPUT="path/to/your/stats.list"
 OUTPUT="path/to/your/output.multi.histogram.prefix"
@@ -199,7 +199,7 @@ Alternative questions/ideas:
 - Which graph is the most different to all the other graphs? (not detailed, just by eye)?
 
 **Plotting script: [multi.heatmap.py](../scripts/multi.heatmap.py)**   
-**Example: [ExampleM2](../plots/test.multi.heatmap.pdf) (s. Figure 1B (left))**
+**Example: ![ExampleM2](../plots/test.multi.heatmap.png) (s. Figure 1B (left))**
 
 
 
@@ -211,11 +211,11 @@ python3 scripts/multi.heatmap.py -i $INPUT -o $OUTPUT
 
 
 ### 3. Which features span the most interesting range of values? (Scatter plot)
-Alterative questions/ideas:
+Alternative questions/ideas:
 - Which features are most correlated with each other?
 
 **Plotting script: [multi.auto.py](../scripts/multi.auto.py)**   
-**Example: [ExampleM3](../plots/multi.auto.scatter.PathNodesizestd%5Bbp%5D(std)--Edges.scatter.pdf) (s. Figure 1B (right), Figure S3)**
+**Example: ![ExampleM3](../plots/multi.auto.scatter.PathNodesizestd[bp](std)--Edges.scatter.png) (s. Figure 1B (right), Figure S3)**
 
 If you run this script, the relative deviation will be calculated for each statistic. Those with the highest deviation will be selected and all pairs of those will be plotted in a scatter plot (always 2). The default amount of selected features is 10, therefore 45 scatter plots will be created. Those can be found in the OUTPUT directory.
 ```bash
@@ -227,7 +227,7 @@ python3 scripts/multi.auto.py -i $INPUT -o $OUTPUT
 ### 4. Show me scatter plot of these two features (name feature here)? 
 
 **Plotting script: [multi.scatter.py](../scripts/multi.scatter.py)**   
-**Example:  [ExampleM4](../plots/test.multi.scatter.Nodes.Nodelength(average)%5Bbp%5D.scatter.pdf) (s. Figure 1B (right), Figure S3)**
+**Example:  ![ExampleM4](../plots/test.multi.scatter.Nodes.Nodelength(average)[bp].scatter.png) (s. Figure 1B (right), Figure S3)**
 
 
 ```bash
@@ -242,7 +242,7 @@ Alternative questions/ideas:
 - Which statistics are the most unique in my dataset? 
 
 **Plotting script: [multi.correlate.py](../scripts/multi.correlate.py)**   
-**Example: [ExampleM5](../plots/test.multi.corr.heatmap.pdf) (s. Figure S5 (top))**
+**Example: ![ExampleM5](../plots/test.multi.corr.heatmap.png) (s. Figure S5 (top))**
 
 
 ```bash

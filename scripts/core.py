@@ -66,7 +66,7 @@ def plot_test(df: pd.DataFrame, df_seq_sorted: pd.DataFrame, output: str) -> Non
     plt.close()
 
     # Plotting the node data
-    plt.figure(figsize=(5,5))
+    plt.figure(figsize=(7,5))
     plt.bar([int(x) for x in df.index], df["#Node"]/1000, edgecolor="black")
     plt.bar([int(x) for x in df.index][-1], df["#Node"].values[-1]/1000, edgecolor="black")
     bottom1 = 0

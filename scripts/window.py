@@ -48,7 +48,17 @@ def plotter_window(df: pd.DataFrame, output: str) -> None:
     # Plot the figure
     plt.figure(figsize=(10, 6))  # Set the figure size
     sns.heatmap(df, cmap="coolwarm", cbar_kws={'label': 'Similarity'})
+    tick_frequency = len(df.columns) / 8
+    print(tick_frequency)
+    plt.xticks(
+        ticks=[i for i in range(len(df.columns)) if i % tick_frequency == 0], # Select every 3rd tick position
+        labels=[year for idx, year in enumerate(df.columns) if idx % tick_frequency == 0], # Select every 3rd label
+        rotation=90
+    )
+    plt.ylabel("Path")
     plt.tight_layout(rect=[0.05, 0.05, 0.85, 0.95])  # Adjust as needed
+
+
     plt.xlabel("Sequence window")
     plt.tight_layout()
     plt.savefig(output + ".window.pdf")
