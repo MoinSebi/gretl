@@ -1,5 +1,5 @@
 use clap::ArgMatches;
-use gfa_reader::{check_numeric_compact_gfafile, check_numeric_gfafile, Gfa, Pansn};
+use gfa_reader::{check_numeric_compact_gfafile, Gfa, Pansn};
 use rayon::prelude::*;
 
 use std::io::Write;

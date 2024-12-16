@@ -3,7 +3,7 @@ use crate::nwindow::writer_nwindow::write_list;
 use clap::ArgMatches;
 use gfa_reader::{check_numeric_compact_gfafile, Gfa};
 use log::{info, warn};
-use std::process;
+
 
 pub fn nwindow_main(matches: &ArgMatches) {
     info!("Running 'gretl nwindow'");
