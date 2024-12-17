@@ -12,7 +12,6 @@ const OUTPUT: &str = "no_num";
 //---
 // Stats
 #[test]
-#[should_panic]
 fn stats_graph_tsv() {
     let mut cmd = Command::cargo_bin("gretl").unwrap();
     let tmp_dir = tempdir().expect("Failed to create temp dir");
@@ -27,7 +26,6 @@ fn stats_graph_tsv() {
 }
 
 #[test]
-#[should_panic]
 fn stats_graph_yaml() {
     let mut cmd = Command::cargo_bin("gretl").unwrap();
     let tmp_dir = tempdir().expect("Failed to create temp dir");
@@ -48,7 +46,8 @@ fn stats_graph_yaml() {
         file.read_to_string(&mut content).unwrap();
         content
     };
-    assert!(content.contains("Paths: 6"));
+    println!("{}", content);
+    assert!(content.contains("Nodes: 9"));
 }
 
 #[test]
@@ -221,7 +220,6 @@ fn analysis_ps_tg() {
 }
 
 #[test]
-#[should_panic]
 fn analysis_node_list_path_tg() {
     let mut cmd = Command::cargo_bin("gretl").unwrap();
     let tmp_dir = tempdir().expect("Failed to create temp dir");
